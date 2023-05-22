@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../fullstackprojectautomobelite.iml" filepath="$PROJECT_DIR$/../fullstackprojectautomobelite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AutoMobeliteFront.iml" filepath="$PROJECT_DIR$/AutoMobeliteFront.iml" />
     </modules>
   </component>
 </project>

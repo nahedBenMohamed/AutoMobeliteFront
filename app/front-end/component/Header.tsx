@@ -19,7 +19,7 @@ function Header() {
                         Login
                     </a>
                     <button className="bg-blue-600 py-3 px-7 text-white shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded">
-                        <a href="/authentification/Signup">Signup</a>
+                        <a href="/authentification/Signup">SignupPage</a>
                     </button>
                 </div>
                 <div className="lg:hidden">

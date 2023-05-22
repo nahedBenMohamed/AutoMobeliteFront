@@ -2,7 +2,7 @@ import Link from "next/link";
 import React from "react";
 import {HiLockClosed, HiMail} from "react-icons/all";
 
-function Login() {
+function LoginPage() {
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
             <div className="w-full p-6 bg-white rounded-md shadow-md lg:max-w-xl">
@@ -21,7 +21,7 @@ function Login() {
                                         id="email"
                                         name="email"
                                         className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                         required
+                                        //required
                                     />
                                 </div>
                             </div>
@@ -34,7 +34,7 @@ function Login() {
                                 </label>
 
                                 <div className="text-sm">
-                                    <a href="/authentification/Forgetpassword" className="font-semibold text-blue-600 hover:text-indigo-500">
+                                    <a href="/admin/dashboard/auth/forget" className="font-semibold text-blue-600 hover:text-indigo-500">
                                         Forgot your password??
                                     </a>
                                 </div>
@@ -56,7 +56,7 @@ function Login() {
                         </div>
                         <div className="mt-2">
                             <button className=" w-full px-4 py-2 text-center text-white transition-colors duration-200 transform  bg-blue-600  focus:outline-none focus:bg-gray-600">
-                                <a href="/Connected" >
+                                <a href="/admin/dashboard/home" >
                                     Login
                                 </a>
                             </button>
@@ -72,7 +72,7 @@ function Login() {
                         {/* eslint-disable-next-line react/no-unescaped-entities */}
                         Don't have an account?{" "}
                         <a
-                            href="/authentification/Signup"
+                            href="/admin/dashboard/auth/register"
                             className="font-medium text-blue-600 hover:underline"
                         >
                             SignupPage
@@ -83,4 +83,4 @@ function Login() {
         </div>
     );
 }
-export default Login;
+export default LoginPage;
