@@ -39,12 +39,12 @@ const ForgetPage = () => {
                         type="submit"
                         className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
                     >
-                        <Link href="/admin/dashboard/auth/login" >Reset password</Link>
+                        <Link href={"/admin/dashboard/auth/login"} >Reset password</Link>
                     </button>
                     <p className="mt-4 text-sm text-center text-gray-700">
                         Login page ?{" "}
                         <Link
-                            href="admin/dashboard/auth/login"
+                            href={"admin/dashboard/auth/login"}
                             className="font-medium text-blue-600 hover:underline"
                         >
                             Login

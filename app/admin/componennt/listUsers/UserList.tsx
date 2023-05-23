@@ -32,14 +32,14 @@ const TableUsers = () => {
             <TableCell align='center'>ID</TableCell>
             <TableCell align='center'>Name</TableCell>
             <TableCell align='center'>First Name</TableCell>
-            <TableCell align='right'>email</TableCell>
-            <TableCell align='right'>Tel</TableCell>
+            <TableCell align='center'>email</TableCell>
+            <TableCell align='center'>Tel</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>
-              <TableCell component="th" scope="row" align="left">{row.id}</TableCell>
+              <TableCell component="th" scope="row" align="center">{row.id}</TableCell>
               <TableCell align='center'>{row.name}</TableCell>
               <TableCell align='center'>{row.prenom}</TableCell>
               <TableCell align='center'>{row.email}</TableCell>

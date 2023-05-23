@@ -1,4 +1,7 @@
 import React, { useState, FormEvent } from "react";
+import EmailOutline from 'mdi-material-ui/EmailOutline'
+import { LockOutline } from 'mdi-material-ui';
+import AccountOutline from 'mdi-material-ui/AccountOutline'
 import Link from "next/link";
 import {HiLockClosed, HiMail, HiUser} from "react-icons/all";
 
@@ -38,7 +41,7 @@ const Signup = () => {
                                 First Name
                             </label>
                             <div className="relative">
-                                <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                                <AccountOutline className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
                                 <input
                                     type="text"
                                     id="firstName"
@@ -57,7 +60,7 @@ const Signup = () => {
                                 Last Name
                             </label>
                             <div className="relative" >
-                                <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                                <AccountOutline className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
                                 <input
                                     type="text"
                                     id="lastName"
@@ -74,7 +77,7 @@ const Signup = () => {
                                 Email
                             </label>
                             <div className="relative">
-                                <HiMail className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                                <EmailOutline className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
                                 <input
                                     type="email"
                                     id="email"
@@ -91,7 +94,7 @@ const Signup = () => {
                                 Password
                             </label>
                             <div className="relative">
-                                <HiLockClosed className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                                <LockOutline className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
                                 <input
                                     type="password"
                                     id="password"
@@ -108,7 +111,7 @@ const Signup = () => {
                                 Confirm password
                             </label>
                             <div className="relative">
-                                <HiLockClosed className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                                <LockOutline className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
                                 <input
                                     type="password"
                                     id="confirmPassword"

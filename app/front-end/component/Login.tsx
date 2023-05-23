@@ -1,6 +1,8 @@
 import Link from "next/link";
 import React from "react";
-import {HiLockClosed, HiMail} from "react-icons/all";
+import EmailOutline from 'mdi-material-ui/EmailOutline'
+import { LockOutline } from 'mdi-material-ui';
+//import {HiLockClosed, HiMail} from "react-icons/all";
 
 function Login() {
     return (
@@ -15,7 +17,7 @@ function Login() {
                                     Email
                                 </label>
                                 <div className="relative">
-                                    <HiMail className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                                    <EmailOutline className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
                                     <input
                                         type="email"
                                         id="email"
@@ -42,7 +44,7 @@ function Login() {
 
                             <div className="mt-2">
                                 <div className="relative">
-                                    <HiLockClosed className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                                    <LockOutline className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
                                     <input
                                         id="password"
                                         name="password"

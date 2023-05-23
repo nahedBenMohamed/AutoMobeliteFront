@@ -1,7 +1,8 @@
 
 import React from "react";
 import {useTogglersContext} from "@/app/front-end/context/togglers";
-import {AiOutlineMenu} from "react-icons/all";
+import MenuIcon from "@mui/icons-material/Menu";
+import Link from 'next/link';
 
 
 
@@ -15,11 +16,11 @@ function Header() {
                     <a href="/Home">AUTO<span className="text-blue-600">MOBELITE</span></a>
                 </div>
                 <div className="hidden lg:flex items-center gap-4 font-medium">
-                    <a href="/authentification/Login" className="hover:text-blue-600 transition-all duration-300 ease-linear">
+                    <Link href={"/authentification/Login"} className="hover:text-blue-600 transition-all duration-300 ease-linear">
                         Login
-                    </a>
+                    </Link>
                     <button className="bg-blue-600 py-3 px-7 text-white shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded">
-                        <a href="/authentification/Signup">SignupPage</a>
+                        <Link href={"/authentification/Signup"}>Sign up</Link>
                     </button>
                 </div>
                 <div className="lg:hidden">
@@ -27,7 +28,7 @@ function Header() {
                         className="text-3xl transition-all duration-300 ease-linear hover:text-custom-orange"
                         onClick={() => setMobileNavbar(true)}
                     >
-                        <AiOutlineMenu/>
+                        <MenuIcon />
                     </button>
                 </div>
 

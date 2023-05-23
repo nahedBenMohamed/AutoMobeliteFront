@@ -1,5 +1,8 @@
 import Link from "next/link";
 import React from "react";
+import Phone from 'mdi-material-ui/Phone'
+import EmailOutline from 'mdi-material-ui/EmailOutline';
+
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { GrMail } from "react-icons/gr";
 
@@ -23,7 +26,7 @@ function Footer() {
                                     className="flex items-center justify-center lg:justify-start gap-2 hover:text-blue-600 transition-all duration-300 ease-linear"
                                 >
                   <span>
-                    <BsFillTelephoneFill />
+                    <Phone />
                   </span>
                                     <span className="font-semibold">(123)-456-789</span>
                                 </Link>
@@ -34,7 +37,7 @@ function Footer() {
                                     className="flex items-center justify-center lg:justify-start gap-2 hover:text-blue-600 transition-all duration-300 ease-linear"
                                 >
                   <span>
-                    <GrMail />
+                    <EmailOutline />
                   </span>
                                     <span className="font-semibold">carrental@gmail.com</span>
                                 </Link>

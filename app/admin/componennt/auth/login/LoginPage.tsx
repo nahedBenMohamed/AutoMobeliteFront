@@ -34,7 +34,7 @@ function LoginPage() {
                                 </label>
 
                                 <div className="text-sm">
-                                    <Link href="/admin/dashboard/auth/forget" className="font-semibold text-blue-600 hover:text-indigo-500">
+                                    <Link href={"/admin/dashboard/auth/forget"} className="font-semibold text-blue-600 hover:text-indigo-500">
                                         Forgot password??
                                     </Link>
                                 </div>
@@ -55,12 +55,11 @@ function LoginPage() {
                             </div>
                         </div>
                         <div className="mt-2">
-                            <button className=" w-full px-4 py-2 text-center text-white transition-colors duration-200 transform  bg-blue-600  focus:outline-none focus:bg-gray-600">
-                                <Link href="/admin/dashboard/home" >
+                            <button className="w-full px-4 py-2 text-center text-white transition-colors duration-200 transform  bg-blue-600  focus:outline-none focus:bg-gray-600">
+                                <Link href={"/admin/dashboard/home"} >
                                     Login
                                 </Link>
                             </button>
-
                         </div>
                     </form>
 
@@ -72,7 +71,7 @@ function LoginPage() {
                         {/* eslint-disable-next-line react/no-unescaped-entities */}
                         Don't have an account?{" "}
                         <Link
-                            href="/admin/dashboard/auth/register"
+                            href={"/admin/dashboard/auth/register"}
                             className="font-medium text-blue-600 hover:underline"
                         >
                             Sign up

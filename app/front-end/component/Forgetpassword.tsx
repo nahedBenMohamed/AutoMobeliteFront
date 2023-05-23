@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { LockOutline } from 'mdi-material-ui';
 import Link from "next/link";
 import {HiLockClosed} from "react-icons/all";
 
@@ -25,7 +26,7 @@ const Forgetpassword = () => {
                             Email
                         </label>
                         <div className="relative">
-                            <HiLockClosed className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                            <LockOutline className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
                             <input
                                 type="email"
                                 id="email"

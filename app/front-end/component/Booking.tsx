@@ -1,9 +1,11 @@
 import React from "react";
 import { bookingInputs } from "../data/input";
-import { AiFillCalendar } from "react-icons/ai";
 import { useInputValueContext } from "../context/inputValue";
-import { AiOutlineClose } from "react-icons/ai";
 import { useTogglersContext } from "../context/togglers";
+import { CloseCircleOutline, CalendarBlank } from 'mdi-material-ui';
+
+/*import { AiFillCalendar } from "react-icons/ai";
+import { AiOutlineClose } from "react-icons/ai";*/
 
 function Booking() {
     const { bookingSelect, setBookingSelect, bookingDate, setBookingDate } =
@@ -36,7 +38,7 @@ function Booking() {
                         <button
                             onClick={() => setBookingFields({ ...bookingFields, red: false })}
                         >
-                            <AiOutlineClose />
+                            <CloseCircleOutline />
                         </button>
                     </div>
                 )}
@@ -48,7 +50,7 @@ function Booking() {
                                 setBookingFields({ ...bookingFields, green: false })
                             }
                         >
-                            <AiOutlineClose />
+                            <CloseCircleOutline />
                         </button>
                     </div>
                 )}
@@ -85,7 +87,7 @@ function Booking() {
                         <div key={data.id} className="flex flex-col gap-4">
                             <label htmlFor={data.htmlId} className="flex items-center gap-2">
                 <span className="text-blue-600 text-xl">
-                  <AiFillCalendar />
+                  <CalendarBlank />
                 </span>
                                 <span className="font-semibold">{data.label}</span>
                                 <span className="text-custom-orange font-bold">*</span>

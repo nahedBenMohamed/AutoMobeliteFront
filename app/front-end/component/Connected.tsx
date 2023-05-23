@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import {AiOutlineMenu, AiOutlineUser} from "react-icons/ai";
 import { useTogglersContext } from "../context/togglers";
+import MenuIcon from '@mui/icons-material/Menu';
+import {Account} from 'mdi-material-ui'
 //import { useAuthContext } from "../context/auth";
 
 
@@ -33,7 +35,7 @@ function HeaderConn() {
                         onClick={toggleDropdown}
                         className="hover:text-blue-600 transition-all duration-600 ease-linear"
                     >
-                        <AiOutlineUser className="inline-block mr-4 text-2xl" />
+                        <Account className="inline-block mr-4 text-2xl" />
                     </button>
                     {isDropdownOpen && (
                         <ul className="absolute top-full right-0 bg-white rounded-md shadow-md py-2 mt-2">
@@ -69,7 +71,7 @@ function HeaderConn() {
                         className="text-3xl transition-all duration-300 ease-linear hover:text-custom-orange"
                         onClick={() => setMobileNavbar(true)}
                     >
-                        <AiOutlineMenu />
+                        <MenuIcon />
                     </button>
                 </div>
             </header>
