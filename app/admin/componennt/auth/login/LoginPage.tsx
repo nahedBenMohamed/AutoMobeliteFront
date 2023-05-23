@@ -34,9 +34,9 @@ function LoginPage() {
                                 </label>
 
                                 <div className="text-sm">
-                                    <a href="/admin/dashboard/auth/forget" className="font-semibold text-blue-600 hover:text-indigo-500">
-                                        Forgot your password??
-                                    </a>
+                                    <Link href="/admin/dashboard/auth/forget" className="font-semibold text-blue-600 hover:text-indigo-500">
+                                        Forgot password??
+                                    </Link>
                                 </div>
                             </div>
 
@@ -56,9 +56,9 @@ function LoginPage() {
                         </div>
                         <div className="mt-2">
                             <button className=" w-full px-4 py-2 text-center text-white transition-colors duration-200 transform  bg-blue-600  focus:outline-none focus:bg-gray-600">
-                                <a href="/admin/dashboard/home" >
+                                <Link href="/admin/dashboard/home" >
                                     Login
-                                </a>
+                                </Link>
                             </button>
 
                         </div>
@@ -71,12 +71,12 @@ function LoginPage() {
                     <p className="mt-4 text-sm text-center text-gray-700">
                         {/* eslint-disable-next-line react/no-unescaped-entities */}
                         Don't have an account?{" "}
-                        <a
+                        <Link
                             href="/admin/dashboard/auth/register"
                             className="font-medium text-blue-600 hover:underline"
                         >
-                            SignupPage
-                        </a>
+                            Sign up
+                        </Link>
                     </p>
                 </div>
             </div>

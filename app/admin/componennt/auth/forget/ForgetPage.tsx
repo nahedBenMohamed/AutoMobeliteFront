@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {HiLockClosed} from "react-icons/all";
+import Link from 'next/link';
 
 const ForgetPage = () => {
     const [email, setEmail] = useState("");
@@ -38,16 +39,16 @@ const ForgetPage = () => {
                         type="submit"
                         className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
                     >
-                        Reset your password
+                        <Link href="/admin/dashboard/auth/login" >Reset password</Link>
                     </button>
                     <p className="mt-4 text-sm text-center text-gray-700">
                         Login page ?{" "}
-                        <a
-                            href="/auth/login"
+                        <Link
+                            href="admin/dashboard/auth/login"
                             className="font-medium text-blue-600 hover:underline"
                         >
                             Login
-                        </a>
+                        </Link>
                     </p>
                 </form>
             </div>

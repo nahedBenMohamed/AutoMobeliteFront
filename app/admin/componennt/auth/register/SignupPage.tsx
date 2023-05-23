@@ -125,17 +125,17 @@ const SignupPage = () => {
                         type="submit"
                         className="mt-6 bg-center w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
                     >
-                        <a>Create an account</a>
+                        <Link href="/admin/dashboard/auth/login">Create account</Link>
 
                     </button>
                     <p className="mt-4 text-sm text-center text-gray-700">
                         already registered?{" "}
-                        <a
+                        <Link
                             href="/admin/dashboard/auth/login"
                             className="font-medium text-blue-600 hover:underline"
                         >
                             Login
-                        </a>
+                        </Link>
                     </p>
                 </form>
             </div>

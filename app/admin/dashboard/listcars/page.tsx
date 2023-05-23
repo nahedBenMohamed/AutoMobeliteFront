@@ -4,6 +4,7 @@ import React from "react";
 import CarTable from '@/app/admin/componennt/Cars/liste';
 import Grid from '@mui/material/Grid';
 import { AddCar } from '@/app/admin/componennt/Cars/add-cars';
+import Navbar from '@/app/admin/componennt/dashboard/navbar';
 
 function Page() {
   const mainStyles = {
@@ -19,7 +20,9 @@ function Page() {
   };
 
   return (
-    <main style={mainStyles}>
+    <main>
+      <Navbar/>
+      <div style={mainStyles}>
       <Grid container spacing={6} style={gridContainerStyles}>
         <Grid item xs={6}>
           <AddCar />
@@ -28,6 +31,7 @@ function Page() {
           <CarTable />
         </Grid>
       </Grid>
+      </div>
     </main>
   );
 }

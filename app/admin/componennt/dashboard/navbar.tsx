@@ -3,12 +3,14 @@
 
 import { usePathname } from 'next/navigation';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
+import Link from 'next/link';
 
 
 const navigation = [
   { name: 'Dashboard', href: '/admin/dashboard/home' },
   { name: 'Cars List', href: '/admin/dashboard/listcars' },
-  { name: 'User List', href: '/admin/dashboard/listusers' }
+  { name: 'Client List', href: '/admin/dashboard/listusers' },
+  { name: 'Reserve List', href: '/admin/dashboard/reservation' }
 ];
 
 function classNames(...classes: string[]) {
@@ -50,7 +52,7 @@ export default function Navbar() {
                 </div>
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                   {navigation.map((item) => (
-                    <a
+                    <Link
                       key={item.name}
                       href={item.href}
                       className={classNames(
@@ -62,7 +64,7 @@ export default function Navbar() {
                       aria-current={pathname === item.href ? 'page' : undefined}
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               </div>
