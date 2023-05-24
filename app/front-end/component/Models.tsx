@@ -59,7 +59,7 @@ function Models() {
                   <hr className="border border-lighter-grey" />
                 </div>
                 <div>
-                  <Link href="/Login" className="block text-center bg-blue-600 p-3 font-bold text-white rounded transition-all duration-300 ease-linear w-full">
+                  <Link href={"/authentification/Login"} className="block text-center bg-blue-600 p-3 font-bold text-white rounded transition-all duration-300 ease-linear w-full">
                    Book Ride
                   </Link>
                 </div>
