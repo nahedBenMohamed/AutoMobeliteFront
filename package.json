@@ -44,6 +44,9 @@
     "tailwindcss-react": "^0.0.0",
     "typescript": "5.0.4",
 
+    "react-datepicker": "^4.5.0",
+    "@mui/lab": "^5.0.0-alpha.70",
+    "react-perfect-scrollbar": "^1.5.8",
     "mdi-material-ui": "^7.1.0"
   },
   "prettier": {
