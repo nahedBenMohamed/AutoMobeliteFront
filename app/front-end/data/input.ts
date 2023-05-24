@@ -1,5 +1,4 @@
-import { AiFillCar } from "react-icons/ai";
-import { IoLocationSharp } from "react-icons/io5";
+import { Car, MapMarker } from 'mdi-material-ui';
 
 
 
@@ -8,7 +7,7 @@ export const bookingInputs = {
         {
             id: 1,
             htmlId: "car-type",
-            label: { icon: AiFillCar, text: "Select your type of car" },
+            label: { icon: Car, text: "Select your type of car" },
             placeholder: "Select your car type",
             options: [
                 { id: 1, option: "Audi A1 S-Line" },
@@ -22,7 +21,7 @@ export const bookingInputs = {
         {
             id: 2,
             htmlId: "pickup-location",
-            label: { icon: IoLocationSharp, text: "Place of collection" },
+            label: { icon: MapMarker, text: "Place of collection" },
             placeholder: "Select your pick up location",
             options: [
                 { id: 1, option: "Bandung" },
@@ -36,7 +35,7 @@ export const bookingInputs = {
         {
             id: 3,
             htmlId: "dropof-location",
-            label: { icon: IoLocationSharp, text: "Relocation of the place" },
+            label: { icon: MapMarker, text: "Relocation of the place" },
             placeholder: "Select your drop of location",
             options: [
                 { id: 1, option: "Bandung" },

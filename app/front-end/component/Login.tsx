@@ -2,7 +2,6 @@ import Link from "next/link";
 import React from "react";
 import EmailOutline from 'mdi-material-ui/EmailOutline'
 import { LockOutline } from 'mdi-material-ui';
-//import {HiLockClosed, HiMail} from "react-icons/all";
 
 function Login() {
     return (
@@ -23,7 +22,7 @@ function Login() {
                                         id="email"
                                         name="email"
                                         className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                         required
+                                        //required
                                     />
                                 </div>
                             </div>
@@ -34,14 +33,12 @@ function Login() {
                                 <label htmlFor="password" className="block font-semibold">
                                     Password
                                 </label>
-
                                 <div className="text-sm">
-                                    <a href="/authentification/Forgetpassword" className="font-semibold text-blue-600 hover:text-indigo-500">
-                                        Forgot your password??
-                                    </a>
+                                    <Link href={"/authentification/Forgetpassword"} className="font-semibold text-blue-600 hover:text-indigo-500">
+                                        Forgot password ?
+                                    </Link>
                                 </div>
                             </div>
-
                             <div className="mt-2">
                                 <div className="relative">
                                     <LockOutline className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
@@ -58,14 +55,12 @@ function Login() {
                         </div>
                         <div className="mt-2">
                             <button className=" w-full px-4 py-2 text-center text-white transition-colors duration-200 transform  bg-blue-600  focus:outline-none focus:bg-gray-600">
-                                <a href="/Connected" >
+                                <Link href="/Connected" >
                                     Login
-                                </a>
+                                </Link>
                             </button>
-
                         </div>
-                    </form>
-
+                        </form>
                     <div className="relative flex items-center justify-center w-full mt-6 border border-t">
                         <div className="absolute px-5 bg-white">Or</div>
                     </div>
@@ -73,12 +68,9 @@ function Login() {
                     <p className="mt-4 text-sm text-center text-gray-700">
                         {/* eslint-disable-next-line react/no-unescaped-entities */}
                         Don't have an account?{" "}
-                        <a
-                            href="/authentification/Signup"
-                            className="font-medium text-blue-600 hover:underline"
-                        >
-                            SignupPage
-                        </a>
+                        <Link href={"/authentification/Signup"} className="font-medium text-blue-600 hover:underline">
+                            Sign Up
+                        </Link>
                     </p>
                 </div>
             </div>

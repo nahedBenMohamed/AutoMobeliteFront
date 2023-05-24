@@ -1,12 +1,8 @@
-/* Inused import
-import { AiFillCar, AiFillStar, AiFillTool } from "react-icons/ai";
-import { GiCarDoor } from "react-icons/gi";
-import { BsFillFuelPumpFill } from "react-icons/bs";*/
-
 import React from "react";
 import { carDetails } from "../data/content";
 import Image from "next/image";
 import {  CarDoor, Car, Tools, GasStation,Star } from 'mdi-material-ui';
+import Link from 'next/link';
 
 function Models() {
  return (
@@ -63,9 +59,9 @@ function Models() {
                   <hr className="border border-lighter-grey" />
                 </div>
                 <div>
-                  <a href="/Login" className="block text-center bg-blue-600 p-3 font-bold text-white rounded transition-all duration-300 ease-linear w-full">
+                  <Link href="/Login" className="block text-center bg-blue-600 p-3 font-bold text-white rounded transition-all duration-300 ease-linear w-full">
                    Book Ride
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { LockOutline } from 'mdi-material-ui';
 import Link from "next/link";
-import {HiLockClosed} from "react-icons/all";
 
 const Forgetpassword = () => {
     const [email, setEmail] = useState("");
@@ -36,20 +35,14 @@ const Forgetpassword = () => {
                             />
                         </div>
                     </div>
-                    <button
-                        type="submit"
-                        className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-                    >
+                    <button type="submit" className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
                         Reset your password
                     </button>
                     <p className="mt-4 text-sm text-center text-gray-700">
                         Login page ?{" "}
-                        <a
-                            href="/authentification/Login"
-                            className="font-medium text-blue-600 hover:underline"
-                        >
+                        <Link href={"/authentification/Login"} className="font-medium text-blue-600 hover:underline">
                             Login
-                        </a>
+                        </Link>
                     </p>
                 </form>
             </div>

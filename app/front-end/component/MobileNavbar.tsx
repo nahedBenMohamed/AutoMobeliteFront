@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useTogglersContext } from "../context/togglers";
 import MenuIcon from '@mui/icons-material/Menu';
+import Link from "next/link";
 
 //import {AiOutlineClose} from "react-icons/ai";
 
@@ -20,10 +21,10 @@ function MobileNavbar() {
                 </button>
                 <ul className="flex flex-col items-center gap-8 font-medium text-2xl">
                     <button className="hover:text-blue-600 transition-all duration-300 ease-linear">
-                        <a href="/Login">Sign In</a>
+                        <Link href="/Login">Sign In</Link>
                     </button>
                     <button className="bg-blue-600 py-3 px-7 text-white shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded">
-                        <a href="/Signup">Sign Up</a>
+                        <Link href="/Signup">Sign Up</Link>
                     </button>
                     <button className="text-3xl transition-all duration-300 ease-linear hover:text-custom-orange"
                         onClick={() => setMobileNavbar(true)}>

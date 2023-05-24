@@ -3,7 +3,7 @@ import EmailOutline from 'mdi-material-ui/EmailOutline'
 import { LockOutline } from 'mdi-material-ui';
 import AccountOutline from 'mdi-material-ui/AccountOutline'
 import Link from "next/link";
-import {HiLockClosed, HiMail, HiUser} from "react-icons/all";
+
 
 
 const Signup = () => {
@@ -124,21 +124,14 @@ const Signup = () => {
                             </div>
                         </div>
                     </div>
-                    <button
-                        type="submit"
-                        className="mt-6 bg-center w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-                    >
-                        <a>Create an account</a>
-
+                    <button type="submit" className="mt-6 bg-center w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+                        <Link href={"/authentification/Login"}>Create an account</Link>
                     </button>
                     <p className="mt-4 text-sm text-center text-gray-700">
                         already registered?{" "}
-                        <a
-                            href="/authentification/Login"
-                            className="font-medium text-blue-600 hover:underline"
-                        >
+                        <Link href={"/authentification/Login"} className="font-medium text-blue-600 hover:underline">
                             Login
-                        </a>
+                        </Link>
                     </p>
                 </form>
             </div>

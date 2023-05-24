@@ -52,7 +52,7 @@ export default function Navbar() {
                 </div>
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                   {navigation.map((item) => (
-                    <Link
+                    <a
                       key={item.name}
                       href={item.href}
                       className={classNames(
@@ -64,7 +64,7 @@ export default function Navbar() {
                       aria-current={pathname === item.href ? 'page' : undefined}
                     >
                       {item.name}
-                    </Link>
+                    </a>
                   ))}
                 </div>
               </div>

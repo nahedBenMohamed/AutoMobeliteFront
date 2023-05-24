@@ -2,6 +2,7 @@ import React from "react";
 import { carDetails, cars } from "../data/content";
 import { useCurrentValueContext } from "../context/currentValue";
 import Image from "next/image";
+import Link from 'next/link';
 
 function RentalFleet() {
     const { rentalFleet, setRentalFleet } = useCurrentValueContext();
@@ -122,12 +123,9 @@ function RentalFleet() {
                             </table>
                         </div>
                         <div>
-                            <a
-                                href="/Models"
-                                className="text-xl block w-full font-bold bg-blue-600 p-2 text-white transition-all duration-300 ease-linear rounded"
-                            >
+                            <Link href="/Models" className="text-xl block w-full font-bold bg-blue-600 p-2 text-white transition-all duration-300 ease-linear rounded">
                                 See list of cars
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>

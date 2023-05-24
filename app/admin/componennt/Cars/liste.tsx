@@ -10,6 +10,7 @@ import TableContainer from '@mui/material/TableContainer';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Tooltip } from '@mui/material';
 
 
 const createData = (
@@ -61,12 +62,12 @@ const rows = [
 const CarTable = () => {
   const handleEdit = (id) => {
     console.log(`Edit car with ID: ${id}`);
-    // Ajoutez ici la logique pour gérer l'événement de modification
+    //ici la logique pour gérer l'événement de modification
   };
 
   const handleDelete = (id) => {
     console.log(`Delete car with ID: ${id}`);
-    // Ajoutez ici la logique pour gérer l'événement de suppression
+    //la logique pour gérer l'événement de suppression
   };
 
   return (
@@ -99,20 +100,16 @@ const CarTable = () => {
               <TableCell align="center">{row.color}</TableCell>
               <TableCell align="center">{row.cost}</TableCell>
               <TableCell align="center">
-                <IconButton
-                  aria-label="Edit"
-                  onClick={() => handleEdit(row.id)}
-                  color="primary" // Couleur personnalisée
-                >
-                  <EditIcon />
-                </IconButton>
-                <IconButton
-                  aria-label="Delete"
-                  onClick={() => handleDelete(row.id)}
-                  color="secondary" // Couleur personnalisée
-                >
-                  <DeleteIcon />
-                </IconButton>
+                <Tooltip title="Edit">
+                 <IconButton aria-label="Edit" onClick={() => handleEdit(row.id)} color="primary">
+                    <EditIcon />
+                 </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete">
+                  <IconButton aria-label="Delete" onClick={() => handleDelete(row.id)} color="secondary" >
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
               </TableCell>
             </TableRow>
           ))}

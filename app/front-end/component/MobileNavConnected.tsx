@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import { useTogglersContext } from "../context/togglers";
 import { CloseCircleOutline } from 'mdi-material-ui';
-
-/*import {AiOutlineClose, AiOutlineMenu} from "react-icons/ai";
-import { usePathname } from "next/navigation";*/
+import Link from "next/link";
 
 function MobileNavConnected() {
     const { mobileNavbar, setMobileNavbar } = useTogglersContext();
@@ -24,7 +22,7 @@ function MobileNavConnected() {
     <a href="/Connected">Profile</a>
     </button>*/}
                   <button className="bg-blue-600 py-3 px-7 text-white shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded">
-                      <a href="/Home">Logout</a>
+                      <Link href="/Home">Logout</Link>
                   </button>
                   <button className="text-3xl transition-all duration-300 ease-linear hover:text-custom-orange"
                           onClick={() => setMobileNavbar(true)}>

@@ -9,6 +9,7 @@ import TableContainer from '@mui/material/TableContainer';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Tooltip } from '@mui/material';
 
 const createData = (
   id: string,
@@ -77,20 +78,16 @@ const ReserveList = () => {
               <TableCell align="center">{row.color}</TableCell>
               <TableCell align="center">{row.cost}</TableCell>
               <TableCell align="center">
-                <IconButton
-                  aria-label="Edit"
-                  onClick={() => handleEdit(row.id)}
-                  color="primary"
-                >
-                  <VisibilityIcon />
-                </IconButton>
-                <IconButton
-                  aria-label="Delete"
-                  onClick={() => handleDelete(row.id)}
-                  color="secondary"
-                >
-                  <DeleteIcon />
-                </IconButton>
+                <Tooltip title="Details">
+                  <IconButton aria-label="Edit" onClick={() => handleEdit(row.id)} color="primary">
+                    <VisibilityIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete">
+                  <IconButton aria-label="Delete" onClick={() => handleDelete(row.id)} color="secondary">
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
               </TableCell>
             </TableRow>
           ))}

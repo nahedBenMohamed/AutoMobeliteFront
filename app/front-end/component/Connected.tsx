@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import {AiOutlineMenu, AiOutlineUser} from "react-icons/ai";
 import { useTogglersContext } from "../context/togglers";
 import MenuIcon from '@mui/icons-material/Menu';
 import {Account} from 'mdi-material-ui'
+import Link from "next/link";
+
 //import { useAuthContext } from "../context/auth";
 
 
@@ -26,9 +27,9 @@ function HeaderConn() {
         <section id="top header">
             <header className="absolute top-6 inset-x-6 lg:inset-x-28 flex items-center justify-between z-50">
                 <div className="text-2xl">
-                    <a href="/Homec">
+                    <Link href={'/Homec'}>
                         AUTO<span className="text-blue-600">MOBELITE</span>
-                    </a>
+                    </Link>
                 </div>
                 <div className="hidden lg:flex items-center gap-4 font-medium relative">
                     <button
@@ -40,28 +41,19 @@ function HeaderConn() {
                     {isDropdownOpen && (
                         <ul className="absolute top-full right-0 bg-white rounded-md shadow-md py-2 mt-2">
                             <li>
-                                <a
-                                    href="/Editprofile"
-                                    className="block px-4 py-2 hover:bg-gray-200"
-                                >
+                                <Link href={'/Editprofile'} className="block px-4 py-2 hover:bg-gray-200">
                                     Edit Profile
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <button
-                                    onClick={handleLogout}
-                                    className="block px-4 py-2 hover:bg-gray-200 w-full text-left"
-                                >
+                                <button onClick={handleLogout} className="block px-4 py-2 hover:bg-gray-200 w-full text-left">
                                     Logout
                                 </button>
                             </li>
                             <li>
-                                <a
-                                    href="/Reservations"
-                                    className="block px-4 py-2 hover:bg-gray-200"
-                                >
+                                <Link href={'/Reservations'} className="block px-4 py-2 hover:bg-gray-200">
                                     Manage Reservations
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     )}

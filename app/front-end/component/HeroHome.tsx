@@ -1,6 +1,8 @@
 import Image from "next/image";
 import React from "react";
 import { IoIosArrowDown } from "react-icons/io";
+import {ArrowDown} from 'mdi-material-ui';
+import Link from "next/link";
 
 function HeroHome() {
     return (
@@ -35,12 +37,10 @@ function HeroHome() {
 
                     </div>
                 </div>
-                <a
-                    href="/app/front-end/component/Booking"
-                    className="absolute bottom-16 inset-x-1/2 text-3xl animate-bounce"
-                >
-                    <IoIosArrowDown />
-                </a>
+                {/*il faut verifier ici il y'a une erreur dans l'url*/}
+                <Link href="/app/front-end/component/Booking" className="absolute bottom-16 inset-x-1/2 text-3xl animate-bounce">
+                    <ArrowDown />
+                </Link>
             </div>
         </section>
     );

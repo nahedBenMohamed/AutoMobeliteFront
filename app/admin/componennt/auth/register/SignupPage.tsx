@@ -1,6 +1,6 @@
 import React, { useState, FormEvent } from "react";
 import Link from "next/link";
-import {HiLockClosed, HiMail, HiUser} from "react-icons/all";
+import { LockOutline, AccountOutline, EmailOutline } from 'mdi-material-ui';
 
 
 const SignupPage = () => {
@@ -38,7 +38,7 @@ const SignupPage = () => {
                                 First Name
                             </label>
                             <div className="relative">
-                                <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                                <AccountOutline className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
                                 <input
                                     type="text"
                                     id="firstName"
@@ -47,7 +47,6 @@ const SignupPage = () => {
                                     onChange={handleChange}
                                     required
                                     className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-
                                 />
                             </div>
                         </div>
@@ -57,7 +56,7 @@ const SignupPage = () => {
                                 Last Name
                             </label>
                             <div className="relative" >
-                                <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                                <AccountOutline className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
                                 <input
                                     type="text"
                                     id="lastName"
@@ -74,7 +73,7 @@ const SignupPage = () => {
                                 Email
                             </label>
                             <div className="relative">
-                                <HiMail className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                                <EmailOutline className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
                                 <input
                                     type="email"
                                     id="email"
@@ -91,7 +90,7 @@ const SignupPage = () => {
                                 Password
                             </label>
                             <div className="relative">
-                                <HiLockClosed className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                                <LockOutline className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
                                 <input
                                     type="password"
                                     id="password"
@@ -108,7 +107,7 @@ const SignupPage = () => {
                                 Confirm password
                             </label>
                             <div className="relative">
-                                <HiLockClosed className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                                <LockOutline className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
                                 <input
                                     type="password"
                                     id="confirmPassword"
@@ -125,13 +124,13 @@ const SignupPage = () => {
                         type="submit"
                         className="mt-6 bg-center w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
                     >
-                        <Link href="/admin/dashboard/auth/login">Create account</Link>
+                        <Link href={"/admin/dashboard/auth/login"}>Create account</Link>
 
                     </button>
                     <p className="mt-4 text-sm text-center text-gray-700">
                         already registered?{" "}
                         <Link
-                            href="/admin/dashboard/auth/login"
+                            href={"/admin/dashboard/auth/login"}
                             className="font-medium text-blue-600 hover:underline"
                         >
                             Login
