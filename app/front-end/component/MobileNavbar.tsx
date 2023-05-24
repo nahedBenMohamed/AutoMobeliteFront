@@ -21,10 +21,10 @@ function MobileNavbar() {
                 </button>
                 <ul className="flex flex-col items-center gap-8 font-medium text-2xl">
                     <button className="hover:text-blue-600 transition-all duration-300 ease-linear">
-                        <Link href="/Login">Sign In</Link>
+                        <Link href={"/authentification/Login"}>Sign In</Link>
                     </button>
                     <button className="bg-blue-600 py-3 px-7 text-white shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded">
-                        <Link href="/Signup">Sign Up</Link>
+                        <Link href={"/authentification/Signup"}>Sign Up</Link>
                     </button>
                     <button className="text-3xl transition-all duration-300 ease-linear hover:text-custom-orange"
                         onClick={() => setMobileNavbar(true)}>

@@ -21,12 +21,19 @@ function MobileNavConnected() {
                   {/*<button className="bg-blue-600 py-3 px-7 text-white shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded">
     <a href="/Connected">Profile</a>
     </button>*/}
-                  <button className="bg-blue-600 py-3 px-7 text-white shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded">
-                      <Link href="/Home">Logout</Link>
+                  <button className="py-3 px-5 text-black shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded">
+                      <Link href="/Editprofile">Edit Profile</Link>
+                  </button>
+                  <button className="py-3 px-5 text-black shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded">
+                      <Link href="/Reservations">Manage Reserversations</Link>
                   </button>
                   <button className="text-3xl transition-all duration-300 ease-linear hover:text-custom-orange"
                           onClick={() => setMobileNavbar(true)}>
                   </button>
+                  <button className="bg-blue-600 py-3 px-5 text-white shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded">
+                      <Link href={"/authentification/Login"}>Logout</Link>
+                  </button>
+
               </ul>
             </nav>
         </section>
