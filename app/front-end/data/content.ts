@@ -34,7 +34,7 @@ export const cars = [
     { id: 1, car: "Audi A1" },
     { id: 2, car: "VW Golf 6" },
     { id: 3, car: "Toyota Camry" },
-    { id: 4, car: "BMW320" },
+    { id: 4, car: "BMW 320" },
     { id: 5, car: "Mercedez GLK" },
     { id: 6, car: "VW Passat CC" },
 ];
@@ -78,7 +78,7 @@ export const carDetails = [
     },
     {
         id: 4,
-        car: "BMW320",
+        car: "BMW 320",
         price: 35,
         model: "320",
         mark: "BMW",
