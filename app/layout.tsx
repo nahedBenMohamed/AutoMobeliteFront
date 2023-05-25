@@ -2,7 +2,7 @@ import "./globals.css";
 import { Poppins } from "next/font/google";
 
 export const metadata = {
-  title: "Car Rental",
+    title: "AutoMobelite",
   description:
     "An online platform that allows users to rent cars for personal or business use.",
 };

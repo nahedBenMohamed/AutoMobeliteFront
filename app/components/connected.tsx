@@ -23,22 +23,11 @@ function HeaderConnected() {
     return (
         <section id="top header">
             <header className="absolute top-6 inset-x-6 lg:inset-x-28 flex items-center justify-between z-50">
-                <div>
-                    <Link href={"/HomeConnected"}>
-                        <Image
-                            src="/images/logo.png"
-                            alt="logo"
-                            width={140}
-                            height={140}
-                            priority
-                        />
-                    </Link>
-                </div>
-                {/*<div className="text-2xl">
-                    <Link href={'/Homec'}>
+                <div className="text-2xl">
+                    <Link href={'/HomeConnected'}>
                         AUTO<span className="text-blue-600">MOBELITE</span>
                     </Link>
-                </div>*/}
+                </div>
                 <div className="hidden lg:flex items-center gap-4 font-medium relative">
                     <button
                         onClick={toggleDropdown}

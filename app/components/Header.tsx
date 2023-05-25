@@ -9,15 +9,9 @@ function Header() {
   return (
     <section id="top header">
       <header className="absolute top-6 inset-x-6 lg:inset-x-28 flex items-center justify-between z-50">
-        <div>
-          <Link href="/">
-            <Image
-              src="/images/logo.png"
-              alt="logo"
-              width={140}
-              height={140}
-              priority
-            />
+        <div className="text-2xl">
+          <Link href={'/'}>
+            AUTO<span className="text-blue-600">MOBELITE</span>
           </Link>
         </div>
         <div className="hidden lg:flex items-center gap-4 font-medium">
