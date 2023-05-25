@@ -1,11 +1,10 @@
 import "./globals.css";
 import { Poppins } from "next/font/google";
-import React from "react";
 
 export const metadata = {
-  title: "AUTOMOBELITE",
+  title: "Car Rental",
   description:
-      "An online platform that allows users to rent cars for personal or business use.",
+    "An online platform that allows users to rent cars for personal or business use.",
 };
 
 const poppins = Poppins({
@@ -16,9 +15,9 @@ const poppins = Poppins({
 
 function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-      <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth">
       <body className={`${poppins.className} bg-custom-white`}>{children}</body>
-      </html>
+    </html>
   );
 }
 

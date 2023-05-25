@@ -1,26 +1,29 @@
 "use client";
 
 import React from "react";
-import {TogglersProvider} from "@/app/front-end/context/togglers";
-import Header from "@/app/front-end/component/Header";
-import MobileNavbar from "@/app/front-end/component/MobileNavbar";
-import Models from "@/app/front-end/component/Models";
-import Footer from "@/app/front-end/component/Footer";
-import BannerHero from "@/app/front-end/component/BannerHero";
-
+import Header from "../components/Header";
+import MobileNavbar from "../components/MobileNavbar";
+import BannerHero from "../components/BannerHero";
+import ToTop from "../components/ToTop";
+import { TogglersProvider } from "../context/togglers";
+import Models from "../components/Models";
+import GetTouch from "../components/GetTouch";
+import Footer from "../components/Footer";
 
 function page() {
-    return (
-        <TogglersProvider>
-            <main>
-                <Header />
-                <MobileNavbar />
-                <BannerHero htmlId="models-hero" page="Vehicle Models" />
-                <Models />
-                <Footer />
-            </main>
-        </TogglersProvider>
-    );
+  return (
+    <TogglersProvider>
+      <main>
+        <Header />
+        <MobileNavbar />
+        <BannerHero htmlId="models-hero" page="Vehicle Models" />
+        <ToTop />
+        <Models />
+        <GetTouch />
+        <Footer />
+      </main>
+    </TogglersProvider>
+  );
 }
 
 export default page;

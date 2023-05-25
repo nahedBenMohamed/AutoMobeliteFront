@@ -1,13 +1,10 @@
-import './globals.css';
-import { Analytics } from '@vercel/analytics/react';
-import { Poppins } from 'next/font/google';
-
-
+import "./globals.css";
+import { Poppins } from "next/font/google";
 
 export const metadata = {
-    title: 'Automobelite Dashboard',
+    title: "Car Rental Dashboard",
     description:
-        'A user admin dashboard configured with Next.js'
+        "An online platform that allows users to rent cars for personal or business use.",
 };
 
 const poppins = Poppins({
@@ -16,17 +13,12 @@ const poppins = Poppins({
     variable: "--font-rubik",
 });
 
-export default async function RootLayout({
-    children
- }: {
-    children: React.ReactNode;
-}) {
+function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en" className="scroll-smooth">
-        <body className={`${poppins.className} bg-custom-white`}>
-        {children}
-        <Analytics />
-        </body>
+        <body className={`${poppins.className} bg-custom-white`}>{children}</body>
         </html>
     );
 }
+
+export default RootLayout;

@@ -1,37 +1,45 @@
 "use client";
-import Header from "@/app/front-end/component/Header";
-import MobileNavbar from "@/app/front-end/component/MobileNavbar";
-import {CurrentValueProvider} from "@/app/front-end/context/currentValue";
-import {TogglersProvider} from "@/app/front-end/context/togglers";
-import {InputValueProvider} from "@/app/front-end/context/inputValue";
-import HeroHome from "@/app/front-end/component/HeroHome";
-import HomeDetails from "@/app/front-end/component/HomeDetails";
-import Booking from "@/app/front-end/component/Booking";
-import BookingModal from "@/app/front-end/component/BookingModal";
-import RentalFleet from "@/app/front-end/component/RentalFleet";
-import Footer from "@/app/front-end/component/Footer";
 
-export default function Home() {
+import Header from "./components/Header";
+import MobileNavbar from "./components/MobileNavbar";
+import React from "react";
+import { TogglersProvider } from "./context/togglers";
+import Hero from "./components/Hero";
+import Booking from "./components/Booking";
+import { InputValueProvider } from "./context/inputValue";
+import BookingModal from "./components/BookingModal";
+import QuickEasy from "./components/QuickEasy";
+import ToTop from "./components/ToTop";
+import RentalFleet from "./components/RentalFleet";
+import { CurrentValueProvider } from "./context/currentValue";
+import SaveBig from "./components/SaveBig";
+import ChooseUs from "./components/ChooseUs";
+import Faq from "./components/Faq";
+import Footer from "./components/Footer";
+
+function Home() {
   return (
-      <TogglersProvider>
-          <InputValueProvider>
-              <CurrentValueProvider>
-            <main>
-
-              <Header />
-                <MobileNavbar />
-                <HeroHome />
-                <HomeDetails />
-                <Booking />
-                <BookingModal />
-                <RentalFleet />
-                <Footer />
-
-            </main>
+    <TogglersProvider>
+      <InputValueProvider>
+        <CurrentValueProvider>
+          <main>
+            <Header />
+            <MobileNavbar />
+            <Hero />
+            <ToTop />
+            <Booking />
+            <BookingModal />
+            <QuickEasy />
+            <RentalFleet />
+            <SaveBig />
+            <ChooseUs />
+            <Faq />
+            <Footer />
+          </main>
         </CurrentValueProvider>
-        </InputValueProvider>
-        </TogglersProvider>
-
-
+      </InputValueProvider>
+    </TogglersProvider>
   );
 }
+
+export default Home;
