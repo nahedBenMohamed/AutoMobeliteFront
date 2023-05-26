@@ -33,7 +33,6 @@ function Home() {
             <RentalFleet />
             <SaveBig />
             <ChooseUs />
-            <Faq />
             <Footer />
           </main>
         </CurrentValueProvider>

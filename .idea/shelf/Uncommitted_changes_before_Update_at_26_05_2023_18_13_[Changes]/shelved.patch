@@ -1,0 +1,114 @@
+Index: app/Homec/page.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\"use client\";\r\n\r\nimport React from \"react\";\r\nimport {TogglersProvider} from \"@/app/front-end/context/togglers\";\r\nimport {InputValueProvider} from \"@/app/front-end/context/inputValue\";\r\nimport {CurrentValueProvider} from \"@/app/front-end/context/currentValue\";\r\nimport HeroHome from \"@/app/front-end/component/HeroHome\";\r\nimport HomeDetails from \"@/app/front-end/component/HomeDetails\";\r\nimport Booking from \"@/app/front-end/component/Booking\";\r\nimport BookingModal from \"@/app/front-end/component/BookingModal\";\r\nimport RentalFleet from \"@/app/front-end/component/RentalFleet\";\r\nimport Footer from \"@/app/front-end/component/Footer\";\r\nimport HeaderConn from \"@/app/front-end/component/Connected\";\r\nimport MobileNavConnected from \"@/app/front-end/component/MobileNavConnected\";\r\n\r\n\r\n\r\nfunction page() {\r\n    return (\r\n        <main>\r\n            <TogglersProvider>\r\n                <InputValueProvider>\r\n                    <CurrentValueProvider>\r\n                        <HeaderConn />\r\n                        <MobileNavConnected />\r\n                        <HeroHome />\r\n                        <HomeDetails />\r\n                        <Booking />\r\n                        <BookingModal />\r\n                        <RentalFleet />\r\n                        <Footer />\r\n                    </CurrentValueProvider>\r\n                </InputValueProvider>\r\n            </TogglersProvider>\r\n        </main>\r\n\r\n\r\n    );\r\n}\r\n\r\nexport default page;
+===================================================================
+diff --git a/app/Homec/page.tsx b/app/Homec/page.tsx
+--- a/app/Homec/page.tsx	
++++ b/app/Homec/page.tsx	
+@@ -12,27 +12,28 @@
+ import Footer from "@/app/front-end/component/Footer";
+ import HeaderConn from "@/app/front-end/component/Connected";
+ import MobileNavConnected from "@/app/front-end/component/MobileNavConnected";
++import RentalFleetConnected from '@/app/front-end/component/RentalFleetConnected';
+ 
+ 
+ 
+ function page() {
+     return (
+-        <main>
+-            <TogglersProvider>
+-                <InputValueProvider>
+-                    <CurrentValueProvider>
+-                        <HeaderConn />
+-                        <MobileNavConnected />
+-                        <HeroHome />
+-                        <HomeDetails />
+-                        <Booking />
+-                        <BookingModal />
+-                        <RentalFleet />
+-                        <Footer />
+-                    </CurrentValueProvider>
+-                </InputValueProvider>
+-            </TogglersProvider>
+-        </main>
++      <main>
++          <TogglersProvider>
++              <InputValueProvider>
++                  <CurrentValueProvider>
++                      <HeaderConn />
++                      <MobileNavConnected />
++                      <HeroHome />
++                      <HomeDetails />
++                      <Booking />
++                      <BookingModal />
++                      <RentalFleetConnected />
++                      <Footer />
++                  </CurrentValueProvider>
++              </InputValueProvider>
++          </TogglersProvider>
++      </main>
+ 
+ 
+     );
+Index: app/front-end/component/MobileNavConnected.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React, { useEffect } from \"react\";\r\nimport { useTogglersContext } from \"../context/togglers\";\r\nimport { CloseCircleOutline } from 'mdi-material-ui';\r\nimport Link from \"next/link\";\r\n\r\nfunction MobileNavConnected() {\r\n    const { mobileNavbar, setMobileNavbar } = useTogglersContext();\r\n    useEffect(() => {\r\n        document.body.style.overflowY = mobileNavbar ? \"hidden\" : \"auto\";\r\n    }, [mobileNavbar]);\r\n    return (\r\n      <section id=\"mobile-navbar\">\r\n          <nav className={`fixed inset-y-0 right-0 bg-white ${\r\n              mobileNavbar ? \"left-0\" : \"left-[150%]\"\r\n          } z-50 transition-all duration-300 ease-linear p-8 flex items-center justify-center flex-col`}>\r\n              <button className=\"text-3xl absolute top-10 right-10 hover:text-blue-600 transition-all duration-300 ease-linear\"\r\n                      onClick={() => setMobileNavbar(false)}>\r\n                  <CloseCircleOutline />\r\n              </button>\r\n              <ul className=\"flex flex-col items-center gap-8 font-medium text-2xl\">\r\n                  {/*<button className=\"bg-blue-600 py-3 px-7 text-white shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded\">\r\n    <a href=\"/Connected\">Profile</a>\r\n    </button>*/}\r\n                  <button className=\"py-3 px-5 text-black shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded\">\r\n                      <Link href=\"/Editprofile\">Edit Profile</Link>\r\n                  </button>\r\n                  <button className=\"py-3 px-5 text-black shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded\">\r\n                      <Link href=\"/Reservations\">Manage Reserversations</Link>\r\n                  </button>\r\n                  <button className=\"text-3xl transition-all duration-300 ease-linear hover:text-custom-orange\"\r\n                          onClick={() => setMobileNavbar(true)}>\r\n                  </button>\r\n                  <button className=\"bg-blue-600 py-3 px-5 text-white shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded\">\r\n                      <Link href={\"/authentification/Login\"}>Logout</Link>\r\n                  </button>\r\n\r\n              </ul>\r\n            </nav>\r\n        </section>\r\n    );\r\n\r\n}\r\n\r\nexport default MobileNavConnected;\r\n\r\n
+===================================================================
+diff --git a/app/front-end/component/MobileNavConnected.tsx b/app/front-end/component/MobileNavConnected.tsx
+--- a/app/front-end/component/MobileNavConnected.tsx	
++++ b/app/front-end/component/MobileNavConnected.tsx	
+@@ -31,7 +31,7 @@
+                           onClick={() => setMobileNavbar(true)}>
+                   </button>
+                   <button className="bg-blue-600 py-3 px-5 text-white shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded">
+-                      <Link href={"/authentification/Login"}>Logout</Link>
++                      <Link href={"/Home"}>Logout</Link>
+                   </button>
+ 
+               </ul>
+Index: app/front-end/component/Connected.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React, { useState } from \"react\";\r\nimport { useTogglersContext } from \"../context/togglers\";\r\nimport MenuIcon from '@mui/icons-material/Menu';\r\nimport {Account} from 'mdi-material-ui'\r\nimport Link from \"next/link\";\r\n\r\n//import { useAuthContext } from \"../context/auth\";\r\n\r\n\r\n\r\nfunction HeaderConn() {\r\n    const { setMobileNavbar } = useTogglersContext();\r\n    //const { logout } = useAuthContext();\r\n    const [isDropdownOpen, setIsDropdownOpen] = useState(false);\r\n\r\n    const toggleDropdown = () => {\r\n        setIsDropdownOpen((prevState) => !prevState);\r\n    };\r\n\r\n    const handleLogout = () => {\r\n        // logout();\r\n        // Rediriger l'utilisateur vers la page de connexion ou une autre page appropriée\r\n\r\n    };\r\n\r\n    return (\r\n        <section id=\"top header\">\r\n            <header className=\"absolute top-6 inset-x-6 lg:inset-x-28 flex items-center justify-between z-50\">\r\n                <div className=\"text-2xl\">\r\n                    <Link href={'/Homec'}>\r\n                        AUTO<span className=\"text-blue-600\">MOBELITE</span>\r\n                    </Link>\r\n                </div>\r\n                <div className=\"hidden lg:flex items-center gap-4 font-medium relative\">\r\n                    <button\r\n                        onClick={toggleDropdown}\r\n                        className=\"hover:text-blue-600 transition-all duration-600 ease-linear\"\r\n                    >\r\n                        <Account className=\"inline-block mr-4 text-2xl\" />\r\n                    </button>\r\n                    {isDropdownOpen && (\r\n                        <ul className=\"absolute top-full right-0 bg-white rounded-md shadow-md py-2 mt-2\">\r\n                            <li>\r\n                                <Link href={'/Editprofile'} className=\"block px-4 py-2 hover:bg-gray-200\">\r\n                                    Edit Profile\r\n                                </Link>\r\n                            </li>\r\n                            <li>\r\n                                <button onClick={handleLogout} className=\"block px-4 py-2 hover:bg-gray-200 w-full text-left\">\r\n                                    Logout\r\n                                </button>\r\n                            </li>\r\n                            <li>\r\n                                <Link href={'/Reservations'} className=\"block px-4 py-2 hover:bg-gray-200\">\r\n                                    Manage Reservations\r\n                                </Link>\r\n                            </li>\r\n                        </ul>\r\n                    )}\r\n                </div>\r\n                <div className=\"lg:hidden\">\r\n                    <button\r\n                        className=\"text-3xl transition-all duration-300 ease-linear hover:text-custom-orange\"\r\n                        onClick={() => setMobileNavbar(true)}\r\n                    >\r\n                        <MenuIcon />\r\n                    </button>\r\n                </div>\r\n            </header>\r\n        </section>\r\n    );\r\n}\r\n\r\nexport default HeaderConn;\r\n
+===================================================================
+diff --git a/app/front-end/component/Connected.tsx b/app/front-end/component/Connected.tsx
+--- a/app/front-end/component/Connected.tsx	
++++ b/app/front-end/component/Connected.tsx	
+@@ -46,9 +46,12 @@
+                                 </Link>
+                             </li>
+                             <li>
+-                                <button onClick={handleLogout} className="block px-4 py-2 hover:bg-gray-200 w-full text-left">
++                                {/*<button onClick={handleLogout} className="block px-4 py-2 hover:bg-gray-200 w-full text-left">
+                                     Logout
+-                                </button>
++                                </button>*/}
++                                <Link href={'/Home'} className="block px-4 py-2 hover:bg-gray-200">
++                                    Logout
++                                </Link>
+                             </li>
+                             <li>
+                                 <Link href={'/Reservations'} className="block px-4 py-2 hover:bg-gray-200">
+Index: app/front-end/component/BannerHero.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import Link from \"next/link\";\r\nimport React from \"react\";\r\n\r\nfunction BannerHero({ htmlId, page }: { htmlId: string; page: string }) {\r\n    return (\r\n        <section id={htmlId}>\r\n            <div className=\"h-96 bg-[url('/images/banner-hero-bg.png')] bg-cover bg-[50%] bg-no-repeat relative flex items-center py-8 px-8 lg:px-28\">\r\n                <div className=\"absolute inset-0 bg-white/90\" />\r\n                <div className=\"z-10 space-y-2\">\r\n                    <div>\r\n                        <h1 className=\"font-bold text-4xl\">{page}</h1>\r\n                    </div>\r\n                    <div className=\"flex items-center gap-1 font-semibold\">\r\n                        <Link href=\"/\"></Link>\r\n                        <span></span>\r\n                        <span></span>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </section>\r\n    );\r\n}\r\n\r\nexport default BannerHero;\r\n
+===================================================================
+diff --git a/app/front-end/component/BannerHero.tsx b/app/front-end/component/BannerHero.tsx
+--- a/app/front-end/component/BannerHero.tsx	
++++ b/app/front-end/component/BannerHero.tsx	
+@@ -10,11 +10,7 @@
+                     <div>
+                         <h1 className="font-bold text-4xl">{page}</h1>
+                     </div>
+-                    <div className="flex items-center gap-1 font-semibold">
+-                        <Link href="/"></Link>
+-                        <span></span>
+-                        <span></span>
+-                    </div>
++                   
+                 </div>
+             </div>
+         </section>

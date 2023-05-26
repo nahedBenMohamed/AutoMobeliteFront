@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9a68b77c-36d1-49c1-985c-c0268c9417ce" name="Changes" comment="Ajustement au niveau de la liste de vehicules de tel sorte que la barre NavConnected puisse toujours être perçu dans la page Modelsconnected.tsx&#10;RentalFleetConnected.tsx pour permettre au client de cliquer afin dêtre toujours dans la session connectée">
+      <change beforePath="$PROJECT_DIR$/app/components/Hero.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/Hero.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/page.tsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+        <option value="TypeScript JSX File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectId" id="2QEcig6lvN2lCZdA7Nq3dramX73" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\berth\\Documents\\HORIZON L3\\PROJET_AUTOMOBELITE\\AutoMobeliteFront\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9a68b77c-36d1-49c1-985c-c0268c9417ce" name="Changes" comment="" />
+      <created>1684922311163</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1684922311163</updated>
+      <workItem from="1684922312317" duration="14828000" />
+      <workItem from="1685121164773" duration="1836000" />
+    </task>
+    <task id="LOCAL-00001" summary="le lien/route a été modifier">
+      <created>1684963990841</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1684963990841</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Ajustement au niveau de la liste de vehicules de tel sorte que la barre NavConnected puisse toujours être perçu dans la page Modelsconnected.tsx&#10;RentalFleetConnected.tsx pour permettre au client de cliquer afin dêtre toujours dans la session connectée">
+      <created>1685121676716</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1685121676716</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="le lien/route a été modifier" />
+    <MESSAGE value="Ajustement au niveau de la liste de vehicules de tel sorte que la barre NavConnected puisse toujours être perçu dans la page Modelsconnected.tsx&#10;RentalFleetConnected.tsx pour permettre au client de cliquer afin dêtre toujours dans la session connectée" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ajustement au niveau de la liste de vehicules de tel sorte que la barre NavConnected puisse toujours être perçu dans la page Modelsconnected.tsx&#10;RentalFleetConnected.tsx pour permettre au client de cliquer afin dêtre toujours dans la session connectée" />
+  </component>
+</project>

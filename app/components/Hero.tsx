@@ -18,7 +18,7 @@ function Hero() {
         <Image
           src="/images/hero-big-car.png"
           alt="hero"
-          width={800}
+          width={700}
           height={450}
           className="absolute right-0 hidden lg:inline-block"
         />
@@ -28,12 +28,6 @@ function Hero() {
               <h1 className="text-[2.9rem] leading-tight">
                 RENTAL OF <span className="text-blue-600 ">CARS</span> DELIVER TO YOUR HOME
               </h1>
-          </div>
-          <div>
-            <p className="text-custom-grey">
-              Rent the car of your dreams. Unbeatable prices, unlimited miles,
-              flexible pick-up options and much more.We deliver and pick up your rental car at the address of your choice.
-            </p>
           </div>
           <div className="flex flex-col lg:flex-row text-white font-bold gap-6">
             {/*<Link href="#booking" className="bg-custom-blue flex items-center gap-2 justify-center py-4 px-4 lg:px-8 shadow-orange-bottom hover:shadow-orange-bottom-hov transition-all duration-300 ease-linear rounded border-2 border-custom-blue"
