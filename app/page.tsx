@@ -12,9 +12,7 @@ import QuickEasy from "./components/QuickEasy";
 import ToTop from "./components/ToTop";
 import RentalFleet from "./components/RentalFleet";
 import { CurrentValueProvider } from "./context/currentValue";
-import SaveBig from "./components/SaveBig";
 import ChooseUs from "./components/ChooseUs";
-import Faq from "./components/Faq";
 import Footer from "./components/Footer";
 
 function Home() {
@@ -31,7 +29,6 @@ function Home() {
             <BookingModal />
             <QuickEasy />
             <RentalFleet />
-            <SaveBig />
             <ChooseUs />
             <Footer />
           </main>

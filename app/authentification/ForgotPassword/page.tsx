@@ -3,17 +3,14 @@
 import React from "react";
 import MobileNavbar from "@/app/components/MobileNavbar";
 import Header from "@/app/components/Header";
-import Forgetpassword from "@/app/components/forget";
-
-
-
+import ForgotPassword from '@/app/components/ForgotPassword';
 
 function page() {
     return (
         <main>
             <Header />
             <MobileNavbar />
-            <Forgetpassword />
+            <ForgotPassword />
         </main>
 
 

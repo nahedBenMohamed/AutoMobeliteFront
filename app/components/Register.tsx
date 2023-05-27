@@ -1,12 +1,8 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
-import Link from "next/link";
+import React, {useState, FormEvent} from "react";
+import {EmailOutline, LockOutline, AccountOutline} from "mdi-material-ui";
+import Link from "next/link"
 
-// ** Icons Imports
-import EmailOutline from 'mdi-material-ui/EmailOutline'
-import AccountOutline from 'mdi-material-ui/AccountOutline'
-import { LockOutline } from 'mdi-material-ui';
-
-const Editprofile = () => {
+const Register = () => {
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -14,25 +10,29 @@ const Editprofile = () => {
         password: "",
         confirmPassword: "",
     });
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target;
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
 
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
     };
+
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        // Ajoutez ici votre logique de mise à jour du profil
+        // Ajoutez votre logique de soumission de formulaire ici
         console.log(formData);
     };
 
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
-            <div className="w-full p-6 bg-white rounded-md shadow-md lg:max-w-xl">
-                <h2 className="text-2xl text-center font-bold mb-4">Your account Information</h2>
-                <form onSubmit={handleSubmit}>
+            <div className="w-full p-4 bg-white rounded-md shadow-md lg:max-w-xl">
+                <div className="mt-6">
+                <h1 className="text-[1.0em] font-bold text-center text-gray-700 ">Welcome</h1>
+                </div>
+                <form onSubmit={handleSubmit} className="max-w-md mx-auto" >
                     <div className=" mt-4 grid grid-cols-2 gap-4">
                         <div>
                             <label htmlFor="firstName" className="block font-semibold">
@@ -121,16 +121,22 @@ const Editprofile = () => {
                             </div>
                         </div>
                     </div>
-                    <button type="submit" className="mt-6 bg-blue-600 text-white font-semibold py-2 px-4 rounded">
-                        <Link href="/HomeConnected">Save Changes</Link>
-                    </button>
-
+                    <Link href={"/authentification/Login"}>
+                        <button type="submit" className="mt-6 bg-center w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+                            Create an account
+                        </button>
+                    </Link>
+                    <p className="mt-4 text-sm text-center text-gray-700">
+                        already registered?{" "}
+                        <Link href={"/authentification/Login"} className="font-medium text-blue-600 hover:underline">
+                            Login
+                        </Link>
+                    </p>
                 </form>
             </div>
         </div>
 
     );
-}
+};
 
-
-export default Editprofile;
+export default Register;

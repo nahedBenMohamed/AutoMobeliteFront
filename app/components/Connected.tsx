@@ -3,7 +3,7 @@ import {useTogglersContext} from "@/app/context/togglers";
 import MenuIcon from '@mui/icons-material/Menu';
 import {Account} from 'mdi-material-ui'
 import Link from "next/link";
-import Image from "next/image";
+
 
 function HeaderConnected() {
     const { setMobileNavbar } = useTogglersContext();
@@ -38,20 +38,20 @@ function HeaderConnected() {
                     {isDropdownOpen && (
                         <ul className="absolute top-full right-0 bg-white rounded-md shadow-md py-2 mt-2">
                             <li>
-                                <Link href={"/accounts-settings"} className="block px-4 py-2 hover:bg-gray-200">
+                                <Link href="/Editprofile" className="block px-4 py-2 hover:bg-gray-200">
                                     Edit Profile
                                 </Link>
                             </li>
                             <li>
 
                                     <button onClick={handleLogout} className="block px-4 py-2 hover:bg-gray-200 w-full text-left">
-                                        <Link href={"/"}>
+                                        <Link href="#">
                                             Logout
                                         </Link>
                                     </button>
                             </li>
                             <li>
-                                <Link href={'/ManageReservation'} className="block px-4 py-2 hover:bg-gray-200">
+                                <Link href="/ManageReservations" className="block px-4 py-2 hover:bg-gray-200">
                                     Manage Reservations
                                 </Link>
                             </li>

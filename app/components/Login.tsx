@@ -33,7 +33,7 @@ function Login(){
                                     Password
                                 </label>
                                 <div className="text-sm">
-                                    <Link href={"/authentification/forget"} className="font-semibold text-blue-600 hover:text-indigo-500">
+                                    <Link href={"/authentification/ForgotPassword"} className="font-semibold text-blue-600 hover:text-indigo-500">
                                         Forgot password ?
                                     </Link>
                                 </div>
@@ -53,7 +53,7 @@ function Login(){
                             </div>
                         </div>
                         <div className="mt-2">
-                            <Link href="/connected" >
+                            <Link href="/Connected" >
                                 <button className=" w-full px-4 py-2 text-center text-white transition-colors duration-200 transform  bg-blue-600  focus:outline-none focus:bg-gray-600">
                                         Login
                                 </button>
@@ -67,7 +67,7 @@ function Login(){
                     <p className="mt-4 text-sm text-center text-gray-700">
                         {/* eslint-disable-next-line react/no-unescaped-entities */}
                         Don't have an account?{" "}
-                        <Link href={"/authentification/register"} className="font-medium text-blue-600 hover:underline">
+                        <Link href={"/authentification/Register"} className="font-medium text-blue-600 hover:underline">
                             Sign Up
                         </Link>
                     </p>

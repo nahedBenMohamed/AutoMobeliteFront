@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React from "react";
-import { AiFillCheckCircle } from "react-icons/ai";
-import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
+
+import {IoIosArrowDown } from "react-icons/io";
 import Link from "next/link";
 
 function Hero() {
@@ -22,12 +22,17 @@ function Hero() {
           height={450}
           className="absolute right-0 hidden lg:inline-block"
         />
-        <div className="space-y-8 text-center lg:text-left lg:max-w-lg">
+        <div className="space-y-8 text-center lg:text-left md:max-w-lg">
           <div className="font-bold space-y-2">
-            <h3 className="text-xl">Plan your trip now</h3>
-              <h1 className="text-[2.9rem] leading-tight">
+
+              <h4 className="text-[2.0rem] leading-tight">
                 RENTAL OF <span className="text-blue-600 ">CARS</span> DELIVER TO YOUR HOME
-              </h1>
+              </h4>
+          </div>
+          <div>
+            <p className="text-custom-grey text-xl">
+              We deliver and pick up your rental car at the address of your choice.
+            </p>
           </div>
           <div className="flex flex-col lg:flex-row text-white font-bold gap-6">
             {/*<Link href="#booking" className="bg-custom-blue flex items-center gap-2 justify-center py-4 px-4 lg:px-8 shadow-orange-bottom hover:shadow-orange-bottom-hov transition-all duration-300 ease-linear rounded border-2 border-custom-blue"

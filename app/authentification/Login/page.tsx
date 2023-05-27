@@ -1,11 +1,9 @@
 "use client";
 
 import React from "react";
-import Register from "@/app/components/register";
 import MobileNavbar from "@/app/components/MobileNavbar";
 import Header from "@/app/components/Header";
-
-
+import Login from "@/app/components/Login"
 
 
 function page() {
@@ -13,7 +11,7 @@ function page() {
         <main>
             <Header />
             <MobileNavbar />
-            <Register />
+            <Login/>
         </main>
 
 

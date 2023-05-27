@@ -1,22 +1,18 @@
 "use client";
 
-import React from "react";
-import {TogglersProvider} from "@/app/front-end/context/togglers";
-import Header from "@/app/front-end/component/Header";
-import MobileNavbar from "@/app/front-end/component/MobileNavbar";
-import Models from "@/app/front-end/component/Models";
-import Footer from "@/app/front-end/component/Footer";
-import BannerHero from "@/app/front-end/component/BannerHero";
-import HeaderConn from '@/app/front-end/component/Connected';
-import Modelsconnected from '@/app/front-end/component/Modelsconnected';
-
+import { TogglersProvider } from '@/app/context/togglers';
+import HeaderConnected from '@/app/components/Connected';
+import MobileNavConnected from '@/app/components/MobileNavConnected';
+import BannerHero from '@/app/components/BannerHero';
+import Modelsconnected from '@/app/components/Modelsconnected';
+import Footer from '@/app/components/Footer';
 
 function page() {
   return (
     <TogglersProvider>
       <main>
-        <HeaderConn />
-        <MobileNavbar />
+        <HeaderConnected />
+        <MobileNavConnected />
         <BannerHero htmlId="models-hero" page="Vehicle Models" />
         <Modelsconnected />
         <Footer />

@@ -110,15 +110,13 @@ function Booking() {
           ))}
           <div>
             <button
-              className="bg-custom-blue w-full shadow-orange-bottom hover:shadow-orange-bottom-hov transition-all duration-300 ease-linear text-white p-2 font-bold rounded"
+              className="bg-custom-blue w-full text-white p-2 font-bold rounded"
               onClick={() => {
                 setBookingFields({
                   ...bookingFields,
                   red:
-                    bookingDate["pickup-date"] !== "" &&
-                    bookingDate["dropof-date"] !== ""
-                      ? false
-                      : true,
+                    !(bookingDate["pickup-date"] !== "" &&
+                      bookingDate["dropof-date"] !== ""),
                 });
                 bookingDate["pickup-date"] !== "" &&
                 bookingDate["dropof-date"] !== ""

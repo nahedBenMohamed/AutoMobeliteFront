@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { LockOutline } from 'mdi-material-ui';
 import Link from "next/link";
 
-const Forgetpassword = () => {
+const ForgotPassword = () => {
     const [email, setEmail] = useState("");
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,14 +34,14 @@ const Forgetpassword = () => {
                             />
                         </div>
                     </div>
-                    <Link href={"/authentification/login"}>
+                    <Link href={"/authentification/Login"}>
                         <button type="submit" className="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
                             Reset your password
                         </button>
                     </Link>
                     <p className="mt-4 text-sm text-center text-gray-700">
                         Login page ?{" "}
-                        <Link href={"/authentification/login"} className="font-medium text-blue-600 hover:underline">
+                        <Link href={"/authentification/Login"} className="font-medium text-blue-600 hover:underline">
                             Login
                         </Link>
                     </p>
@@ -51,4 +51,4 @@ const Forgetpassword = () => {
     );
 };
 
-export default Forgetpassword;
+export default ForgotPassword;

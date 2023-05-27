@@ -4,6 +4,7 @@ import Image from "next/image";
 import { AiFillCar, AiFillStar, AiFillTool } from "react-icons/ai";
 import { GiCarDoor } from "react-icons/gi";
 import { BsFillFuelPumpFill } from "react-icons/bs";
+import Link from "next/link";
 
 function Models() {
   return (
@@ -89,12 +90,13 @@ function Models() {
                   <hr className="border border-lighter-grey" />
                 </div>
                 <div>
-                  <a
-                    href="/#booking"
-                    className="block text-center bg-custom-blue p-3 font-bold text-white rounded shadow-orange-bottom hover:shadow-orange-bottom-hov transition-all duration-300 ease-linear w-full"
+                  <Link
+                    href="/Login"
+                    className="block text-center bg-custom-blue p-3 font-bold text-white rounded  w-full"
                   >
                     Book Ride
-                  </a>
+                  </Link>
+
                 </div>
               </div>
             </div>

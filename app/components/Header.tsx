@@ -15,13 +15,13 @@ function Header() {
           </Link>
         </div>
         <div className="hidden lg:flex items-center gap-4 font-medium">
-          <button className="hover:text-custom-blue transition-all duration-300 ease-linear">
-            <Link href={"/authentification/login"}>
+          <button className="hover:text-blue-600 transition-all duration-300 ease-linear">
+            <Link href={"/authentification/Login"}>
               Sign In
             </Link>
           </button>
-          <button className="bg-custom-blue py-3 px-7 text-white shadow-orange-bottom hover:shadow-orange-bottom-hov transition-all duration-300 ease-linear rounded">
-            <Link href={"/authentification/register"}>Register</Link>
+          <button className="bg-blue-600 py-3 px-7 text-white   rounded">
+            <Link href={"/authentification/Register"}>Register</Link>
           </button>
 
         </div>

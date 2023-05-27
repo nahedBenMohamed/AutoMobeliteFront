@@ -19,16 +19,16 @@ function MobileNavConnected() {
                 </button>
                 <ul className="flex flex-col items-center gap-8 font-medium text-2xl">
                     <button className="py-3 px-5 text-black shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded">
-                        <Link href={"/accounts-settings"}>Edit Profile</Link>
+                        <Link href="/Editprofile">Edit Profile</Link>
                     </button>
                     <button className="py-3 px-5 text-black shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded">
-                        <Link href={"/ManageReservation"}>Manage Reserversations</Link>
+                        <Link href="/ManageReservations">Manage Reserversations</Link>
                     </button>
                     <button className="text-3xl transition-all duration-300 ease-linear hover:text-custom-orange"
                             onClick={() => setMobileNavbar(true)}>
                     </button>
                     <button className="bg-blue-600 py-3 px-5 text-white shadow-blue-500 hover:shadow--bottom-hov transition-all duration-300 ease-linear rounded">
-                        <Link href={"/"}>Logout</Link>
+                        <Link href="/#">Logout</Link>
                     </button>
 
                 </ul>

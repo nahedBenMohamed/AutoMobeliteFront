@@ -18,7 +18,7 @@ const ManageReservations: React.FC = () => {
 
     return (
         <div className="p-14 ">
-            <h1 className="text-xl text-center font-bold mb-6 relative">Manage Reservations</h1>
+            <h1 className="text-[1.0em]  text-center font-bold mb-6 relative">Manage Reservations</h1>
             <table className="w-full bg-white border border-blue-600 rounded-lg">
                 <thead>
                 <tr>

@@ -7,7 +7,6 @@ import BannerHero from "../components/BannerHero";
 import ToTop from "../components/ToTop";
 import { TogglersProvider } from "../context/togglers";
 import Models from "../components/Models";
-import GetTouch from "../components/GetTouch";
 import Footer from "../components/Footer";
 
 function page() {
@@ -19,7 +18,6 @@ function page() {
         <BannerHero htmlId="models-hero" page="Vehicle Models" />
         <ToTop />
         <Models />
-        <GetTouch />
         <Footer />
       </main>
     </TogglersProvider>

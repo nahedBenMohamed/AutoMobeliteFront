@@ -1,31 +1,24 @@
 export const quickEasy = [
   {
     id: 1,
-    img: "/images/select-car.png",
-    title: "Select Car",
+    img: "/images/home.png",
+    title: "Delivery & pick-up 7/7",
     content:
-      "We offer a big range of vehicles for all your driving needs. We have the perfect car to meet your needs",
+      "We deliver and pick up your vehicle, at the time and address of your choice, 7days/7 "
   },
   {
     id: 2,
-    img: "/images/contact-operator.png",
-    title: "Contact Operator",
+    img: "/images/calendar.png",
+    title: "Reservations can be modified",
     content:
-      "Our knowledgeable and friendly operators are always ready to help with any questions or concerns",
+      "Modify your reservation at any time, directly in your account. Even for a current rental.",
   },
   {
     id: 3,
-    img: "/images/lets-drive.png",
-    title: "Let's Drive",
+    img: "/images/cash.png",
+    title: "Free cancellation!",
     content:
-      "Whether you're hitting the open road, we've got you covered with our wide range of cars",
-  },
-  {
-    id: 4,
-    img: "/images/lets-drive.png",
-    title: "Let's Drive",
-    content:
-        "Whether you're hitting the open road, we've got you covered with our wide range of cars",
+      "Cancel your rental for free up to 24 hours before the start of the rental period.",
   },
 ];
 

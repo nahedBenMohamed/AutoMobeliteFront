@@ -10,11 +10,6 @@ function BannerHero({ htmlId, page }: { htmlId: string; page: string }) {
           <div>
             <h1 className="font-bold text-4xl">{page}</h1>
           </div>
-          <div className="flex items-center gap-1 font-semibold">
-            <Link href="/">Home</Link>
-            <span>/</span>
-            <span>{page}</span>
-          </div>
         </div>
       </div>
     </section>
