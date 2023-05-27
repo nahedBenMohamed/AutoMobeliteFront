@@ -10,14 +10,17 @@ function Page() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '80vh',
+        height: '100vh',
+    };
+    const gridContainerStyles = {
+        justifyContent: 'center',
     };
 
     return (
         <main>
             <Navbar/>
             <div style={mainStyles}>
-                <Grid container spacing={3}>
+                <Grid container spacing={3} style={gridContainerStyles}>
                     <Grid item xs={12}>
                         <Reservelist />
                     </Grid>

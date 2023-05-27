@@ -3,7 +3,6 @@ import React from "react";
 import EmailOutline from 'mdi-material-ui/EmailOutline'
 import { LockOutline } from 'mdi-material-ui';
 
-
 function LoginPage() {
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
@@ -71,12 +70,12 @@ function LoginPage() {
 
                     <p className="mt-4 text-sm text-center text-gray-700">
                         {/* eslint-disable-next-line react/no-unescaped-entities */}
-                        Don't have an account?{" "}
+                        New to AutoMobelite ?{" "}
                         <Link
                             href={"/admin/dashboard/authentification/register"}
                             className="font-medium text-blue-600 hover:underline"
                         >
-                            Sign up
+                            Create an Account
                         </Link>
                     </p>
                 </div>

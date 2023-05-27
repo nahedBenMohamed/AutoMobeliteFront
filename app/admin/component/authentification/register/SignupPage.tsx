@@ -128,7 +128,7 @@ const SignupPage = () => {
 
                     </button>
                     <p className="mt-4 text-sm text-center text-gray-700">
-                        already registered?{" "}
+                        Already have an Account ?{" "}
                         <Link
                             href={"/admin/dashboard/authentification/login"}
                             className="font-medium text-blue-600 hover:underline"

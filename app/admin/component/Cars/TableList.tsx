@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
-import Paper from '@mui/material/Paper';
+import * as React from 'react';
+import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
-import TableRow from '@mui/material/TableRow';
-import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import { useState } from 'react';
+import Pagination from "@mui/material/Pagination";
 import IconButton from '@mui/material/IconButton';
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Tooltip } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import Pagination from '@mui/material/Pagination';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -33,13 +34,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-
-
 const createData = (
   id: string,
-  name: string,
-  prenom: string,
-  email: string,
   marque: string,
   model: string,
   matricule: string,
@@ -48,42 +44,42 @@ const createData = (
   color: string,
   cost: number
 ) => {
-  return { id, name, prenom, email,marque, model, matricule, years, kilometers, color, cost };
+  return { id, marque, model, matricule, years, kilometers, color, cost };
 };
 
 const rows = [
-  createData('1', 'victory', 'aime', 'victoryaime@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('2', 'anta', 'mory', 'antamory@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('3', 'rassoul', 'diallo', 'rassouldiallo@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('1', 'victory', 'aime', 'victoryaime@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('2', 'anta', 'mory', 'antamory@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('3', 'rassoul', 'diallo', 'rassouldiallo@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('1', 'victory', 'aime', 'victoryaime@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('2', 'anta', 'mory', 'antamory@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('3', 'rassoul', 'diallo', 'rassouldiallo@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('1', 'victory', 'aime', 'victoryaime@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('2', 'anta', 'mory', 'antamory@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('3', 'rassoul', 'diallo', 'rassouldiallo@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('1', 'victory', 'aime', 'victoryaime@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('2', 'anta', 'mory', 'antamory@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('3', 'rassoul', 'diallo', 'rassouldiallo@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('1', 'victory', 'aime', 'victoryaime@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('2', 'anta', 'mory', 'antamory@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
-  createData('3', 'rassoul', 'diallo', 'rassouldiallo@gmail.com', 'peugoet', '208', 'AO5278', 2012, 0, 'red', 63),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
+  createData('1', 'Frozen yoghurt', 'Frozen yoghurt', 'Frozen yoghurt', 4.0, 4.0, 'Frozen yoghurt', 4.0),
 ];
+
 const pageSize = 5; // Nombre d'éléments à afficher par page
 
-const ReserveList = () => {
+export default function TabUsers() {
+
   // @ts-ignore
   const handleEdit = (id) => {
     console.log(`Edit car with ID: ${id}`);
-    // Ajoutez ici la logique pour gérer l'événement de modification
+    //ici la logique pour gérer l'événement de modification
   };
 
   // @ts-ignore
   const handleDelete = (id) => {
     console.log(`Delete car with ID: ${id}`);
-    // Ajoutez ici la logique pour gérer l'événement de suppression
+    //la logique pour gérer l'événement de suppression
   };
 
 
@@ -100,16 +96,13 @@ const ReserveList = () => {
 
   return (
     <TableContainer component={Paper} style={{ width: "100%", overflowX: "auto" }}>
-      <Table sx={{ minWidth: 100*9 }} aria-label="customized table">
+      <Table sx={{ minWidth: 800 }} aria-label="customized table">
         <TableHead>
           <TableRow>
             <StyledTableCell align="center">ID</StyledTableCell>
-            <StyledTableCell align="center">Name</StyledTableCell>
-            <StyledTableCell align="center">First name</StyledTableCell>
-            <StyledTableCell align="center">email</StyledTableCell>
-            <StyledTableCell align="center">marque</StyledTableCell>
-            <StyledTableCell align="center">modele</StyledTableCell>
-            <StyledTableCell align="center">matricule</StyledTableCell>
+            <StyledTableCell align="center">Marque</StyledTableCell>
+            <StyledTableCell align="center">Modele</StyledTableCell>
+            <StyledTableCell align="center">Matricule</StyledTableCell>
             <StyledTableCell align="center">Years</StyledTableCell>
             <StyledTableCell align="center">Kilometers</StyledTableCell>
             <StyledTableCell align="center">Color</StyledTableCell>
@@ -121,9 +114,6 @@ const ReserveList = () => {
           {displayedRows.map((row) => (
             <TableRow key={row.id}>
               <StyledTableCell component="th" scope="row" align="center">{row.id}</StyledTableCell>
-              <StyledTableCell align="center">{row.name}</StyledTableCell>
-              <StyledTableCell align="center">{row.prenom}</StyledTableCell>
-              <StyledTableCell align="center">{row.email}</StyledTableCell>
               <StyledTableCell align="center">{row.marque}</StyledTableCell>
               <StyledTableCell align="center">{row.model}</StyledTableCell>
               <StyledTableCell align="center">{row.matricule}</StyledTableCell>
@@ -132,13 +122,13 @@ const ReserveList = () => {
               <StyledTableCell align="center">{row.color}</StyledTableCell>
               <StyledTableCell align="center">{row.cost}</StyledTableCell>
               <StyledTableCell align="center">
-                <Tooltip title="Details">
+                <Tooltip title="Edit">
                   <IconButton aria-label="Edit" onClick={() => handleEdit(row.id)} color="primary">
-                    <VisibilityIcon />
+                    <EditIcon />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Delete">
-                  <IconButton aria-label="Delete" onClick={() => handleDelete(row.id)} color="secondary">
+                  <IconButton aria-label="Delete" onClick={() => handleDelete(row.id)} color="secondary" >
                     <DeleteIcon />
                   </IconButton>
                 </Tooltip>
@@ -157,6 +147,4 @@ const ReserveList = () => {
       </Table>
     </TableContainer>
   );
-};
-
-export default ReserveList;
+}

@@ -17,7 +17,7 @@ import AccountOutline from 'mdi-material-ui/AccountOutline'
 import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
 
 // ** Third Party Styles Imports
-import 'react-datepicker/dist/react-datepicker.css'
+//import 'react-datepicker/dist/react-datepicker.css'
 import TabAccount from "@/app/admin/component/accounts-settings/TabAccount";
 import TabSecurity from "@/app/admin/component/accounts-settings/TabSecurity";
 import Navbar from "@/app/admin/component/dashboard/NavBar";

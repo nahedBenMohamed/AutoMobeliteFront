@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button, Divider, Input, Modal, Text } from '@nextui-org/react';
-import { Flex } from '../styles/flex';
 import Grid from '@mui/material/Grid';
 
 export const AddCar = () => {

@@ -6,6 +6,9 @@
     import { Disclosure, Menu } from '@headlessui/react';
     import NotificationDropdown from "@/app/admin/component/AppBar/NotificationDropdown";
     import UserDropdown from "@/app/admin/component/AppBar/UserDropdown";
+    import { useEffect, useState } from 'react';
+    import Link from "next/link"
+
     const navigation = [
         { name: 'Dashboard', href: '/admin/dashboard/home' },
         { name: 'Cars List', href: '/admin/dashboard/Cars' },
@@ -18,6 +21,11 @@
     }
 
     export default function Navbar() {
+
+        const [isClient, setIsClient] = useState(false);
+        useEffect(() => {
+            setIsClient(true);
+        }, []);
         const pathname = usePathname();
 
         return (
@@ -51,7 +59,7 @@
                                 </div>
                                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                                     {navigation.map((item) => (
-                                        <a
+                                        <Link
                                             key={item.name}
                                             href={item.href}
                                             className={classNames(
@@ -63,19 +71,25 @@
                                             aria-current={pathname === item.href ? 'page' : undefined}
                                         >
                                             {item.name}
-                                        </a>
+                                        </Link>
                                     ))}
                                 </div>
                             </div>
                             <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                                <Menu as="div" className="relative ml-3">
-                                    <Button color="inherit">
-                                        <NotificationDropdown/>
-                                    </Button>
-                                    <Button color="inherit">
-                                        <UserDropdown/>
-                                    </Button>
-                                </Menu>
+                                {isClient && (
+                                  <div className="hidden sm:ml-6 sm:flex sm:items-center">
+                                      <Menu as="div" className="relative ml-3">
+                                          <Button color="inherit">
+                                              <NotificationDropdown />
+                                          </Button>
+                                      </Menu>
+                                      <Menu as="div" className="relative ml-3">
+                                          <Button color="inherit">
+                                              <UserDropdown />
+                                          </Button>
+                                      </Menu>
+                                  </div>
+                                )}
                             </div>
                         </div>
                     </div>

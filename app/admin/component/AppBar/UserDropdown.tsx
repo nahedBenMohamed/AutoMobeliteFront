@@ -35,7 +35,7 @@ const UserDropdown = () => {
     };
 
     const handleProfileClick = () => {
-        router.push('/admin/dashboard/account-settings');
+        router.push('/admin/dashboard/accounts-settings');
         handleDropdownClose();
     };
 
