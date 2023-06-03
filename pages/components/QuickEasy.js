@@ -12,12 +12,12 @@ function QuickEasy(){
                 </div>
                 <div className="grid grid-cols-fluid gap-8">
                     {quickEasy.map((data) => (
-                        <div key={data.id} className="flex flex-col gap-4">
+                        <div key={data.id} className="flex flex-col gap-3">
                             <Image
                                 src={data.img}
                                 alt={data.title}
-                                width={170}
-                                height={170}
+                                width={100}
+                                height={190}
                                 className="m-auto"
                             />
                             <h1 className="font-bold text-2xl">{data.title}</h1>

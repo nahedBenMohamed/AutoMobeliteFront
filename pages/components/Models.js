@@ -90,7 +90,7 @@ function Models() {
                                 </div>
                                 <div>
                                     <a
-                                        href="/Login"
+                                        href="/authentification/login"
                                         className="block text-center bg-custom-blue p-3 font-bold text-white rounded  w-full"
                                     >
                                         Book Ride

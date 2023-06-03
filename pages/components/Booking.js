@@ -1,24 +1,24 @@
-import React from 'react';
-import { AiFillCalendar, AiOutlineClose } from 'react-icons/ai';
-import { useInputValueContext } from '../context/inputValue';
-import { useTogglersContext } from '../context/togglers';
-import {bookingInputs} from "@/pages/data/input";
+import React from "react";
+import { bookingInputs } from "../data/input";
+import { AiFillCalendar } from "react-icons/ai";
+import { useInputValueContext } from "../context/inputValue";
+import { AiOutlineClose } from "react-icons/ai";
+import { useTogglersContext } from "../context/togglers";
 
-const Booking = () => {
-
+function Booking() {
     const { bookingSelect, setBookingSelect, bookingDate, setBookingDate } =
         useInputValueContext();
     const { bookingFields, setBookingFields, setBookingModal } =
         useTogglersContext();
 
-    function getSelectValue(id) {
+    function getSelectValue(id, string) {
         switch (id) {
-            case 'car-type':
-                return bookingSelect['car-type'];
-            case 'pickup-location':
-                return bookingSelect['pickup-location'];
-            case 'dropof-location':
-                return bookingSelect['dropof-location'];
+            case "car-type":
+                return bookingSelect["car-type"];
+            case "pickup-location":
+                return bookingSelect["pickup-location"];
+            case "dropof-location":
+                return bookingSelect["dropof-location"];
             default:
                 break;
         }
@@ -34,9 +34,7 @@ const Booking = () => {
                     <div className="flex items-center justify-between bg-custom-pink py-2 px-4 rounded text-custom-maroon font-medium">
                         <p>All fields required!</p>
                         <button
-                            onClick={() =>
-                                setBookingFields({ ...bookingFields, red: false })
-                            }
+                            onClick={() => setBookingFields({ ...bookingFields, red: false })}
                         >
                             <AiOutlineClose />
                         </button>
@@ -75,9 +73,9 @@ const Booking = () => {
                                 }
                                 value={getSelectValue(data.htmlId)}
                             >
-                                {data.options.map((optionData) => (
-                                    <option key={optionData.id} value={optionData.option} className="m-8">
-                                        {optionData.option}
+                                {data.options.map((data) => (
+                                    <option key={data.id} value={data.option} className="m-8">
+                                        {data.option}
                                     </option>
                                 ))}
                             </select>
@@ -103,29 +101,27 @@ const Booking = () => {
                                     })
                                 }
                                 value={
-                                    data.htmlId === 'pickup-date'
-                                        ? bookingDate['pickup-date']
-                                        : bookingDate['dropof-date']
+                                    data.htmlId === "pickup-date"
+                                        ? bookingDate["pickup-date"]
+                                        : bookingDate["dropof-date"]
                                 }
                             />
                         </div>
                     ))}
                     <div>
                         <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+                            className="bg-custom-blue w-full text-white p-2 font-bold rounded"
                             onClick={() => {
                                 setBookingFields({
                                     ...bookingFields,
                                     red:
-                                        bookingDate['pickup-date'] !== '' &&
-                                        bookingDate['dropof-date'] !== '',
+                                        !(bookingDate["pickup-date"] !== "" &&
+                                            bookingDate["dropof-date"] !== ""),
                                 });
-                                if (
-                                    bookingDate['pickup-date'] !== '' &&
-                                    bookingDate['dropof-date'] !== ''
-                                ) {
-                                    setBookingModal(true);
-                                }
+                                bookingDate["pickup-date"] !== "" &&
+                                bookingDate["dropof-date"] !== ""
+                                    ? setBookingModal(true)
+                                    : null;
                             }}
                         >
                             Book now
@@ -135,6 +131,6 @@ const Booking = () => {
             </div>
         </section>
     );
-};
+}
 
 export default Booking;

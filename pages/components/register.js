@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import { useRouter } from 'next/router';
+import {HiLockClosed, HiMail, HiUser} from "react-icons/hi";
 const RegisterPage = () => {
 
     const router = useRouter()
@@ -24,7 +25,7 @@ const RegisterPage = () => {
             return;
         }
 
-        if (password.length < 12) {
+        if (password.length < 5) {
             setErrorMessage("Le mot de passe doit avoir au moins 12 caractères.");
             return;
         }
@@ -37,13 +38,13 @@ const RegisterPage = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ nom, prenom, email, password: hashedPassword }),
+            body: JSON.stringify({ nom, prenom, email, password: await hashedPassword }),
         });
 
         if (response.ok) {
             await router.push('/authentification/login');
         } else {
-            alert('Erreur lors de l\'ajout de l\'utilisateur.');
+            setErrorMessage('Erreur lors de l\'ajout de l\'utilisateur.');
         }
     };
 
@@ -55,8 +56,6 @@ const RegisterPage = () => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         return hashedPassword;
     };
-
-
 
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
@@ -74,7 +73,7 @@ const RegisterPage = () => {
                                 First Name
                             </label>
                             <div className="relative">
-                                <div className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                                <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                                 <input
                                     id="firstName"
                                     name="firstName"
@@ -82,7 +81,7 @@ const RegisterPage = () => {
                                     autoComplete="given-name"
                                     value={prenom} onChange={(e) => setPrenom(e.target.value)}
                                     required
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                             </div>
                         </div>
@@ -92,7 +91,7 @@ const RegisterPage = () => {
                                 Last Name
                             </label>
                             <div className="relative" >
-                                < div className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
+                                < HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                                 <input
                                     id="lastName"
                                     name="lastName"
@@ -100,7 +99,7 @@ const RegisterPage = () => {
                                     autoComplete="family-name"
                                     value={nom} onChange={(e) => setNom(e.target.value)}
                                     required
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                             </div>
                         </div>
@@ -110,6 +109,8 @@ const RegisterPage = () => {
                             Email address
                         </label>
                         <div className="mt-2">
+                            <div className="relative">
+                                <HiMail className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                             <input
                                 id="email"
                                 name="email"
@@ -117,8 +118,9 @@ const RegisterPage = () => {
                                 autoComplete="email"
                                 required
                                 value={email} onChange={(e) => setEmail(e.target.value)}
-                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
+                        </div>
                         </div>
                     </div>
 
@@ -129,6 +131,8 @@ const RegisterPage = () => {
                             </label>
                         </div>
                         <div className="mt-2">
+                            <div className="relative">
+                                <HiLockClosed className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                             <input
                                 id="password"
                                 name="password"
@@ -136,9 +140,9 @@ const RegisterPage = () => {
                                 autoComplete="new-password"
                                 value={password} onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
-
+                            </div>
                     </div>
 
                     <div>
@@ -148,6 +152,8 @@ const RegisterPage = () => {
                             </label>
                         </div>
                         <div className="mt-2">
+                            <div className="relative">
+                                <HiLockClosed className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                             <input
                                 id="confirmPassword"
                                 name="confirmPassword"
@@ -155,10 +161,13 @@ const RegisterPage = () => {
                                 autoComplete="new-password"
                                 value={ConfirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
                                 required
-                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                className="pl-10 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
                         </div>
-                        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+                        </div>
+                        <div className="mt-2">
+                            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+                        </div>
                     </div>
 
                     <div>
@@ -175,7 +184,7 @@ const RegisterPage = () => {
                 <p className="mt-10 text-center text-sm text-gray-500">
                     Already have an account?{' '}
                     <a href="/authentification/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                        Log in
+                        Login
                     </a>
                 </p>
             </div>

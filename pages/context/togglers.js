@@ -1,5 +1,15 @@
 import React, { useContext, useState } from 'react';
 
+
+const Togglers = () => {
+    return (
+        <div>
+            
+        </div>
+    );
+};
+
+export default Togglers;
 const TogglersContext = React.createContext({
     mobileNavbar: false,
     setMobileNavbar: () => {},

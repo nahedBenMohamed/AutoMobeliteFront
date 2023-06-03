@@ -1,16 +1,14 @@
 // pages/api/login.js
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
+const saltRounds = 10;
 
 export default async function handler(req, res) {
-
     if (req.method === 'GET') {
-        const { email} = req.body;
-        const users = await prisma.user.findUnique({where: { email: email} });
-        res.status(200).json(users);
-    }
-        else if (req.method === 'POST') {
+        // ...
+    } else if (req.method === 'POST') {
         const { email, password } = req.body;
 
         // Vérifier si l'utilisateur existe dans la base de données
@@ -21,7 +19,9 @@ export default async function handler(req, res) {
         }
 
         // Vérifier le mot de passe de l'utilisateur
-        if (user.password !== password) {
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (!passwordMatch) {
             return res.status(401).json({ message: 'Mot de passe incorrect' });
         }
 

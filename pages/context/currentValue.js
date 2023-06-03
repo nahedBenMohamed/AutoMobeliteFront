@@ -1,10 +1,19 @@
 import React, { useContext, useState } from 'react';
-
 const CurrentValueContext = React.createContext({
     rentalFleet: 'Audi A1',
     setRentalFleet: () => {},
 });
 
+
+const CurrentValue = () => {
+    return (
+        <div>
+            
+        </div>
+    );
+};
+
+export default CurrentValue;
 export const useCurrentValueContext = () => useContext(CurrentValueContext);
 
 export const CurrentValueProvider = ({ children }) => {
