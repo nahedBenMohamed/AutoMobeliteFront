@@ -1,28 +1,22 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import {createUser} from "@/service/userService";
 
 export default async function handler(req, res) {
-    if (req.method === 'GET') {
-        const users = await prisma.user.findMany();
-        res.status(200).json(users);
-    } else if (req.method === 'POST') {
-        const { nom, prenom, email, password } = req.body;
+    if (req.method === 'POST') {
+        const { name, firstName,email, password, role } = req.body;
+
+        // Vérification des données requises
+        if (!name || !firstName || !email || !password || !role) {
+            return res.status(400).json({ message: 'Veuillez fournir tous les champs requis.' });
+        }
+
         try {
-            const user = await prisma.user.create({
-                data: {
-                    nom,
-                    prenom,
-                    email,
-                    password
-                },
-            });
-            res.status(201).json(user);
+            const newUser = await createUser(name, firstName, email, password, role);
+            return res.status(201).json({ message: 'Utilisateur enregistré avec succès.' });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Failed to create user' });
+            return res.status(500).json({ message: 'Une erreur est survenue lors de l\'inscription.' });
         }
     } else {
-        res.status(405).json({ error: 'Method not allowed' });
+        res.status(405).json({ message: 'Méthode non autorisée.' });
     }
 }

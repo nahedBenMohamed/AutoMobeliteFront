@@ -1,5 +1,6 @@
-import DashboardHeader from "@/pages/admin/components/Header";
-import ReservationDetails from "@/pages/admin/components/DetailsReservation";
+import DashboardHeader from "@/components/admin/Header";
+import ReservationDetails from "@/components/admin/DetailsReservation";
+
 
 export default function Car ()  {
     return (

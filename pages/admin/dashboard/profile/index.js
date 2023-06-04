@@ -1,13 +1,13 @@
 import DashboardHeader from "@/components/admin/Header";
-import UserTable from "@/components/admin/UserTable";
+import Profile from "@/components/admin/Profile";
 
 
-export default function Car ()  {
+export default function ProfileUsers ()  {
     return (
         <div>
             <DashboardHeader />
             <div style={{ margin: '20px 90px' }}>
-                <UserTable />
+                <Profile/>
             </div>
         </div>
     );

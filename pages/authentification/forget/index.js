@@ -1,13 +1,6 @@
 import React from "react";
-import ForgetPage from "@/pages/components/forget";
-import Header from "@/pages/components/Header";
-
-
-
-
-
-
-
+import Header from "@/components/client/Header";
+import ForgetPage from "@/components/client/forget";
 
 function page() {
     return (

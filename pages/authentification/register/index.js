@@ -1,6 +1,7 @@
 import React from "react";
-import RegisterPage from "@/pages/components/register";
-import Header from "@/pages/components/Header";
+import Header from "@/components/client/Header";
+import RegisterPage from "@/components/client/register";
+
 
 
 

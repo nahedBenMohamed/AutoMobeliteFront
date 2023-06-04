@@ -1,8 +1,7 @@
 import React from 'react';
-import DashboardHeader from "@/pages/admin/components/Header";
-import DashboardCards from "@/pages/admin/components/DashboardCards";
-import RevenueCards from "@/pages/admin/components/RevenueCards";
-
+import DashboardHeader from "@/components/admin/Header";
+import DashboardCards from "@/components/admin/DashboardCards";
+import RevenueCards from "@/components/admin/RevenueCards";
 
 const Home = () => {
     return (

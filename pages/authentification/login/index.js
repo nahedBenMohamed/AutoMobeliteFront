@@ -1,6 +1,7 @@
 import React from "react";
-import LoginPage from "@/pages/components/login";
-import Header from "@/pages/components/Header";
+import Header from "@/components/client/Header";
+import LoginPage from "@/components/client/login";
+
 
 
 function page() {

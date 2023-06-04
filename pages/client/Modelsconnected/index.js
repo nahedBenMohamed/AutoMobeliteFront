@@ -1,20 +1,22 @@
-import React from "react";
-import { TogglersProvider } from "@/components/context/togglers";
-import Header from "@/components/client/Header";
+import {TogglersProvider} from "@/components/context/togglers";
+import HeaderConnected from "@/components/client/Connected";
+import MobileNavConnected from "@/components/client/MobileNavConnected";
 import BannerHero from "@/components/client/BannerHero";
 import ToTop from "@/components/client/ToTop";
-import Models from "@/components/client/Models";
+import Modelsconnected from "@/components/client/ModelsConnected";
 import Footer from "@/components/client/Footer";
+
 
 
 function page() {
     return (
         <TogglersProvider>
             <main>
-                <Header />
+                <HeaderConnected />
+                <MobileNavConnected />
                 <BannerHero htmlId="models-hero" page="Vehicle Models" />
                 <ToTop />
-                <Models />
+                <Modelsconnected />
                 <Footer />
             </main>
         </TogglersProvider>

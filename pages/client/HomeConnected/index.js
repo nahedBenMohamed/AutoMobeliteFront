@@ -1,12 +1,12 @@
-import {CurrentValueProvider} from "@/components/context/currentValue";
 import {TogglersProvider} from "@/components/context/togglers";
 import {InputValueProvider} from "@/components/context/inputValue";
-import Header from "@/components/client/Header";
-import MobileNavbar from "@/components/client/MobilNavbar";
+import {CurrentValueProvider} from "@/components/context/currentValue";
+import HeaderConnected from "@/components/client/Connected";
+import MobileNavConnected from "@/components/client/MobileNavConnected";
 import Hero from "@/components/client/Hero";
+import ToTop from "@/components/client/ToTop";
 import Booking from "@/components/client/Booking";
 import BookingModal from "@/components/client/BookingModal";
-import ToTop from "@/components/client/ToTop";
 import QuickEasy from "@/components/client/QuickEasy";
 import RentalFleet from "@/components/client/RentalFleet";
 import ChooseUs from "@/components/client/ChooseUs";
@@ -14,25 +14,29 @@ import Footer from "@/components/client/Footer";
 
 
 
-export default function Home() {
+function page() {
     return (
-        <TogglersProvider>
-            <InputValueProvider>
-                <CurrentValueProvider>
-                    <main>
-                        <Header/>
-                        <MobileNavbar />
+        <main>
+            <TogglersProvider>
+                <InputValueProvider>
+                    <CurrentValueProvider>
+                        <HeaderConnected/>
+                        <MobileNavConnected/>
                         <Hero/>
+                        <ToTop/>
                         <Booking/>
                         <BookingModal/>
-                        <ToTop />
                         <QuickEasy/>
                         <RentalFleet/>
                         <ChooseUs/>
                         <Footer/>
-                    </main>
-                </CurrentValueProvider>
-            </InputValueProvider>
-        </TogglersProvider>
-    )
+                    </CurrentValueProvider>
+                </InputValueProvider>
+            </TogglersProvider>
+        </main>
+
+
+    );
 }
+
+export default page;
