@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from 'next/router';
-import { HiLockClosed, HiMail, HiUser } from "react-icons/hi";
+import {HiEye, HiEyeOff, HiLockClosed, HiMail, HiUser} from "react-icons/hi";
 
 const Register = () => {
 
@@ -11,6 +11,7 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [passwordVisible, setPasswordVisible]= useState();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -127,11 +128,17 @@ const Register = () => {
                                     <input
                                         id="password"
                                         name="password"
-                                        type="password"
+                                        type={passwordVisible ? 'text' : 'password'}
                                         autoComplete="new-password"
                                         value={password} onChange={(e) => setPassword(e.target.value)}
                                         className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
+                                    <div
+                                        className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+                                        onClick={() => setPasswordVisible(!passwordVisible)}
+                                    >
+                                        {passwordVisible ? <HiEyeOff className="text-blue-600" /> : <HiEye className="text-blue-600" />}
+                                    </div>
                                 </div>
                             </div>
 
@@ -147,7 +154,7 @@ const Register = () => {
                                         <input
                                             id="confirmPassword"
                                             name="confirmPassword"
-                                            type="password"
+                                            type={passwordVisible ? 'text' : 'password'}
                                             autoComplete="new-password"
                                             value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
                                             className="pl-10 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import React from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import { useTogglersContext } from "../context/togglers";
