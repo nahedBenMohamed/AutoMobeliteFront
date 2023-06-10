@@ -3,8 +3,8 @@ import React from "react";
 
 function Hero() {
     return (
-        <section id="hero">
-            <div className="px-8 lg:px-28 py-12 lg:py-0 h-screen flex items-center relative">
+        <section className="-mt-5 hero ">
+            <div className=" lg:px-28 py-12 lg:py-12 h-screen flex items-center relative">
                 <Image
                     src="/images/home-hero-bg.png"
                     alt="hero"

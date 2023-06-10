@@ -5,15 +5,6 @@ const CurrentValueContext = React.createContext({
 });
 
 
-const CurrentValue = () => {
-    return (
-        <div>
-            
-        </div>
-    );
-};
-
-export default CurrentValue;
 export const useCurrentValueContext = () => useContext(CurrentValueContext);
 
 export const CurrentValueProvider = ({ children }) => {

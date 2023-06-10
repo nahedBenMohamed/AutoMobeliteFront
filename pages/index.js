@@ -11,6 +11,7 @@ import QuickEasy from "@/components/client/QuickEasy";
 import RentalFleet from "@/components/client/RentalFleet";
 import ChooseUs from "@/components/client/ChooseUs";
 import Footer from "@/components/client/Footer";
+import VehicleSearchForm from "@/components/client/VehicleSearchForm";
 
 
 
@@ -22,8 +23,13 @@ export default function Home() {
                     <main>
                         <Header/>
                         <MobileNavbar />
-                        <Hero/>
-                        <Booking/>
+                        <div className=" flex justify-center ">
+                            <VehicleSearchForm />
+
+                        </div>
+                        <div className="-mt-6">
+                            <Hero />
+                        </div>
                         <BookingModal/>
                         <ToTop />
                         <QuickEasy/>

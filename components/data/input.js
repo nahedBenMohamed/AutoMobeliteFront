@@ -1,15 +1,7 @@
 import React from "react";
 
 
-const Input = () => {
-  return (
-      <div>
 
-      </div>
-  );
-};
-
-export default Input;
 import { AiFillCar } from "react-icons/ai";
 import { IoLocationSharp } from "react-icons/io5";
 

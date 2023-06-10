@@ -1,15 +1,7 @@
 import React, { useContext, useState } from 'react';
 
 
-const InputValue = () => {
-  return (
-      <div>
-        
-      </div>
-  );
-};
 
-export default InputValue;
 
 const InputValueContext = React.createContext({
   bookingSelect: {
