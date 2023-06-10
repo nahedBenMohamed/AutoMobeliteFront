@@ -12,7 +12,7 @@ const LoginPage = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const response = await fetch('/api/signin', {
+        const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -21,25 +21,11 @@ const LoginPage = () => {
         });
 
         if (response.ok) {
-            const data = await response.json();
-            if (data.role) {
-                const { role } = data;
 
-                // Message de succès
-                setMessage('Connexion réussie');
-                // Redirection en fonction du rôle
-                if (role === 'admin') {
-                    await router.push('/admin/dashboard/home');
-                } else {
-                    await router.push('/client/HomeConnected');
-                }
-            } else {
-                // Erreur lors de la connexion
-                setMessage('Email ou mot de passe incorrect');
-            }
-        } else {
-            // Erreur lors de la requête HTTP
-            //alert('Erreur lors de la requête.');
+            await router.push('/client/HomeConnected/');
+        }
+         else {
+            setMessage('Email ou mot de passe incorrect');
         }
     };
 

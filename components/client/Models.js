@@ -1,27 +1,29 @@
-import React from "react";
-import { carDetails } from "../data/content";
-import Image from "next/image";
+import React, { useEffect, useState } from "react";
 import { AiFillCar, AiFillStar, AiFillTool } from "react-icons/ai";
 import { GiCarDoor } from "react-icons/gi";
 import { BsFillFuelPumpFill } from "react-icons/bs";
+import axios from "axios";
 
 function Models() {
+    const [cars, setCars] = useState([]);
+
+    useEffect(() => {
+        axios.get('/api/cars/cars').then(response => {
+            setCars(response.data);
+        });
+    }, []);
+
     return (
         <section id="models-main">
             <div className="py-8 px-8 lg:px-48 lg:py-16 my-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {carDetails.map((data) => (
-                        <div
-                            key={data.id}
-                            className="border border-lighter-grey bg-white rounded"
-                        >
-                            <div>
-                                <Image
-                                    src={`/images/box-${data.car}.png`}
-                                    alt={data.car}
-                                    width={800}
-                                    height={800}
-                                    className="w-full h-full lg:h-60 object-cover rounded-t"
+                    {cars.map(car => (
+                        <div key={car.id} className="border border-lighter-grey bg-white rounded">
+                            <div className="image-container">
+                                <img
+                                    src={car.images}
+                                    alt=""
+                                    //className="w-full h-full lg:h-60 object-cover rounded-t"
                                 />
                             </div>
                             <div className="p-6 space-y-6">
@@ -29,7 +31,7 @@ function Models() {
                                     <div className="space-y-1">
                                         <div>
                                             <h1 className="font-bold text-xl lg:text-2xl">
-                                                {data.car}
+                                                {car.marque}
                                             </h1>
                                         </div>
                                         <div className="text-[#ffc933] flex items-center">
@@ -52,7 +54,7 @@ function Models() {
                                     </div>
                                     <div className="text-right">
                                         <h1 className="font-bold text-xl lg:text-2xl">
-                                            ${data.price}
+                                            {car.prix} DT
                                         </h1>
                                         <p className="text-custom-grey">per day</p>
                                     </div>
@@ -62,10 +64,10 @@ function Models() {
                     <span>
                       <AiFillCar />
                     </span>
-                                        <span>{data.model}</span>
+                                        <span>{car.modele}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span>{data.doors}</span>
+                                        <span>{/*{data.doors}*/}</span>
                                         <span>
                       <GiCarDoor />
                     </span>
@@ -76,10 +78,10 @@ function Models() {
                     <span>
                       <AiFillTool />
                     </span>
-                                        <span>{data.transmission}</span>
+                                        <span>{/*{data.transmission}*/}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span>{data.fuel}</span>
+                                        <span>{/*{data.fuel}*/}</span>
                                         <span>
                       <BsFillFuelPumpFill />
                     </span>

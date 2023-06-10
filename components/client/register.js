@@ -1,43 +1,48 @@
 import React, { useState } from "react";
 import { useRouter } from 'next/router';
-import {HiEye, HiEyeOff, HiLockClosed, HiMail, HiUser} from "react-icons/hi";
+import { HiEye, HiEyeOff, HiLockClosed, HiMail, HiUser } from "react-icons/hi";
 
 const RegisterPage = () => {
     const router = useRouter();
-
     const [errorMessage, setErrorMessage] = useState('');
     const [name, setName] = useState('');
-    const [firstName, setFirstName] = useState('');
+    const [firstname, setFirstName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordVisible, setPasswordVisible] = useState('')
+    const [passwordVisible, setPasswordVisible] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         // Vérification des données côté client (facultatif)
-        if (!name || !firstName || !email || !password) {
+        if (!name || !firstname || !email || !password) {
             setErrorMessage('Veuillez remplir tous les champs.');
             return;
         }
         if (password !== confirmPassword) {
-            setErrorMessage('Mot de passe différent.');
+            setErrorMessage('Les mots de passe ne correspondent pas.');
             return;
         }
 
-        if (password.length < 12) {
-            setErrorMessage("Le mot de passe doit avoir au moins 12 caractères.");
+        if (password.length < 8) {
+            setErrorMessage("Le mot de passe doit avoir au moins 8 caractères.");
+            return;
+        }
+
+        const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*]).{8,}$/;
+        if (!passwordRegex.test(password)) {
+            setErrorMessage("Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.");
             return;
         }
 
         try {
-            const response = await fetch('/api/signup', {
+            const response = await fetch('/api/auth/register-client', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, firstName,email, password, role: 'user' }),
+                body: JSON.stringify({ name, firstname, email, password }),
             });
 
             if (response.ok) {
@@ -46,9 +51,8 @@ const RegisterPage = () => {
                 const errorData = await response.json();
                 setErrorMessage(errorData.message);
             }
-        } catch (error) {
-            console.error(error);
-            console.log('Une erreur est survenue lors de l\'appel à l\'API.');
+        } catch (errorData) {
+            setErrorMessage(errorData.message);
         }
     };
 
@@ -75,7 +79,7 @@ const RegisterPage = () => {
                                     name="firstName"
                                     type="text"
                                     autoComplete="given-name"
-                                    value={firstName} onChange={(e) => setFirstName(e.target.value)}
+                                    value={firstname} onChange={(e) => setFirstName(e.target.value)}
                                     className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                             </div>
