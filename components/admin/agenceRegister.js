@@ -7,26 +7,27 @@ const AgenceAdd = () => {
 
     const [errorMessage, setErrorMessage] = useState('');
     const [name, setName] = useState('');
-    const [tel, setTel] = useState('');
+    const [telephone, setTelephone] = useState('');
     const [email, setEmail] = useState('');
-    const [location, setLocation] = useState('');
+    const [adresse, setAdresse] = useState('');
+    const [responsableName, setResponsableName] = useState('');
 
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         // Vérification des données côté client (facultatif)
-        if (!name || !tel || !email || !location) {
+        if (!name || !telephone || !email || !adresse || !responsableName) {
             setErrorMessage('Veuillez remplir tous les champs.');
             return;
         }
         try {
-            const response = await fetch('/api/agency', {
+            const response = await fetch('/api/agence/add-agence', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, tel,email, location }),
+                body: JSON.stringify({ name, telephone,email, adresse,responsableName }),
             });
 
             if (response.ok) {
@@ -35,9 +36,8 @@ const AgenceAdd = () => {
                 const errorData = await response.json();
                 setErrorMessage(errorData.message);
             }
-        } catch (error) {
-            console.error(error);
-            console.log('Une erreur est survenue lors de l\'appel à l\'API.');
+        } catch (errorData) {
+            setErrorMessage(errorData.message);
         }
     };
 
@@ -67,6 +67,22 @@ const AgenceAdd = () => {
                                     />
                                 </div>
                             </div>
+                            <div>
+                                <label htmlFor="responsable" className="block font-semibold">
+                                    Name Responsable
+                                </label>
+                                <div className="relative">
+                                    <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
+                                    <input
+                                        id="responsable"
+                                        name="responsable"
+                                        type="text"
+                                        autoComplete="given-name"
+                                        value={responsableName} onChange={(e) => setResponsableName(e.target.value)}
+                                        className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                            </div>
                         </div>
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
@@ -86,7 +102,6 @@ const AgenceAdd = () => {
                                 </div>
                             </div>
                         </div>
-
                         <div>
                             <div className="flex items-center justify-between">
                                 <label htmlFor="tel" className="block text-sm font-medium leading-6 text-gray-900">
@@ -101,7 +116,7 @@ const AgenceAdd = () => {
                                         name="tel"
                                         type="tel"
                                         autoComplete="new-tel"
-                                        value={tel} onChange={(e) => setTel(e.target.value)}
+                                        value={telephone} onChange={(e) => setTelephone(e.target.value)}
                                         className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
                                 </div>
@@ -121,7 +136,7 @@ const AgenceAdd = () => {
                                             name="location"
                                             type="text"
                                             autoComplete="new-location"
-                                            value={location} onChange={(e) => setLocation(e.target.value)}
+                                            value={adresse} onChange={(e) => setAdresse(e.target.value)}
                                             className="pl-10 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         />
                                     </div>

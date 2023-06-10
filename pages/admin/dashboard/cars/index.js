@@ -6,7 +6,7 @@ export default function Car ()  {
     return (
         <div>
             <DashboardHeader />
-            <div style={{ margin: '20px 90px' }}>
+            <div style={{ margin: '60px 90px' }}>
                 <VehicleTable />
             </div>
         </div>
