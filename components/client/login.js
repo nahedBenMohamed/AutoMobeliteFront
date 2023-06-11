@@ -21,13 +21,14 @@ const LoginPage = () => {
         });
 
         if (response.ok) {
-
             await router.push('/client/HomeConnected/');
         }
-         else {
-            setMessage('Email ou mot de passe incorrect');
+        else {
+            const errorData = await response.json(); // Extraire les données de la réponse en cas d'erreur
+            setMessage(errorData.error); // Utiliser le message d'erreur de la réponse
         }
     };
+
 
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">

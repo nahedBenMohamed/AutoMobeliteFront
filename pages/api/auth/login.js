@@ -19,6 +19,11 @@ export default async function handle(req, res) {
             return res.status(401).json({ error: 'Email ou mot de passe incorrect.' });
         }
 
+        // Vérifier si l'email a été vérifié
+        if (!client.emailVerified) {
+            return res.status(401).json({ error: 'Votre email n\'a pas été vérifié. Veuillez vérifier votre boîte de réception.' });
+        }
+
         // Vérifier le mot de passe
         const motDePasseMatch = await bcrypt.compare(password, client.password);
         if (!motDePasseMatch) {

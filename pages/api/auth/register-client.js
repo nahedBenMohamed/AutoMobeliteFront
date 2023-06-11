@@ -35,7 +35,7 @@ export default async function handle(req, res) {
     from: process.env.EMAIL,
     to: client.email,
     subject: 'Valider votre compte',
-    text: `Veuillez cliquer sur le lien suivant pour valider votre compte: ${process.env.BASE_URL}/api/validate?token=${token}`,
+    text: `Veuillez cliquer sur le lien suivant pour valider votre compte: ${process.env.BASE_URL}/validate-email?token=${token}`,
   };
 
   try {

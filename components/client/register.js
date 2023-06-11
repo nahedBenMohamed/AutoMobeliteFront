@@ -4,6 +4,7 @@ import { HiEye, HiEyeOff, HiLockClosed, HiMail, HiUser } from "react-icons/hi";
 
 const RegisterPage = () => {
     const router = useRouter();
+    const [message, setMessage] = useState(''); // Nouvel état pour le message de succès
     const [errorMessage, setErrorMessage] = useState('');
     const [name, setName] = useState('');
     const [firstname, setFirstName] = useState('');
@@ -46,7 +47,7 @@ const RegisterPage = () => {
             });
 
             if (response.ok) {
-                await router.push('/authentification/login');
+                await router.push('/redirect');
             } else {
                 const errorData = await response.json();
                 setErrorMessage(errorData.message);
@@ -60,11 +61,7 @@ const RegisterPage = () => {
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
             <div className="w-full p-4 bg-white rounded-md shadow-md lg:max-w-xl">
-                <h2 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                    Welcome
-                </h2>
-
-
+                <h2 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Welcome</h2>
             <div className=" mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form onSubmit={handleSubmit} >
                     <div className=" mt-4 grid grid-cols-2 gap-4">
@@ -168,6 +165,7 @@ const RegisterPage = () => {
                         </div>
                         <div className="mt-2">
                             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+                            {message && <div className="alert alert-success">{message}</div>}
                         </div>
                     </div>
 
