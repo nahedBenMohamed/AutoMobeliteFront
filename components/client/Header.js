@@ -1,3 +1,4 @@
+
 import React from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import { useTogglersContext } from "../context/togglers";
@@ -12,6 +13,7 @@ function Header() {
                         AUTO<span className="text-blue-600">MOBELITE</span>
                     </a>
                 </div>
+
                 <div className="hidden lg:flex items-center gap-4 font-medium">
                     <button className="hover:text-blue-600 transition-all duration-300 ease-linear">
                         <a href="/authentification/login">
@@ -23,6 +25,7 @@ function Header() {
                     </button>
 
                 </div>
+
                 <div className="lg:hidden">
                     <button
                         className="text-3xl transition-all duration-300 ease-linear hover:text-custom-blue"

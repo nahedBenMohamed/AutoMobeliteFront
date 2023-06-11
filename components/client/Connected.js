@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useTogglersContext } from "@/components/context/togglers";
 import jwt_decode from "jwt-decode";
 import { useRouter } from "next/router";
+import VehicleSearchForm from "@/components/client/VehicleSearchForm";
 
 function HeaderConnected() {
     const router = useRouter()
@@ -46,6 +47,7 @@ function HeaderConnected() {
                         AUTO<span className="text-blue-600">MOBELITE</span>
                     </a>
                 </div>
+                <VehicleSearchForm />
                 <div className="relative ml-auto">
                     <button
                         onClick={toggleDropdown}

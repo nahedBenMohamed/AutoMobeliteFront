@@ -1,15 +1,6 @@
 import React from "react";
 
 
-const Content = () => {
-    return (
-        <div>
-
-        </div>
-    );
-};
-
-export default Content;
 export const quickEasy = [
     {
         id: 1,
