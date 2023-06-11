@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 export default async function handle(req, res) {
     const {method} = req;
     if (method === 'POST') {
-        let { agenceName, marque, annee, kilometrage, modele, prix, matricule,etat } = req.body
+        let { agenceName, marque, annee, kilometrage, modele, prix, matricule,etat,images } = req.body
         annee = parseInt(annee);
         kilometrage = parseInt(kilometrage);
         prix = parseFloat(prix);
@@ -17,6 +17,7 @@ export default async function handle(req, res) {
                 prix,
                 etat,
                 matricule,
+                images: { set: images },
                 Agence: {
                     connect: {
                         name: agenceName

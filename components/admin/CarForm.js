@@ -112,8 +112,8 @@ export default function CarForm({
                             <input id="car-status" name="car-status" type="text" value={etat} onChange={(ev) => setEtat(ev.target.value)} className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Etat de la voiture"/>
                         </div>
                         <div>
-                            <label htmlFor="car-status" className="sr-only">Matricule</label>
-                            <input id="car-status" name="car-status" type="text" value={matricule} onChange={(ev) => setMatricule(ev.target.value)} className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Matricule"/>
+                            <label htmlFor="matricule" className="sr-only">Matricule</label>
+                            <input id="matricule" name="matricule" type="text" value={matricule} onChange={(ev) => setMatricule(ev.target.value)} className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Matricule"/>
                         </div>
                     </div>
 

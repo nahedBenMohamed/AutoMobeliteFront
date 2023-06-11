@@ -34,7 +34,7 @@ export default async function handle(req, res) {
   let mailOptions = {
     from: process.env.EMAIL,
     to: client.email,
-    subject: 'Valider votre compte',
+    subject: 'Automobelite valider votre compte',
     text: `Veuillez cliquer sur le lien suivant pour valider votre compte: ${process.env.BASE_URL}/validate-email?token=${token}`,
   };
 

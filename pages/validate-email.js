@@ -45,7 +45,7 @@ export async function getServerSideProps(context) {
             return {
                 props: {
                     isValidated: false,
-                    message: "lien expire"
+                    message: "Ce lien a deja ete utilise pour activer un compte"
                 },
             };
         }
@@ -78,7 +78,7 @@ export async function getServerSideProps(context) {
         return {
             props: {
                 isValidated: false,
-                message: "Une erreur est survenue. Veuillez réessayer."
+                message: "Ce lien a expire."
             },
         };
     }
