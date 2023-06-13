@@ -10,14 +10,15 @@ const AgenceAdd = () => {
     const [telephone, setTelephone] = useState('');
     const [email, setEmail] = useState('');
     const [adresse, setAdresse] = useState('');
-    const [responsableName, setResponsableName] = useState('');
+    const [responsableId, setResponsableId] = useState('');
+
 
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         // Vérification des données côté client (facultatif)
-        if (!name || !telephone || !email || !adresse || !responsableName) {
+        if (!name || !telephone || !email || !adresse || !responsableId) {
             setErrorMessage('Veuillez remplir tous les champs.');
             return;
         }
@@ -27,11 +28,11 @@ const AgenceAdd = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, telephone,email, adresse,responsableName }),
+                body: JSON.stringify({ name, telephone,email, adresse,responsableId }),
             });
 
             if (response.ok) {
-                await router.push('/admin/dashboard/home');
+                await router.push('/admin/auth/login');
             } else {
                 const errorData = await response.json();
                 setErrorMessage(errorData.message);
@@ -69,16 +70,16 @@ const AgenceAdd = () => {
                             </div>
                             <div>
                                 <label htmlFor="responsable" className="block font-semibold">
-                                    Name Responsable
+                                    Responsable ID
                                 </label>
                                 <div className="relative">
                                     <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                                     <input
                                         id="responsable"
                                         name="responsable"
-                                        type="text"
-                                        autoComplete="given-name"
-                                        value={responsableName} onChange={(e) => setResponsableName(e.target.value)}
+                                        type="number"
+                                        autoComplete="responsable-id"
+                                        value={responsableId} onChange={(e) => setResponsableId(parseInt(e.target.value))}
                                         className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
                                 </div>

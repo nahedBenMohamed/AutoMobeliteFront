@@ -12,7 +12,7 @@ export default async function handle(req, res) {
     });
 
     if (existingUser) {
-        return res.status(400).json({ error: 'Cet email est déjà utilisé.' });
+        return res.status(400).json({ message: 'Cet email est déjà utilisé.' });
     }
 
     // Hasher le mot de passe
@@ -30,5 +30,5 @@ export default async function handle(req, res) {
     });
 
     // Envoyer une réponse de succès
-    return res.status(200).json({ message: 'Utilisateur enregistré avec succès.' });
+    return res.status(200).json({ message: 'Utilisateur enregistré avec succès.',newUser });
 }

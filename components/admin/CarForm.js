@@ -1,9 +1,11 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import {ReactSortable} from "react-sortablejs";
 import Spinner from "@/components/admin/Spinner";
 import Link from "next/link";
+
+
 export default function CarForm({
     id,
     agenceName: existingAgenceName,
@@ -27,22 +29,34 @@ export default function CarForm({
     const [images, setImages] = useState(Array.isArray(existingImages) ? existingImages : []);
     const [isUploading,setIsUploading] = useState(false)
     const [goToCars, setGoToCars] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const router = useRouter();
-    console.log({ id });
+
 
     async function saveCar(ev) {
         ev.preventDefault();
-        const data = { agenceName, marque, annee, kilometrage, modele, prix, etat,matricule,images };
 
-        if (id) {
-            // Update
-            await axios.put("/api/cars/cars/", { ...data, id },{ withCredentials: true },);
-        } else {
-            // Create
-            await axios.post("/api/cars/cars", data,{ withCredentials: true });
+        // Vérification des données côté client (facultatif)
+        if (!agenceName || !marque || !matricule || !modele|| !annee || !kilometrage || !prix || !etat) {
+            setErrorMessage('Veuillez remplir tous les champs.');
+            return;
         }
-        setGoToCars(true);
+
+        const data = { agenceName, marque, annee, kilometrage, modele, prix, etat, matricule, images };
+        try {
+            if (id) {
+                // Update
+                await axios.put("/api/cars/cars/", { ...data, id },{ withCredentials: true });
+            } else {
+                // Create
+                await axios.post("/api/cars/cars", data,{ withCredentials: true });
+            }
+            setGoToCars(true);
+        } catch (error) {
+                setErrorMessage(error.response.data.message);
+        }
     }
+
 
     if (goToCars) {
         router.push("/admin/dashboard/cars");
@@ -57,15 +71,19 @@ export default function CarForm({
                 data.append("file", file);
             }
             data.append("id", id);
-            const res = await axios.post("/api/cars/upload", data,{ withCredentials: true },);
-            const { message, imagePath } = res.data;
-
-            if (message === "Image uploaded successfully") {
-                setImages((oldImages) => [...oldImages, imagePath]);
-            } else {
-                console.error("Upload failed");
+            try {
+                const res = await axios.post("/api/cars/upload", data,{ withCredentials: true },);
+                const { message, imagePath } = res.data;
+                if (message === "Image uploaded successfully") {
+                    setImages((oldImages) => [...oldImages, imagePath]);
+                } else {
+                    setErrorMessage("Upload failed");
+                }
+            } catch (error) {
+                setErrorMessage(error.response.data.message);
+            } finally {
+                setIsUploading(false);
             }
-            setIsUploading(false);
         }
     }
 
@@ -135,23 +153,19 @@ export default function CarForm({
                             </div>
                         )}
                         <label className="w-24 h-24 cursor-pointer text-center flex items-center justify-center text-sm gap-1 text-gray-500 rounded-lg bg-gray-200">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                className="w-6 h-6"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-                                />
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
+                                 stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round"
+                                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
                             </svg>
+
+
                             <div>upload</div>
                             <input type="file" onChange={uploadImage} className="hidden" />
                         </label>
+                    </div>
+                    <div className="mt-2">
+                        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                     </div>
                     <div className="flex justify-center gap-4">
                         <button type="submit" className="group relative w-1/2 flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">

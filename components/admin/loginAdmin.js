@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import {HiEye, HiEyeOff, HiLockClosed, HiMail} from "react-icons/hi";
 
 const LoginAdmin = () => {
+
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -17,7 +18,7 @@ const LoginAdmin = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email, password, role:'admin'}),
+            body: JSON.stringify({ email, password }),
         });
 
         if (response.ok) {
@@ -66,7 +67,7 @@ const LoginAdmin = () => {
                                     Password
                                 </label>
                                 <div className="text-sm">
-                                    <a href="/authentification/forget" className="font-semibold text-blue-600 hover:text-indigo-500">
+                                    <a href="/admin/auth/forget" className="font-semibold text-blue-600 hover:text-indigo-500">
                                         Forgot password?
                                     </a>
                                 </div>
@@ -105,7 +106,7 @@ const LoginAdmin = () => {
 
                     <p className="mt-10 text-center text-sm text-gray-500">
                         Don't have an account?{' '}
-                        <a href="/authentification/register" className="font-bold leading-6 text-blue-600 hover:text-gray-500">
+                        <a href="/admin/auth/register" className="font-bold leading-6 text-blue-600 hover:text-gray-500">
                             Register
                         </a>
                     </p>

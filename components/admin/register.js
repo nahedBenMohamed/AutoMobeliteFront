@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useRouter } from 'next/router';
 import {HiEye, HiEyeOff, HiLockClosed, HiMail, HiUser} from "react-icons/hi";
 
-const Register = () => {
+const RegisterAdmin = () => {
 
     const router = useRouter();
     const [errorMessage, setErrorMessage] = useState('');
@@ -47,14 +47,13 @@ const Register = () => {
             });
 
             if (response.ok) {
-                await router.push('/admin/authentification/login');
+                await router.push('/admin/auth/login');
             } else {
                 const errorData = await response.json();
                 setErrorMessage(errorData.message);
             }
-        } catch (error) {
-            console.error(error);
-            console.log('Une erreur est survenue lors de l\'appel à l\'API.');
+        } catch (errorData) {
+           setErrorMessage(errorData.message)
         }
     };
 
@@ -62,7 +61,7 @@ const Register = () => {
         <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
             <div className="w-full p-4 bg-white rounded-md shadow-md lg:max-w-xl">
                 <h2 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                    Welcome
+                    Sign Up in Automobelite
                 </h2>
 
 
@@ -173,10 +172,7 @@ const Register = () => {
                             </div>
 
                             <div>
-                                <button
-                                    type="submit"
-                                    className="mt-8 w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                >
+                                <button type="submit" className="mt-8 w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                                     Create an account
                                 </button>
                             </div>
@@ -185,7 +181,7 @@ const Register = () => {
 
                     <p className="mt-10 text-center text-sm text-gray-500">
                         Already have an account?{' '}
-                        <a href="/authentification/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                        <a href="/admin/auth/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
                             Login
                         </a>
                     </p>
@@ -195,4 +191,4 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default RegisterAdmin;
