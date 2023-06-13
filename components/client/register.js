@@ -47,7 +47,7 @@ const RegisterPage = () => {
             });
 
             if (response.ok) {
-                await router.push('/redirect');
+                await router.push('/authentification/login');
             } else {
                 const errorData = await response.json();
                 setErrorMessage(errorData.message);

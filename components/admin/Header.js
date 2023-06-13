@@ -1,6 +1,7 @@
 import { Disclosure, Menu } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon} from '@heroicons/react/24/outline'
-import MobileMenu from "@/components/admin/Mobil";
+import { Bars3Icon, XMarkIcon} from '@heroicons/react/24/outline'
+import {protectRoute} from "@/utils/auth";
+import { useRouter } from 'next/router';
 
 
 const navigation = [
@@ -16,7 +17,22 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
 
+
 function DashboardHeader() {
+
+    const router = useRouter();
+
+    const handleLogout = async () => {
+        const res = await fetch('/api/auth/logout', {
+            method: 'POST',
+        });
+
+        if (res.ok) {
+            await router.push('/authentification/login');
+        } else {
+            // handle error
+        }
+    };
 
     return (
         <>
@@ -61,7 +77,7 @@ function DashboardHeader() {
                                             <Menu as="div" className="relative ml-3">
                                                 <div>
                                                     <button
-                                                        onClick=""
+                                                        onClick={handleLogout}
                                                         className="bg-none color-white block px-4 py-2 text-sm text-gray-700"
                                                     >
                                                         <svg
@@ -113,7 +129,7 @@ function DashboardHeader() {
                                 <div className="border-t border-gray-700 pb-3 pt-4">
                                     <div>
                                         <button
-                                            onClick=""
+                                            onClick={handleLogout}
                                             className="bg-none color-white block px-4 py-2 text-sm text-gray-700"
                                         >
                                             <svg
@@ -133,17 +149,13 @@ function DashboardHeader() {
                         </>
                     )}
                 </Disclosure>
-
-                <header className="bg-white shadow">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Admin Dashboard</h1>
-                    </div>
-                </header>
-                <main>
-                    <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">{/* Your content */}</div>
-                </main>
             </div>
         </>
     );
 }
+
 export default DashboardHeader
+
+export const getServerSideProps = (ctx) => {
+    return protectRoute(ctx, ['admin', 'superAdmin']);
+};

@@ -1,24 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { AiFillCar, AiFillStar, AiFillTool } from "react-icons/ai";
-import { GiCarDoor } from "react-icons/gi";
-import { BsFillFuelPumpFill } from "react-icons/bs";
-import axios from "axios";
+import { useRouter } from 'next/router';
+import React from "react";
+import {AiFillCar, AiFillStar, AiFillTool} from "react-icons/ai";
+import {GiCarDoor} from "react-icons/gi";
+import {BsFillFuelPumpFill} from "react-icons/bs";
 
-function Models() {
-    const [cars, setCars] = useState([]);
+const SearchResultsPage = () => {
+    const router = useRouter();
+    const { results } = router.query;
 
-    useEffect(() => {
-        axios.get('/api/client-cars/AllCars').then(response => {
-            setCars(response.data);
-        });
-    }, []);
+    // Convertir les résultats de recherche en objet JavaScript
+    const searchResults = JSON.parse(results);
 
     return (
         <section id="models-main">
             <div className="py-8 px-8 lg:px-48 lg:py-16 my-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {cars.map(car => (
-                        <div key={car.id} className="border border-lighter-grey bg-white rounded">
+                    {searchResults.map((car, index) => (
+                        <div key={index} className="border border-lighter-grey bg-white rounded">
                             <div className="image-container">
                                 <img
                                     src={car.images}
@@ -49,32 +47,24 @@ function Models() {
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-between text-lg">
-                                    <div className="flex items-center gap-2">
-                                        <span><AiFillCar /></span>
+                                    <div className="flex items-center gap-2"><span><AiFillCar /></span>
                                         <span>{car.modele}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span>{car.agenceName}</span>
+                                        <span>{/*{data.doors}*/}</span>
                                         <span><GiCarDoor /></span>
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-between text-lg">
-                                    <div className="flex items-center gap-2">
-                    <span>
-                      <AiFillTool />
-                    </span>
+                                    <div className="flex items-center gap-2"><span><AiFillTool /></span>
                                         <span>{/*{data.transmission}*/}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <span>{/*{data.fuel}*/}</span>
-                                        <span>
-                      <BsFillFuelPumpFill />
-                    </span>
+                                        <span><BsFillFuelPumpFill /></span>
                                     </div>
                                 </div>
-                                <div>
-                                    <hr className="border border-lighter-grey" />
-                                </div>
+                                <div><hr className="border border-lighter-grey" /></div>
                                 <div>
                                     <a
                                         href="/authentification/login"
@@ -91,6 +81,6 @@ function Models() {
             </div>
         </section>
     );
-}
+};
 
-export default Models;
+export default SearchResultsPage;

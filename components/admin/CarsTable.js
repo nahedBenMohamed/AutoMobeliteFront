@@ -4,11 +4,14 @@ import axios from "axios";
 
 const VehicleTable = () => {
     const[cars, setCars] = useState([])
-    useEffect(() =>{
-        axios.get('/api/cars/cars').then(response =>{
-            setCars(response.data);
-        })
-    })
+
+    useEffect(() => {
+        axios.get('/api/cars/cars', { withCredentials: true })
+            .then(response => {
+                setCars(response.data);
+            })
+    }, [])
+
 
     return (
         <div>

@@ -36,10 +36,10 @@ export default function CarForm({
 
         if (id) {
             // Update
-            await axios.put("/api/cars/cars/", { ...data, id });
+            await axios.put("/api/cars/cars/", { ...data, id },{ withCredentials: true },);
         } else {
             // Create
-            await axios.post("/api/cars/cars", data);
+            await axios.post("/api/cars/cars", data,{ withCredentials: true });
         }
         setGoToCars(true);
     }
@@ -57,7 +57,7 @@ export default function CarForm({
                 data.append("file", file);
             }
             data.append("id", id);
-            const res = await axios.post("/api/cars/upload", data);
+            const res = await axios.post("/api/cars/upload", data,{ withCredentials: true },);
             const { message, imagePath } = res.data;
 
             if (message === "Image uploaded successfully") {

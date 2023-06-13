@@ -1,8 +1,8 @@
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import prisma from '@/lib/prisma';
 
 export default async function handle(req, res) {
-    const { nom, email, motDePasse, role } = req.body;
+    const { name,firstname, email, password, role } = req.body;
 
     // Vérifier si l'email est déjà utilisé
     const existingUser = await prisma.userAgency.findUnique({
@@ -16,14 +16,15 @@ export default async function handle(req, res) {
     }
 
     // Hasher le mot de passe
-    const hashedPassword = await bcrypt.hash(motDePasse, 10);
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     // Créer le nouvel utilisateur
     const newUser = await prisma.userAgency.create({
         data: {
-            nom: nom,
+            name: name,
+            firstname: firstname,
             email: email,
-            motDePasse: hashedPassword,
+            password: hashedPassword,
             role: role,
         },
     });

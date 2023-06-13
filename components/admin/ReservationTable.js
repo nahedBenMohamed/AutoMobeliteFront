@@ -1,46 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const RentalTable = () => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [rentalsPerPage] = useState(1); // Nombre de locations affichées par page
+    const [reservations, setReservations] = useState([]);
 
-    // Exemple de données de locations de véhicules
-    const rentals = [
-        {
-            nom: 'Doe',
-            prenom: 'John',
-            marque: 'Toyota',
-            model: 'Camry',
-            dateDebut: '2023-06-01',
-            dateFin: '2023-06-05',
-            prix: '50 DT / jour',
-        },
-        {
-            nom: 'Smith',
-            prenom: 'Jane',
-            marque: 'Honda',
-            model: 'Accord',
-            dateDebut: '2023-06-02',
-            dateFin: '2023-06-06',
-            prix: '60 DT / jour',
-        },
-    ];
-
-    // Index du dernier véhicule de la page
-    const lastRentalIndex = currentPage * rentalsPerPage;
-    // Index du premier véhicule de la page
-    const firstRentalIndex = lastRentalIndex - rentalsPerPage;
-    // Locations à afficher sur la page courante
-    const currentRentals = rentals.slice(firstRentalIndex, lastRentalIndex);
-
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
-
-    // Calcul du nombre total de pages
-    const totalPages = Math.ceil(rentals.length / rentalsPerPage);
-    // Tableau de numéros de pages
-    const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+    useEffect(() => {
+        // Appeler l'API pour récupérer les réservations
+        axios.get('/api/admin/reservations')
+            .then(response => {
+                setReservations(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }, []);
 
     return (
         <div>
@@ -58,39 +31,24 @@ const RentalTable = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {currentRentals.map((rental, index) => (
+                {reservations.map((reservation, index) => (
                     <tr key={index}>
-                        <td className="border px-4 py-2">{rental.nom}</td>
-                        <td className="border px-4 py-2">{rental.prenom}</td>
-                        <td className="border px-4 py-2">{rental.marque}</td>
-                        <td className="border px-4 py-2">{rental.model}</td>
-                        <td className="border px-4 py-2">{rental.dateDebut}</td>
-                        <td className="border px-4 py-2">{rental.dateFin}</td>
-                        <td className="border px-4 py-2">{rental.prix}</td>
+                        <td className="border px-4 py-2">{reservation.client.nom}</td>
+                        <td className="border px-4 py-2">{reservation.client.prenom}</td>
+                        <td className="border px-4 py-2">{reservation.voiture.marque}</td>
+                        <td className="border px-4 py-2">{reservation.voiture.modele}</td>
+                        <td className="border px-4 py-2">{reservation.dateDeDebut}</td>
+                        <td className="border px-4 py-2">{reservation.dateDeFin}</td>
+                        <td className="border px-4 py-2">{reservation.total}</td>
                         <td className="border px-4 py-2">
                             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                <a href="/admin/dashboard/reservations/details">Voir les détails</a>
+                                <a href={`/admin/dashboard/reservations/details/${reservation.id}`}>Voir les détails</a>
                             </button>
                         </td>
                     </tr>
                 ))}
                 </tbody>
             </table>
-
-            {/* Pagination */}
-            <div className="mt-8">
-                {pageNumbers.map((pageNumber) => (
-                    <button
-                        key={pageNumber}
-                        className={`${
-                            currentPage === pageNumber ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-700'
-                        } font-bold py-2 px-4 rounded mr-2`}
-                        onClick={() => handlePageChange(pageNumber)}
-                    >
-                        {pageNumber}
-                    </button>
-                ))}
-            </div>
         </div>
     );
 };

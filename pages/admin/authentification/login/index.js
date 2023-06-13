@@ -1,15 +1,10 @@
 import React from "react";
-import Login from "@/components/admin/login";
-
-
-
-
-
+import LoginAdmin from "@/components/admin/loginAdmin";
 
 function page() {
     return (
         <main>
-            <Login/>
+            <LoginAdmin/>
         </main>
 
 

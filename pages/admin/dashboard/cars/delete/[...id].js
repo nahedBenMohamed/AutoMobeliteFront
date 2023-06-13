@@ -7,11 +7,12 @@ export default  function DeleteCarPage(){
     const router = useRouter()
     const [carInfo,setCarInfo] = useState('')
     const {id} = router.query;
+
     useEffect(()=>{
         if(!id){
             return;
         }
-        axios.get('/api/cars/cars?id='+id).then(response =>{
+        axios.get('/api/cars/cars?id='+id,{ withCredentials: true }).then(response =>{
             setCarInfo(response.data);
         });
     }, [id]);
@@ -20,7 +21,7 @@ export default  function DeleteCarPage(){
     }
 
     async function deleteCar(){
-        await axios.delete('/api/cars/cars?id=' + id)
+        await axios.delete('/api/cars/cars?id='+id,{ withCredentials: true })
         goBack()
     }
     return(

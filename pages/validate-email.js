@@ -1,4 +1,3 @@
-import Link from "next/link";
 import jwt from "jsonwebtoken";
 import prisma from "@/lib/prisma";
 
