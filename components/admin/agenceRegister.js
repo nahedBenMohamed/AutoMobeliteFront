@@ -23,6 +23,7 @@ const AgenceAdd = () => {
             return;
         }
         try {
+            console.log({ name, telephone,email, adresse,responsableId });
             const response = await fetch('/api/agence/add-agence', {
                 method: 'POST',
                 headers: {
@@ -59,8 +60,8 @@ const AgenceAdd = () => {
                                 <div className="relative">
                                     <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                                     <input
-                                        id="nameAgency"
-                                        name="nameAgency"
+                                        id="name"
+                                        name="name"
                                         type="text"
                                         autoComplete="given-name"
                                         value={name} onChange={(e) => setName(e.target.value)}

@@ -1,10 +1,10 @@
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import nodemailer from "nodemailer";
 import prisma from "@/lib/prisma";
 import jwt from "jsonwebtoken";
 
 export default async function handle(req, res) {
-  const { name, email, password,firstname } = req.body;
+  const { name,firstname,email, password,telephone } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -14,6 +14,7 @@ export default async function handle(req, res) {
       firstname: firstname,
       email: email,
       password: hashedPassword,
+      telephone: telephone
     },
   });
 

@@ -17,10 +17,11 @@ model Client {
   updatedAt     DateTime   @default(now()) @map("updated_at")
   emailVerified Boolean    @default(false)
   telephone     String     @db.VarChar(100)
-  locations     Location[]
+  role          ClientRole @default(user)
+  rentals       Rental[]
 }
 
-model UserAgency {
+model AgencyUser {
   id        Int      @id @default(autoincrement())
   name      String   @db.VarChar(100)
   firstname String   @db.VarChar(100)
@@ -29,69 +30,59 @@ model UserAgency {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
   role      UserRole @default(admin)
-  Agence    Agence?
+  Agency    Agency?
 }
 
-model Agence {
-  name          String     @id @db.VarChar(100)
-  adresse       String     @db.VarChar(100)
+model Agency {
+  id            Int        @id @default(autoincrement())
+  name          String     @unique @db.VarChar(100)
+  address       String     @db.VarChar(100)
   email         String     @unique @db.VarChar(200)
   telephone     String     @db.VarChar(100)
-  responsableId Int        @unique
-  UserAgency    UserAgency @relation(fields: [responsableId], references: [id])
-  Voiture       Voiture[]
+  responsibleId Int        @unique
+  AgencyUser    AgencyUser @relation(fields: [responsibleId], references: [id])
+  Cars          Car[]
   createdAt     DateTime   @default(now()) @map("created_at")
   updatedAt     DateTime   @default(now()) @map("updated_at")
 }
 
-model Voiture {
+model Car {
   id           Int           @id @default(autoincrement())
-  agenceName   String        @db.VarChar(100)
-  marque       String        @db.VarChar(100)
-  modele       String        @db.VarChar(100)
-  annee        Int
-  kilometrage  Int
-  prix         Float
-  matricule    String
+  agencyId     Int
+  brand        String        @db.VarChar(100)
+  model        String        @db.VarChar(100)
+  year         Int
+  mileage      Int
+  price        Float
+  registration String
   images       String[]
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @default(now()) @map("updated_at")
-  etat         CarState      @default(disponible)
-  locations    Location[]
+  status       CarStatus     @default(available)
+  rentals      Rental[]
   maintenances Maintenance[]
-  Agence       Agence        @relation(fields: [agenceName], references: [name])
+  Agency       Agency        @relation(fields: [agencyId], references: [id])
 }
 
-model Location {
-  id            Int           @id @default(autoincrement())
-  utilisateurId Int
-  voitureId     Int
-  dateDeDebut   DateTime
-  dateDeFin     DateTime
-  total         Float
-  etat          LocationState @default(reservee)
-  client        Client        @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
-  voiture       Voiture       @relation(fields: [voitureId], references: [id], onDelete: Cascade)
-  paiements     Paiement[]
-}
-
-model Paiement {
-  id         Int           @id @default(autoincrement())
-  locationId Int
-  montant    Float
-  date       DateTime
-  methode    PaymentMethod @default(carteDeCredit)
-  etat       PaymentState  @default(attente)
-  location   Location      @relation(fields: [locationId], references: [id], onDelete: Cascade)
+model Rental {
+  id        Int          @id @default(autoincrement())
+  clientId  Int
+  carId     Int
+  startDate DateTime
+  endDate   DateTime
+  total     Float
+  status    RentalStatus @default(reserved)
+  client    Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  car       Car          @relation(fields: [carId], references: [id], onDelete: Cascade)
 }
 
 model Maintenance {
   id          Int      @id @default(autoincrement())
-  voitureId   Int
+  carId       Int
   date        DateTime
   description String   @db.VarChar(300)
-  cout        Float
-  voiture     Voiture  @relation(fields: [voitureId], references: [id], onDelete: Cascade)
+  cost        Float
+  car         Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
 }
 
 enum UserRole {
@@ -99,25 +90,18 @@ enum UserRole {
   superAdmin
 }
 
-enum CarState {
-  disponible
-  louee
+enum ClientRole {
+  user
+}
+
+enum CarStatus {
+  available
+  rented
   maintenance
 }
 
-enum LocationState {
-  reservee
-  enCours
-  terminee
-}
-
-enum PaymentMethod {
-  carteDeCredit
-  presentielle
-}
-
-enum PaymentState {
-  attente
-  reussi
-  echoue
+enum RentalStatus {
+  reserved
+  ongoing
+  completed
 }

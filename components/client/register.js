@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useRouter } from 'next/router';
-import { HiEye, HiEyeOff, HiLockClosed, HiMail, HiUser } from "react-icons/hi";
+import {HiEye, HiEyeOff, HiLockClosed, HiMail, HiPhone, HiUser} from "react-icons/hi";
 
 const RegisterPage = () => {
     const router = useRouter();
-    const [message, setMessage] = useState(''); // Nouvel état pour le message de succès
     const [errorMessage, setErrorMessage] = useState('');
     const [name, setName] = useState('');
     const [firstname, setFirstName] = useState('');
     const [email, setEmail] = useState('');
+    const [telephone, setTelephone] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -43,7 +43,7 @@ const RegisterPage = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, firstname, email, password }),
+                body: JSON.stringify({ name, firstname, email, password, telephone}),
             });
 
             if (response.ok) {
@@ -117,6 +117,24 @@ const RegisterPage = () => {
                         </div>
                         </div>
                     </div>
+                    <div>
+                        <label htmlFor="phone" className="block text-sm font-medium leading-6 text-gray-900">
+                            Phone
+                        </label>
+                        <div className="mt-2">
+                            <div className="relative">
+                                <HiPhone className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
+                                <input
+                                    id="phone"
+                                    name="phone"
+                                    type="phone"
+                                    autoComplete="email"
+                                    value={telephone} onChange={(e) => setTelephone(e.target.value)}
+                                    className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                />
+                            </div>
+                        </div>
+                    </div>
 
                     <div>
                         <div className="flex items-center justify-between">
@@ -165,7 +183,6 @@ const RegisterPage = () => {
                         </div>
                         <div className="mt-2">
                             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-                            {message && <div className="alert alert-success">{message}</div>}
                         </div>
                     </div>
 
