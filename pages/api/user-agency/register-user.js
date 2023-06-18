@@ -5,7 +5,7 @@ export default async function handle(req, res) {
     const { name,firstname, email, password, role } = req.body;
 
     // Vérifier si l'email est déjà utilisé
-    const existingUser = await prisma.userAgency.findUnique({
+    const existingUser = await prisma.agencyUser.findUnique({
         where: {
             email: email,
         },
@@ -19,7 +19,7 @@ export default async function handle(req, res) {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     // Créer le nouvel utilisateur
-    const newUser = await prisma.userAgency.create({
+    const newUser = await prisma.agencyUser.create({
         data: {
             name: name,
             firstname: firstname,

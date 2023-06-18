@@ -4,7 +4,7 @@ export default async function handle(req, res) {
     const {method} = req;
 
     if (method === 'GET') {
-        const voitures = await prisma.voiture.findMany();
+        const voitures = await prisma.car.findMany();
         res.json(voitures);
         }
 

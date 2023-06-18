@@ -92,8 +92,8 @@ const LoginAdmin = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="mt-2">
-                                {message && <p style={{ color: message.includes('incorrect') ? 'red' : 'green' }}>{message}</p>}
+                            <div className="mt-4">
+                                {message && <p style={{ color:'red' }}>{message}</p>}
                             </div>
 
                             <div>

@@ -1,5 +1,5 @@
 // utils/auth.js
-import { parseCookies } from 'nookies';
+import {parseCookies} from 'nookies';
 import jwt from 'jsonwebtoken';
 
 export const getSession = (ctx) => {
@@ -9,27 +9,22 @@ export const getSession = (ctx) => {
         return null;
     }
 
-    // décode le token
-    const session = jwt.verify(token, process.env.JWT_SECRET);
-
-    return session;
+    // decode the token
+    return jwt.verify(token, process.env.JWT_SECRET);
 };
 
-export const protectRoute = (ctx, roles) => {
-    const session = getSession(ctx);
-
-    // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
+export const protectRoute = async (ctx, allowedRoles) => {
+    const session = await getSession(ctx);
     if (!session) {
         return {
             redirect: {
-                destination: '/authentification/login',
+                destination: '/login',
                 permanent: false,
             },
         }
     }
 
-    // Si l'utilisateur n'a pas le bon rôle, redirigez-le vers la page d'accueil
-    if (!roles.includes(session.role)) {
+    if (!allowedRoles.includes(session.role)) {
         return {
             redirect: {
                 destination: '/',
@@ -37,8 +32,7 @@ export const protectRoute = (ctx, roles) => {
             },
         }
     }
-
     return {
-        props: { session },
+        props: {session}
     }
 };

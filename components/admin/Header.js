@@ -2,25 +2,28 @@ import { Disclosure, Menu } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon} from '@heroicons/react/24/outline'
 import {protectRoute} from "@/utils/auth";
 import { useRouter } from 'next/router';
+import React, {useEffect, useState} from "react";
 
 
 const navigation = [
-    { name: 'Dashboard', href: '/admin/dashboard/home', current: true },
-    { name: 'Cars', href: '/admin/dashboard/cars', current: false },
-    { name: 'Users', href: '/admin/dashboard/users', current: false },
-    { name: 'Reservation', href: '/admin/dashboard/reservations', current: false },
-    { name: 'Profile', href: '/admin/dashboard/profile', current: false },
-    { name: 'Agence', href: '/admin/dashboard/agency', current: false },
+    { name: 'Dashboard', href: '/admin/dashboard/home'},
+    { name: 'Cars', href: '/admin/dashboard/cars'},
+    { name: 'Users', href: '/admin/dashboard/users'},
+    { name: 'Reservation', href: '/admin/dashboard/reservations'},
+    { name: 'Profile', href: '/admin/dashboard/profile'},
 ];
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
 }
 
-
 function DashboardHeader() {
-
     const router = useRouter();
+    const [currentLink, setCurrentLink] = useState('');
+
+    useEffect(() => {
+        setCurrentLink(router.pathname);
+    }, [router.pathname]);
 
     const handleLogout = async () => {
         const res = await fetch('/api/auth/logout', {
@@ -44,11 +47,7 @@ function DashboardHeader() {
                                 <div className="flex h-16 items-center justify-between">
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <img
-                                                className="h-8 w-8"
-                                                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                                                alt="Your Company"
-                                            />
+                                            <img className="h-10 w-10" src="/mobelite.png" alt="mobelite" />
                                         </div>
                                         <div className="hidden md:block">
                                             <div className="ml-10 flex items-baseline space-x-4">
@@ -57,12 +56,13 @@ function DashboardHeader() {
                                                         key={item.name}
                                                         href={item.href}
                                                         className={classNames(
-                                                            item.current
+                                                            currentLink === item.href
                                                                 ? 'bg-gray-900 text-white'
                                                                 : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                                                             'rounded-md px-3 py-2 text-sm font-medium'
                                                         )}
-                                                        aria-current={item.current ? 'page' : undefined}
+                                                        aria-current={currentLink === item.href ? 'page' : undefined}
+                                                        onClick={() => setCurrentLink(item.href)}
                                                     >
                                                         {item.name}
                                                     </a>
@@ -72,8 +72,7 @@ function DashboardHeader() {
                                     </div>
                                     <div className="hidden md:block">
                                         <div className="ml-4 flex items-center md:ml-6">
-
-                                            {/* Profile dropdown */}
+                                            {/* SuperAdminProfile dropdown */}
                                             <Menu as="div" className="relative ml-3">
                                                 <div>
                                                     <button
@@ -117,10 +116,13 @@ function DashboardHeader() {
                                             as="a"
                                             href={item.href}
                                             className={classNames(
-                                                item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                                                currentLink === item.href
+                                                    ? 'bg-gray-900 text-white'
+                                                    : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                                                 'block rounded-md px-3 py-2 text-base font-medium'
                                             )}
-                                            aria-current={item.current ? 'page' : undefined}
+                                            aria-current={currentLink === item.href ? 'page' : undefined}
+                                            onClick={() => setCurrentLink(item.href)}
                                         >
                                             {item.name}
                                         </Disclosure.Button>
@@ -154,8 +156,8 @@ function DashboardHeader() {
     );
 }
 
-export default DashboardHeader
+export default DashboardHeader;
 
 export const getServerSideProps = (ctx) => {
-    return protectRoute(ctx, ['admin', 'superAdmin']);
+    return protectRoute(ctx, ['admin']);
 };

@@ -4,7 +4,8 @@ export default async function handle(req, res) {
     const { name, adresse, email, telephone, responsableId } = req.body;
 
     // Vérifier si l'agence existe déjà
-    const existingAgence = await prisma.agence.findUnique({
+    console.log({ name, adresse, email, telephone, responsableId });
+    const existingAgence = await prisma.agency.findUnique({
         where: {
             name: name,
         },
@@ -15,9 +16,9 @@ export default async function handle(req, res) {
     }
 
     // Vérifier si le id est déjà relier a une agence
-    const existingUserId = await prisma.agence.findUnique({
+    const existingUserId = await prisma.agency.findUnique({
         where: {
-            responsableId: responsableId,
+            responsibleId: responsableId,
         },
     });
 
@@ -26,7 +27,7 @@ export default async function handle(req, res) {
     }
 
     // Vérifier si le responsable existe
-    const responsableExists = await prisma.userAgency.findUnique({
+    const responsableExists = await prisma.agencyUser.findUnique({
         where: {
             id: responsableId,
         },
@@ -37,13 +38,13 @@ export default async function handle(req, res) {
     }
 
     // Créer la nouvelle agence avec la référence au responsable
-    const newAgence = await prisma.agence.create({
+    const newAgence = await prisma.agency.create({
         data: {
             name: name,
-            adresse: adresse,
+            address: adresse,
             email: email,
             telephone: telephone,
-            responsableId: responsableId,
+            responsibleId: responsableId,
         },
     });
 

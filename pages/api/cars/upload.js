@@ -20,7 +20,7 @@ export default async function handle(req, res) {
 
         fs.renameSync(tempPath, targetPath);
 
-        await prisma.voiture.update({
+        await prisma.car.update({
             where: { id: carId },
             data: { images: { set: fileName } },
         });
