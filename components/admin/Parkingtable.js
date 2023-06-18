@@ -7,10 +7,11 @@ const Parkingtable = () => {
     const [parkings, setParking] = useState([]);
 
     useEffect(() => {
-        axios.get('/api/admin/parking').then((response) => {
-            setParking(response.data);
-        });
-    }, []);
+        axios.get('/api/admin/parking', { withCredentials: true })
+            .then(response => {
+                setParking(response.data);
+            })
+    }, [])
 
     return (
         <div className="overflow-x-auto">
@@ -18,7 +19,7 @@ const Parkingtable = () => {
                 <thead>
                 <tr>
                     <th className="px-4 py-2">Name Parking</th>
-                    <th className="px-4 py-2">Adress</th>
+                    <th className="px-4 py-2">Address</th>
                     <th className="px-4 py-2">City</th>
                     <th className="px-4 py-2">Agency</th>
                     <th className="px-4 py-2">Actions</th>

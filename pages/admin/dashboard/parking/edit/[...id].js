@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import DashboardHeader from "@/components/admin/Header";
 import Parkingform from "@/components/admin/Parkingform";
+import {protectRoute} from "@/utils/auth";
 
 
 export default function EditAgence(){
@@ -29,3 +30,7 @@ export default function EditAgence(){
 
     )
 }
+
+export const getServerSideProps = (ctx) => {
+    return protectRoute(ctx, ['admin']);
+};

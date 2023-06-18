@@ -34,7 +34,7 @@ const VehicleTable = () => {
                 {cars.map(car => (
                     <tr key={car.id}>
                         <td className="border px-4 py-2">{car.Agency.name}</td>
-                        <td className="border px-4 py-2">{car.parking.name}</td>
+                        <td className="border px-4 py-2">{car.parking?.name}</td>
                         <td className="border px-4 py-2">{car.brand}</td>
                         <td className="border px-4 py-2">{car.model}</td>
                         <td className="border px-4 py-2">{car.registration}</td>

@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import SuperAdminHeader from "@/components/super-admin/super-admin-header";
 import SuperAdminParkingform from "@/components/super-admin/super-admin-parkingform";
+import {protectRoute} from "@/utils/auth";
 
 export default function EditAgence(){
 
@@ -28,3 +29,7 @@ export default function EditAgence(){
 
     )
 }
+
+export const getServerSideProps = (ctx) => {
+    return protectRoute(ctx, ['superAdmin']);
+};

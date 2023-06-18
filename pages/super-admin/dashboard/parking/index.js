@@ -1,5 +1,6 @@
 import SuperAdminHeader from "@/components/super-admin/super-admin-header";
 import SuperAdminParkingtable from "@/components/super-admin/super-admin-parkingtable";
+import {protectRoute} from "@/utils/auth";
 
 
 export default function Car ()  {
@@ -11,4 +12,8 @@ export default function Car ()  {
             </div>
         </div>
     );
+};
+
+export const getServerSideProps = (ctx) => {
+    return protectRoute(ctx, ['superAdmin']);
 };

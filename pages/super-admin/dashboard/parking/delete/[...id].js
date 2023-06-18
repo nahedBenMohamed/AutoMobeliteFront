@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import SuperAdminHeader from "@/components/super-admin/super-admin-header";
+import {protectRoute} from "@/utils/auth";
 
 export default function DeleteParkingPage() {
     const router = useRouter();
@@ -47,3 +48,7 @@ export default function DeleteParkingPage() {
         </div>
     );
 }
+
+export const getServerSideProps = (ctx) => {
+    return protectRoute(ctx, ['superAdmin']);
+};

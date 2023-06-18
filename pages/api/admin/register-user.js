@@ -2,9 +2,9 @@ import * as bcrypt from 'bcrypt';
 import prisma from '@/lib/prisma';
 
 export default async function handle(req, res) {
-    const { name,firstname, email, password, role } = req.body;
+    const { name, firstname, email, password, role } = req.body;
 
-    // Vérifier si l'email est déjà utilisé
+    // Check if the email is already in use
     const existingUser = await prisma.agencyUser.findUnique({
         where: {
             email: email,
@@ -12,13 +12,14 @@ export default async function handle(req, res) {
     });
 
     if (existingUser) {
+        // Return an error response if the email is already in use
         return res.status(400).json({ message: 'Cet email est déjà utilisé.' });
     }
 
-    // Hasher le mot de passe
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Créer le nouvel utilisateur
+    // Create the new user
     const newUser = await prisma.agencyUser.create({
         data: {
             name: name,
@@ -29,6 +30,6 @@ export default async function handle(req, res) {
         },
     });
 
-    // Envoyer une réponse de succès
-    return res.status(200).json({ message: 'Utilisateur enregistré avec succès.',newUser });
+    // Send a success response
+    return res.status(200).json({ message: 'Utilisateur enregistré avec succès.', newUser });
 }

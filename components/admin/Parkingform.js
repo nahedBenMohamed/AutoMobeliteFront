@@ -3,18 +3,34 @@ import { useRouter } from "next/router";
 import { HiLocationMarker, HiMail, HiUser } from "react-icons/hi";
 import axios from "axios";
 import Link from "next/link";
+import {parseCookies} from "nookies";
+import jwt from "jsonwebtoken";
 
 const ParkingForm = ({ id }) => {
     const router = useRouter();
-
+    const [agency, setAgency] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [name, setName] = useState("");
     const [city, setCity] = useState("");
     const [address, setAddress] = useState("");
-    const [agencyName, setAgencyName] = useState("");
     const [goToParkings, setGoToParkings] = useState(false);
+    const [errorMessageVisible, setErrorMessageVisible] = useState(true);
 
     useEffect(() => {
+        const { token } = parseCookies();
+        // Verify JWT and extract payload
+        if (token) {
+            try {
+                const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+                // Set agency name from JWT
+                setAgency(decodedToken.agency);
+            } catch (error) {
+                console.error("Invalid token.");
+            }
+        } else {
+            console.error("No cookies found.");
+        }
+
         if (id) {
             axios
                 .get("/api/admin/parking?id=" + id, { withCredentials: true })
@@ -23,11 +39,9 @@ const ParkingForm = ({ id }) => {
                     setName(parkingData.name);
                     setAddress(parkingData.address);
                     setCity(parkingData.city);
-                    setAgencyName(parkingData.Agency?.name);
                 })
                 .catch((error) => {
                     console.log(error);
-                    setErrorMessage("Erreur lors du chargement depuis la base de données");
                 });
         }
     }, [id]);
@@ -36,25 +50,36 @@ const ParkingForm = ({ id }) => {
         ev.preventDefault();
 
         // Vérification des données côté client (facultatif)
-        if (!name || !city || !address || !agencyName) {
+        if (!name || !city || !address) {
             setErrorMessage("Veuillez remplir tous les champs.");
+            setErrorMessageVisible(true); // Set this to true when you want to show the error message
+            setTimeout(() => {
+                setErrorMessageVisible(false); // Set this to false after 5 seconds
+            }, 5000);
             return;
         }
 
-        const data = { name, address, city, agencyName };
+        const data = { name, address, city,agency };
         try {
             if (id) {
                 // Update
-                await axios.put("/api/admin/parking/", { ...data, id });
+                await axios.put("/api/admin/parking/", { ...data, id },{ withCredentials: true });
             } else {
                 // Create
-                await axios.post("/api/admin/parking/", data);
+                await axios.post("/api/admin/parking/", data,{ withCredentials: true });
             }
             setGoToParkings(true);
         } catch (error) {
+            if (error.response) {
             setErrorMessage(error.response.data.message);
+            setErrorMessageVisible(true);
+            setTimeout(() => {
+                setErrorMessageVisible(false);
+            }, 5000);
         }
     }
+
+}
 
     if (goToParkings) {
         router.push("/admin/dashboard/parking");
@@ -68,7 +93,7 @@ const ParkingForm = ({ id }) => {
                 </h2>
                 <div className=" mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <form onSubmit={saveParking}>
-                        <div className=" mt-4 grid grid-cols-2 gap-4">
+                        <div>
                             <div>
                                 <label htmlFor="name" className="block font-semibold">
                                     Name Parking
@@ -82,23 +107,6 @@ const ParkingForm = ({ id }) => {
                                         autoComplete="given-name"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label htmlFor="agencyName" className="block font-semibold">
-                                    Name Agency
-                                </label>
-                                <div className="relative">
-                                    <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
-                                    <input
-                                        id="agencyName"
-                                        name="agencyName"
-                                        type="text"
-                                        autoComplete="responsable-id"
-                                        value={agencyName}
-                                        onChange={(e) => setAgencyName(e.target.value)}
                                         className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
                                 </div>
@@ -145,8 +153,8 @@ const ParkingForm = ({ id }) => {
                             </div>
                         </div>
                         <div>
-                            <div className="mt-2 mb-8">
-                                {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+                            <div className="mt-2 mb-4">
+                                {errorMessageVisible && errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                             </div>
                             <div className="flex justify-center gap-4">
                                 <button

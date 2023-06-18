@@ -4,7 +4,7 @@ import { HiLocationMarker, HiMail, HiUser } from "react-icons/hi";
 import axios from "axios";
 import Link from "next/link";
 
-const ParkingForm = ({ id }) => {
+const SuperAdminParkingForm = ({ id }) => {
     const router = useRouter();
 
     const [errorMessage, setErrorMessage] = useState("");
@@ -12,7 +12,8 @@ const ParkingForm = ({ id }) => {
     const [city, setCity] = useState("");
     const [address, setAddress] = useState("");
     const [agencyName, setAgencyName] = useState("");
-    const [goToParkings, setGoToParkings] = useState(false);
+    const [goToParking, setGoToParking] = useState(false);
+    const [errorMessageVisible, setErrorMessageVisible] = useState(true);
 
     useEffect(() => {
         if (id) {
@@ -38,6 +39,10 @@ const ParkingForm = ({ id }) => {
         // Vérification des données côté client (facultatif)
         if (!name || !city || !address || !agencyName) {
             setErrorMessage("Veuillez remplir tous les champs.");
+            setErrorMessageVisible(true);
+            setTimeout(() => {
+                setErrorMessageVisible(false);
+            }, 5000);
             return;
         }
 
@@ -50,13 +55,19 @@ const ParkingForm = ({ id }) => {
                 // Create
                 await axios.post("/api/super-admin/parking/", data);
             }
-            setGoToParkings(true);
+            setGoToParking(true);
         } catch (error) {
-            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                setErrorMessage(error.response.data.message);
+                setErrorMessageVisible(true);
+                setTimeout(() => {
+                    setErrorMessageVisible(false);
+                }, 5000);
+            }
         }
     }
 
-    if (goToParkings) {
+    if (goToParking) {
         router.push("/super-admin/dashboard/parking");
     }
 
@@ -145,8 +156,8 @@ const ParkingForm = ({ id }) => {
                             </div>
                         </div>
                         <div>
-                            <div className="mt-2 mb-8">
-                                {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+                            <div className="mt-2 mb-4">
+                                {errorMessageVisible && errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                             </div>
                             <div className="flex justify-center gap-4">
                                 <button
@@ -173,4 +184,4 @@ const ParkingForm = ({ id }) => {
     );
 };
 
-export default ParkingForm;
+export default SuperAdminParkingForm;

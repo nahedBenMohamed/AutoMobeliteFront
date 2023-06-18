@@ -1,5 +1,6 @@
 import SuperAdminHeader from "@/components/super-admin/super-admin-header";
-import ParkingForm from "@/components/super-admin/super-admin-parkingform";
+import {protectRoute} from "@/utils/auth";
+import SuperAdminParkingForm from "@/components/super-admin/super-admin-parkingform";
 
 
 export default function Car ()  {
@@ -7,8 +8,12 @@ export default function Car ()  {
         <div>
             <SuperAdminHeader />
             <div style={{ margin: '0px 90px' }}>
-                <ParkingForm />
+                <SuperAdminParkingForm />
             </div>
         </div>
     );
+};
+
+export const getServerSideProps = (ctx) => {
+    return protectRoute(ctx, ['superAdmin']);
 };
