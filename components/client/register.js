@@ -59,9 +59,9 @@ const RegisterPage = () => {
 
 
     return (
-        <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
-            <div className="w-full p-4 bg-white rounded-md shadow-md lg:max-w-xl">
-                <h2 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Welcome</h2>
+        <div className="relative flex flex-col items-center justify-center min-h-screen rounded-lg shadow-l overflow-hidden">
+            <div className="mt-12 w-full p-4 bg-white rounded-lg shadow-lg lg:max-w-xl">
+                <h2 className="-mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Welcome</h2>
             <div className=" mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form onSubmit={handleSubmit} >
                     <div className=" mt-4 grid grid-cols-2 gap-4">

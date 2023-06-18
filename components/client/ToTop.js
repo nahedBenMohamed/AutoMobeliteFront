@@ -6,13 +6,14 @@ function ScrollTop() {
     const { goUp, setGoUp } = useTogglersContext();
 
     useEffect(() => {
-        const onPageScroll = () => setGoUp(window.pageYOffset > 600 ? true : false);
+        const onPageScroll = () =>
+            setGoUp && setGoUp(window.pageYOffset > 600 ? true : false);
         window.addEventListener("scroll", onPageScroll);
 
         return () => {
             window.removeEventListener("scroll", onPageScroll);
         };
-    }, []);
+    }, [setGoUp]);
 
     return (
         <section id="to-top">

@@ -1,65 +1,83 @@
+import React from 'react';
 import Link from "next/link";
-import React from "react";
-/*import Phone from 'mdi-material-ui/Phone'
-import EmailOutline from 'mdi-material-ui/EmailOutline';*/
 
-function Footer() {
+function Footer () {
+    const footerLinks = [
+        {
+            title: "About",
+            links: [
+                { title: "How it works", url: "/" },
+                { title: "Featured", url: "/" },
+                { title: "Partnership", url: "/" },
+                { title: "Bussiness Relation", url: "/" },
+            ],
+        },
+        {
+            title: "Company",
+            links: [
+                { title: "Events", url: "/" },
+                { title: "Blog", url: "/" },
+                { title: "Podcast", url: "/" },
+                { title: "Invite a friend", url: "/" },
+            ],
+        },
+        {
+            title: "Socials",
+            links: [
+                { title: "Discord", url: "/" },
+                { title: "Instagram", url: "/" },
+                { title: "Twitter", url: "/" },
+                { title: "Facebook", url: "/" },
+            ],
+        },
+    ];
     return (
-        <section id="footer">
-            <div className="bg-white px-8 lg:px-32 py-16 text-center grid grid-cols-1 lg:grid-cols-2 lg:text-left gap-60">
-                <div className="space-y-6">
-                    <div className="space-y-4">
-                        <a className="font-bold text-2xl">AUTO<span className="text-blue-600">MOBELITE</span></a>
-                        <p className="text-custom-grey">
-                            We offer a wide range of vehicles for all your driving needs. We
-                            have the perfect car to meet your needs.
-                        </p>
-                    </div>
-                    <div>
-                        <ul className="space-y-2">
-                            <li>
-                                <Link href="tel:123456789" className="flex items-center justify-center lg:justify-start gap-2 hover:text-blue-600 transition-all duration-300 ease-linear">
-                                    {/*<span><Phone /></span>*/}
-                                    <span className="font-semibold">(123)-456-789</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="mailto:carrental@gmail.com" className="flex items-center justify-center lg:justify-start gap-2 hover:text-blue-600 transition-all duration-300 ease-linear">
-                                    {/*<span><EmailOutline /></span>*/}
-                                    <span className="font-semibold">automobelite@gmail.com</span>
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
+        <footer className="flex flex-col text-black-100 mt-5 border- border-gray-300 bg-gray-100">
+            <div className="flex max-md:flex-col flex-wrap justify-between gap-5 sm:px-16 px-6 py-10">
+                <div className="flex flex-col justify-start items-start gap-6">
+                    <Link href="/" className="text-xl justify-center items-center">
+                        AUTO<span className="text-blue-600">MOBELITE</span>
+                    </Link>
+                    <p className="text-base text-gray-700">
+                        Automobelite <br/>
+                        All rights reserved & copy
+
+                    </p>
                 </div>
-                <div className="space-y-4">
-                    <h1 className="font-bold text-2xl">COMPANIES</h1>
-                    <ul className="space-y-2">
-                        <li>
-                            <a href="#top" className="hover:text-blue-600 transition-all duration-300 ease-linear">
-                                Sousse
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#top" className="hover:text-blue-600 transition-all duration-300 ease-linear">
-                                Carrière
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#top" className="hover:text-blue-600 transition-all duration-300 ease-linear">
-                                Blogue
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#top" className="hover:text-blue-600 transition-all duration-300 ease-linear">
-                                How we work
-                            </a>
-                        </li>
-                    </ul>
+                <div className="footer__links">
+                    {footerLinks.map((item) => (
+                        <div key={item.title} className="footer__link">
+                            <h3 className="font-bold">{item.title}</h3>
+                            <div className="flex flex-col gap-5">
+                                {item.links.map((link) => (
+                                    <Link
+                                        key={link.title}
+                                        href={link.url}
+                                        className="text-gray-500"
+                                    >
+                                        {link.title}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
-        </section>
+
+            <div className='flex justify-between items-center flex-wrap mt-10 border-t border-gray-100 sm:px-16 px-6 py-10'>
+                <p>@2023 Automobelite. All rights reserved</p>
+
+                <div className="footer__copyrights-link">
+                    <Link href="/" className="text-gray-500">
+                        Privacy & Policy
+                    </Link>
+                    <Link href="/" className="text-gray-500">
+                        Terms & Conditions
+                    </Link>
+                </div>
+            </div>
+        </footer>
     );
-}
+};
 
 export default Footer;

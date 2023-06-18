@@ -1,6 +1,6 @@
 import React from 'react';
 import DashboardHeader from "@/components/admin/Header";
-import {protectRoute} from "@/utils/auth";
+//import {protectRoute} from "@/utils/auth";
 
 
 
@@ -11,9 +11,9 @@ function Dashboard({session}) {
         <DashboardHeader/>
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
 
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+           {/* <h1 className="text-3xl font-bold tracking-tight text-gray-900">
                 Bienvenue, {session.name} {session.firstname}. Vous êtes responsable de l'agence {session.agenceName}.
-            </h1>
+            </h1>*/}
         </div>
         </div>
     )
@@ -21,6 +21,6 @@ function Dashboard({session}) {
 
 export default Dashboard;
 
-export const getServerSideProps = (ctx) => {
+/*export const getServerSideProps = (ctx) => {
     return protectRoute(ctx, ['admin', 'superAdmin']);
-};
+};*/

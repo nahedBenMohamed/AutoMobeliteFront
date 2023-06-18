@@ -14,7 +14,6 @@ export default function Redirect() {
                         </button>
                     </>
 
-
             </div>
         </div>
     );
