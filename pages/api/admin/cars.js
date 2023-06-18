@@ -41,6 +41,7 @@ export default async function handle(req, res) {
         if (method === "POST") {
             const {
                 agency: postAgencyName,
+                parkingName,
                 brand,
                 model,
                 year,
@@ -76,6 +77,11 @@ export default async function handle(req, res) {
                             name: agency,
                         },
                     },
+                    parking: {
+                        connect: {
+                            name: parkingName,
+                        },
+                    },
                 },
                 include: { Agency: true }, // Include Agence object in the response
             });
@@ -86,7 +92,7 @@ export default async function handle(req, res) {
                 const voitureId = req.query.id;
                 const voiture = await prisma.car.findUnique({
                     where: { id: Number(voitureId) },
-                    include: { Agency: true },
+                    include: {Agency: true, parking: true}, // Inclure le parking
                 });
 
                 if (!voiture || voiture.Agency.name !== agency) {
@@ -97,7 +103,7 @@ export default async function handle(req, res) {
             } else {
                 const voitures = await prisma.car.findMany({
                     where: { Agency: { name: agency } },
-                    include: { Agency: true },
+                    include: {Agency: true, parking: true}, // Inclure le parking
                 });
 
                 res.json(voitures);
@@ -106,6 +112,7 @@ export default async function handle(req, res) {
 
         if (method === "PUT") {
             const {
+                parkingName,
                 brand,
                 model,
                 year,
@@ -122,7 +129,7 @@ export default async function handle(req, res) {
 
             const voiture = await prisma.car.findUnique({
                 where: { id: Number(id) },
-                include: { Agency: true }, // Include Agence object in the response
+                include: {Agency: true, parking: true}, // Inclure le parking
             });
 
             if (voiture.Agency.name !== agency) {
@@ -142,8 +149,13 @@ export default async function handle(req, res) {
                     registration,
                     status,
                     images: { set: images },
+                    parking: {
+                        connect: {
+                            name: parkingName,
+                        },
+                    },
                 },
-                include: { Agency: true }, // Include Agence object in the response
+                include: {Agency: true, parking: true}, // Inclure le parking
             });
 
             res.json(updatedCar);
@@ -154,7 +166,7 @@ export default async function handle(req, res) {
                 const voitureId = req.query.id;
                 const voiture = await prisma.car.findUnique({
                     where: { id: Number(voitureId) },
-                    include: { Agency: true }, // Include Agence object in the response
+                    include: {Agency: true, parking: true}, // Inclure le parking
                 });
 
                 if (voiture.Agency.name !== agency) {
@@ -166,7 +178,7 @@ export default async function handle(req, res) {
                 res.json(
                     await prisma.car.delete({
                         where: { id: Number(voitureId) },
-                        include: { Agency: true }, // Include Agence object in the response
+                        include: {Agency: true, parking: true}, // Inclure le parking
                     })
                 );
             }

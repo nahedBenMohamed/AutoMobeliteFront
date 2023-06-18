@@ -18,12 +18,13 @@ export default function CarForm({ id }) {
     const [isUploading, setIsUploading] = useState(false);
     const [goToCars, setGoToCars] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [parkingName, setParkingName] = useState("");
     const router = useRouter();
 
     useEffect(() => {
         if (id) {
             axios
-                .get(`/api/cars/cars?id=${id}`, { withCredentials: true })
+                .get(`/api/admin/cars?id=${id}`, { withCredentials: true })
                 .then((response) => {
                     const carData = response.data;
                     setAgency(carData.Agency.name);
@@ -35,6 +36,7 @@ export default function CarForm({ id }) {
                     setStatus(carData.status);
                     setImages(carData.images)
                     setRegistration(carData.registration);
+                    setParkingName(carData.parking.name);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -47,7 +49,7 @@ export default function CarForm({ id }) {
         ev.preventDefault();
 
         // Vérification des données côté client (facultatif)
-        if (!agency || !brand || !model || !year || !mileage || !price || !registration || !status) {
+        if (!agency || !brand || !model || !year || !mileage || !price || !registration || !status || !parkingName) {
             setErrorMessage("Veuillez remplir tous les champs.");
             return;
         }
@@ -62,15 +64,16 @@ export default function CarForm({ id }) {
             registration,
             status,
             images,
+            parkingName,
         };
 
         try {
             if (id) {
                 // Update car
-                await axios.put("/api/cars/cars/", { ...data, id },{ withCredentials: true });
+                await axios.put("/api/admin/cars/", { ...data, id, parkingName},{ withCredentials: true });
             } else {
                 // Create car
-                await axios.post("/api/cars/cars", data,{ withCredentials: true });
+                await axios.post("/api/admin/cars", data,{ withCredentials: true });
             }
             setGoToCars(true);
         } catch (error) {
@@ -92,7 +95,7 @@ export default function CarForm({ id }) {
             }
             data.append("id", id);
             try {
-                const res = await axios.post("/api/cars/upload", data, { withCredentials: true });
+                const res = await axios.post("/api/admin/upload", data, { withCredentials: true });
                 const { message, imagePath } = res.data;
                 if (message === "Image uploaded successfully") {
                     setImages((oldImages) => [...oldImages, imagePath]);
@@ -133,6 +136,20 @@ export default function CarForm({ id }) {
                                 onChange={(ev) => setAgency(ev.target.value)}
                                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                                 placeholder="Agence"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="parkingName" className="sr-only">
+                                Nom du parking
+                            </label>
+                            <input
+                                id="parkingName"
+                                name="parkingName"
+                                type="text"
+                                value={parkingName}
+                                onChange={(ev) => setParkingName(ev.target.value)}
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                placeholder="Nom du parking"
                             />
                         </div>
                         <div>

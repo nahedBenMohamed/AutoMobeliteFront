@@ -42,6 +42,7 @@ model Agency {
   responsibleId Int        @unique
   AgencyUser    AgencyUser @relation(fields: [responsibleId], references: [id])
   Cars          Car[]
+  Parking       Parking[]
   createdAt     DateTime   @default(now()) @map("created_at")
   updatedAt     DateTime   @default(now()) @map("updated_at")
 }
@@ -61,6 +62,8 @@ model Car {
   status       CarStatus     @default(available)
   rentals      Rental[]
   maintenances Maintenance[]
+  parkingName  String?       @db.VarChar(100)
+  parking      Parking?      @relation(fields: [parkingName], references: [name])
   Agency       Agency        @relation(fields: [agencyId], references: [id])
 }
 
@@ -83,6 +86,18 @@ model Maintenance {
   description String   @db.VarChar(300)
   cost        Float
   car         Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+}
+
+model Parking {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique @db.VarChar(100)
+  address   String   @db.VarChar(100)
+  city      String   @db.VarChar(100)
+  agencyId  Int
+  Agency    Agency   @relation(fields: [agencyId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  Car       Car[]
 }
 
 enum UserRole {

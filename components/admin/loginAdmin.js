@@ -13,7 +13,7 @@ const LoginAdmin = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const response = await fetch('/api/user-agency/login', {
+        const response = await fetch('/api/admin/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

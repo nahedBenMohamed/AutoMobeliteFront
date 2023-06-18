@@ -1,41 +1,23 @@
 import React, { useState } from "react";
-import { useTogglersContext } from "@/components/context/togglers";
-import jwt_decode from "jwt-decode";
 import { useRouter } from "next/router";
 import VehicleSearchForm from "@/components/client/VehicleSearchForm";
 
 function HeaderConnected() {
     const router = useRouter()
-
-    const { setMobileNavbar } = useTogglersContext();
-
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
     const toggleDropdown = () => {
         setIsDropdownOpen((prevState) => !prevState);
     };
 
     const handleLogout = async () => {
-        try {
-            await fetch('/api/logout', {
-                method: 'POST',
-                credentials: 'include',
-            });
+        const res = await fetch('/api/auth/logout', {
+            method: 'POST',
+        });
 
-            const accessToken = localStorage.getItem('accessToken');
-            if (accessToken) {
-                const decodedToken = jwt_decode(accessToken);
-                const currentTimeInSeconds = Math.floor(Date.now() / 1000);
-
-                if (decodedToken.exp < currentTimeInSeconds) {
-                    await router.push('/authentification/login');
-                    return;
-                }
-            }
-
+        if (res.ok) {
             await router.push('/authentification/login');
-        } catch (error) {
-            console.error('Une erreur s\'est produite lors de la déconnexion', error);
+        } else {
+            // handle error
         }
     };
 

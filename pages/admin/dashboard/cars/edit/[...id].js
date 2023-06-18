@@ -15,7 +15,7 @@ export default function EditCar(){
         if(!id){
             return;
         }
-        axios.get('/api/cars/cars?id='+id,{ withCredentials: true }).then(response =>{
+        axios.get('/api/admin/cars?id='+id,{ withCredentials: true }).then(response =>{
             setCarInfo(response.data);
         })
     }, [id]);

@@ -38,7 +38,7 @@ const RegisterAdmin = () => {
         }
 
         try {
-            const response = await fetch('/api/user-agency/register-user', {
+            const response = await fetch('/api/admin/register-user', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
