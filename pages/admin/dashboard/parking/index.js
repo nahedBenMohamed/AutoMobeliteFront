@@ -1,13 +1,13 @@
-import SuperAdminHeader from "@/components/super-admin/super-admin-header";
-import SuperAdminParkingtable from "@/components/super-admin/super-admin-parkingtable";
+import Parkingtable from "@/components/admin/Parkingtable";
+import DashboardHeader from "@/components/admin/Header";
 
 
 export default function Car ()  {
     return (
         <div>
-            <SuperAdminHeader />
+            <DashboardHeader />
             <div style={{ margin: '60px 90px' }}>
-                <SuperAdminParkingtable />
+                <Parkingtable />
             </div>
         </div>
     );

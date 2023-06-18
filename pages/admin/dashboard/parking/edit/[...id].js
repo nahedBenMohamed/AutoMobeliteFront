@@ -1,8 +1,9 @@
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import SuperAdminHeader from "@/components/super-admin/super-admin-header";
-import SuperAdminParkingform from "@/components/super-admin/super-admin-parkingform";
+import DashboardHeader from "@/components/admin/Header";
+import Parkingform from "@/components/admin/Parkingform";
+
 
 export default function EditAgence(){
 
@@ -14,15 +15,15 @@ export default function EditAgence(){
         if(!id){
             return;
         }
-        axios.get('/api/super-admin/parking?id='+id).then(response =>{
+        axios.get('/api/admin/parking?id='+id).then(response =>{
             setParkingInfo(response.data);
         })
     }, [id]);
     return(
             <div>
-                <SuperAdminHeader/>
+                <DashboardHeader/>
                 {parkingInfo && (
-                    <SuperAdminParkingform {...parkingInfo}/>
+                    <Parkingform {...parkingInfo}/>
                 )}
             </div>
 
