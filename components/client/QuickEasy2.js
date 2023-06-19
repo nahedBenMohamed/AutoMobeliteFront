@@ -5,32 +5,31 @@ function QuickEasy(){
     const quickEasy = [
         {
             id: 1,
-            img: "/images/home.png",
-            title: "Delivery & pick-up 7/7",
+            img: "/images/laptop-screen.png",
+            title: "Book online",
             content:
-                "We deliver and pick up your vehicle, at the time and address of your choice, 7days/7 "
+                "Book a vehicle to suit your needs in just 5 minutes.Be ready "
         },
         {
             id: 2,
-            img: "/images/calendar.png",
-            title: "Reservations can be modified",
+            img: "/images/delivery1.png",
+            title: "I'll have it delivered",
             content:
-                "Modify your reservation at any time, directly in your account. Even for a current rental.",
+                "Your vehicle is delivered by a driver at the time and address of your choice..",
         },
         {
             id: 3,
-            img: "/images/cash.png",
-            title: "Free cancellation!",
+            img: "/images/internet.png",
+            title: "I'm on my way home",
             content:
-                "Cancel your rental for free up to 24 hours before the start of the rental period.",
+                "On your return, a driver will meet you at the address indicated to collect the vehicle.",
         },
     ];
     return(
         <section id="quick-easy">
             <div className="px-8 lg:px-28 py-16 text-center space-y-8 lg:space-y-16">
                 <div className="font-bold space-y-2">
-                    <h3 className="text-xl">Plan your trip now</h3>
-                    <h1 className="text-5xl leading-tight">Quick & easy car rental</h1>
+                    <h1 className="text-5xl leading-tight">HOW IT WORKS ?</h1>
                 </div>
                 <div className="grid grid-cols-fluid gap-8">
                     {quickEasy.map((data) => (
@@ -38,7 +37,7 @@ function QuickEasy(){
                             <Image
                                 src={data.img}
                                 alt={data.title}
-                                width={70}
+                                width={90}
                                 height={40}
                                 className="m-auto"
                             />

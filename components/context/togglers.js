@@ -38,14 +38,14 @@ export const TogglersProvider = ({ children }) => {
             value={{
                 mobileNavbar,
                 setMobileNavbar,
-                bookingFields,
+               /* bookingFields,
                 setBookingFields,
                 bookingModal,
                 setBookingModal,
                 goUp,
                 setGoUp,
                 showAnswer,
-                setShowAnswer,
+                setShowAnswer,*/
             }}
         >
             {children}

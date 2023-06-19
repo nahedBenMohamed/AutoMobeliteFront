@@ -51,8 +51,8 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
-            <div className="w-full p-4 bg-white rounded-md shadow-md lg:max-w-xl">
+        <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden rounded-lg shadow-lg ">
+            <div className="w-full p-4 bg-white rounded-lg shadow-lg lg:max-w-xl">
                 <h1 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                     Welcome Back
                 </h1>
