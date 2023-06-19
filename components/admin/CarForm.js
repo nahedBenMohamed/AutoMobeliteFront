@@ -4,6 +4,8 @@ import axios from "axios";
 import { ReactSortable } from "react-sortablejs";
 import Spinner from "@/components/admin/Spinner";
 import Link from "next/link";
+import { parseCookies } from 'nookies';
+import jwt from 'jsonwebtoken';
 
 export default function CarForm({ id }) {
     const [agency, setAgency] = useState("");
@@ -18,15 +20,30 @@ export default function CarForm({ id }) {
     const [isUploading, setIsUploading] = useState(false);
     const [goToCars, setGoToCars] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [parkingName, setParkingName] = useState("");
+    const [errorMessageVisible, setErrorMessageVisible] = useState(true);
     const router = useRouter();
 
+
     useEffect(() => {
+        const { token } = parseCookies();
+        // Verify JWT and extract payload
+        if (token) {
+            try {
+                const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+                // Set agency name from JWT
+                setAgency(decodedToken.agency);
+            } catch (error) {
+                console.error("Invalid token.");
+            }
+        } else {
+            console.error("No cookies found.");
+        }
         if (id) {
             axios
-                .get(`/api/cars/cars?id=${id}`, { withCredentials: true })
+                .get(`/api/admin/cars?id=${id}`, { withCredentials: true })
                 .then((response) => {
                     const carData = response.data;
-                    setAgency(carData.Agency.name);
                     setBrand(carData.brand);
                     setModel(carData.model);
                     setYear(carData.year.toString());
@@ -35,10 +52,10 @@ export default function CarForm({ id }) {
                     setStatus(carData.status);
                     setImages(carData.images)
                     setRegistration(carData.registration);
+                    setParkingName(carData.parking.name);
                 })
                 .catch((error) => {
                     console.log(error);
-                    setErrorMessage('error lors du chargement avec la database ')
                 });
         }
     }, [id]);
@@ -47,10 +64,15 @@ export default function CarForm({ id }) {
         ev.preventDefault();
 
         // Vérification des données côté client (facultatif)
-        if (!agency || !brand || !model || !year || !mileage || !price || !registration || !status) {
+        if ( !brand || !model || !year || !mileage || !price || !registration || !status || !parkingName) {
             setErrorMessage("Veuillez remplir tous les champs.");
+            setErrorMessageVisible(true); // Set this to true when you want to show the error message
+            setTimeout(() => {
+                setErrorMessageVisible(false); // Set this to false after 5 seconds
+            }, 5000);
             return;
         }
+
 
         const data = {
             agency,
@@ -62,19 +84,26 @@ export default function CarForm({ id }) {
             registration,
             status,
             images,
+            parkingName,
         };
 
         try {
             if (id) {
                 // Update car
-                await axios.put("/api/cars/cars/", { ...data, id },{ withCredentials: true });
+                await axios.put("/api/admin/cars/", { ...data, id, parkingName},{ withCredentials: true });
             } else {
                 // Create car
-                await axios.post("/api/cars/cars", data,{ withCredentials: true });
+                await axios.post("/api/admin/cars", data,{ withCredentials: true });
             }
             setGoToCars(true);
         } catch (error) {
-            setErrorMessage(error.response.data.message);
+            if (error.response) {
+                setErrorMessage(error.response.data.error);
+                setErrorMessageVisible(true);
+                setTimeout(() => {
+                    setErrorMessageVisible(false);
+                }, 5000);
+            }
         }
     }
 
@@ -92,7 +121,7 @@ export default function CarForm({ id }) {
             }
             data.append("id", id);
             try {
-                const res = await axios.post("/api/cars/upload", data, { withCredentials: true });
+                const res = await axios.post("/api/admin/upload", data, { withCredentials: true });
                 const { message, imagePath } = res.data;
                 if (message === "Image uploaded successfully") {
                     setImages((oldImages) => [...oldImages, imagePath]);
@@ -100,7 +129,13 @@ export default function CarForm({ id }) {
                     setErrorMessage("Upload failed");
                 }
             } catch (error) {
-                setErrorMessage(error.response.data.message);
+                if (error.response) {
+                    setErrorMessage(error.response.data.error);
+                    setErrorMessageVisible(true);
+                    setTimeout(() => {
+                        setErrorMessageVisible(false);
+                    }, 5000);
+                }
             } finally {
                 setIsUploading(false);
             }
@@ -115,24 +150,24 @@ export default function CarForm({ id }) {
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="max-w-md w-full space-y-8 bg-white p-6 rounded-lg shadow-md">
                 <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        Gestion Flottes véhicules
-                    </h2>
+                        <h2 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+                            {id ? "Edit Car" : "Add Car"}
+                        </h2>
                 </div>
                 <form onSubmit={saveCar} className="mt-8 space-y-6">
                     <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                         <div>
-                            <label htmlFor="agency" className="sr-only">
-                                Agence
+                            <label htmlFor="parkingName" className="sr-only">
+                                Nom du parking
                             </label>
                             <input
-                                id="agency"
-                                name="agency"
+                                id="parkingName"
+                                name="parkingName"
                                 type="text"
-                                value={agency}
-                                onChange={(ev) => setAgency(ev.target.value)}
+                                value={parkingName}
+                                onChange={(ev) => setParkingName(ev.target.value)}
                                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Agence"
+                                placeholder="Nom du parking"
                             />
                         </div>
                         <div>
@@ -272,7 +307,7 @@ export default function CarForm({ id }) {
                         </label>
                     </div>
                     <div className="mt-2">
-                        {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+                        {errorMessageVisible && errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                     </div>
                     <div className="flex justify-center gap-4">
                         <button

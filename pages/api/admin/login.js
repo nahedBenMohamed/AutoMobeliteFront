@@ -6,32 +6,33 @@ import {setCookie} from "nookies";
 export default async function handle(req, res) {
     const { email, password } = req.body;
 
-    // Rechercher l'utilisateur dans la base de données
+    // Search for the user in the database
     const agencyUser = await prisma.agencyUser.findUnique({
         where: {
             email: email,
         },
         include: {
-            Agency: true,  // inclure les Agences liées à l'utilisateur
+            Agency: true,  // include Agencies linked to the user
         },
     });
 
-    // Vérifier si l'utilisateur existe
+    // Verify if the user exists
     if (!agencyUser) {
-        return res.status(401).json({ error: 'Email ou mot de passe incorrect.' });
+        return res.status(401).json({ error: 'Incorrect email or password.' });
     }
 
-    // Vérifier le mot de passe
+    // Verify the password
     const passwordMatch = await bcrypt.compare(password, agencyUser.password);
     if (!passwordMatch) {
-        return res.status(401).json({ error: 'Email ou mot de passe incorrect.' });
-    }
-    // Si l'utilisateur n'est associé à aucune Agence, on renvoie une erreur
-    if (!agencyUser.Agency) {
-        return res.status(400).json({ error: "vous n'avez pas acces au dashboard" });
+        return res.status(401).json({ error: 'Incorrect email or password.' });
     }
 
-    // Générer un token pour l'utilisateur
+    // If the user is not associated with any Agency, return an error
+    if (!agencyUser.Agency) {
+        return res.status(400).json({ error: "You do not have access to the dashboard" });
+    }
+
+    // Generate a token for the user
     const token = jwt.sign({
         agencyUserId: agencyUser.id,
         name: agencyUser.name,
@@ -40,14 +41,13 @@ export default async function handle(req, res) {
         agency: agencyUser.Agency.name
     }, process.env.JWT_SECRET, { expiresIn: '3h' });
 
-    // Enregistrement du jeton dans un cookie sécurisé
+    // Store the token in a secure cookie
     setCookie({ res }, 'token', token, {
         httpOnly: true,
         path: '/',
-        maxAge: 3*3600, // Durée de vie du cookie en secondes
+        maxAge: 3*3600, // Cookie lifetime in seconds
     });
 
-
-    // Retourner la réponse avec le rôle de l'utilisateur
-    return res.status(200).json({  message: 'Connexion réussie', role: agencyUser.role });
+    // Return the response with the user's role
+    return res.status(200).json({  message: 'Successful login', role: agencyUser.role });
 }

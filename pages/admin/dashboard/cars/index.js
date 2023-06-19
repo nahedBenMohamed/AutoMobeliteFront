@@ -1,5 +1,6 @@
 import DashboardHeader from "@/components/admin/Header";
 import VehicleTable from "@/components/admin/CarsTable";
+import {protectRoute} from "@/utils/auth";
 
 
 export default function Car ()  {
@@ -11,4 +12,8 @@ export default function Car ()  {
             </div>
         </div>
     );
+};
+
+export const getServerSideProps = (ctx) => {
+    return protectRoute(ctx, ['admin']);
 };

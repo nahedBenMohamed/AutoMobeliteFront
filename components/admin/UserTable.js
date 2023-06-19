@@ -10,7 +10,7 @@ const UserTable = () => {
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get('/api/gestion-client/client');
+            const response = await axios.get('/api/auth/client',{ withCredentials: true });
             setUsers(response.data);
         } catch (error) {
             console.log(error);

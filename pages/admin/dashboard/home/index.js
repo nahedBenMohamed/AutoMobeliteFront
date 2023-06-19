@@ -18,5 +18,5 @@ function Dashboard({ session }) {
 export default Dashboard;
 
 export const getServerSideProps = (ctx) => {
-    return protectRoute(ctx, ['admin', 'superAdmin', 'client']);
+    return protectRoute(ctx, ['admin']);
 };

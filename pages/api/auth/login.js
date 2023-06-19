@@ -7,49 +7,48 @@ export default async function handle(req, res) {
     const { email, password } = req.body;
 
     try {
-        // Rechercher l'utilisateur dans la base de données
+        // Search for the user in the database
         const client = await prisma.client.findUnique({
             where: {
                 email: email,
             },
         });
 
-        // Vérifier si l'utilisateur existe
+        // Check if the user exists
         if (!client) {
-            return res.status(401).json({ error: 'Email ou mot de passe incorrect.' });
+            return res.status(401).json({ error: 'Email or password incorrect.' });
         }
 
-        // Vérifier si l'email a été vérifié
+        // Check if the email has been verified
         if (!client.emailVerified) {
-            return res.status(401).json({ error: 'Votre email n\'a pas été vérifié. Veuillez vérifier votre boîte de réception.' });
+            return res.status(401).json({ error: 'Your email has not been verified. Please check your inbox.' });
         }
 
-        // Vérifier le mot de passe
-        const motDePasseMatch = await bcrypt.compare(password, client.password);
-        if (!motDePasseMatch) {
-            return res.status(401).json({ error: 'Email ou mot de passe incorrect.' });
+        // Verify the password
+        const passwordMatch = await bcrypt.compare(password, client.password);
+        if (!passwordMatch) {
+            return res.status(401).json({ error: 'Email or password incorrect.' });
         }
 
-        // Générer un token pour l'utilisateur
+        // Generate a token for the user
         const token = jwt.sign(
             { clientId: client.id },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
 
-        // Définir le cookie d'authentification
-
+        // Set the authentication cookie
         setCookie({ res }, 'authToken', token, {
-            maxAge: 60 * 60 * 24, // Durée de validité du cookie en secondes (ex: 24 heures)
-            path: '/', // Chemin du cookie (ex: '/' pour le domaine principal)
-            secure: process.env.NODE_ENV === 'production', // Activer le mode sécurisé en production
-            sameSite: 'strict', // Contraintes de même site pour le cookie
+            maxAge: 60 * 60 * 24, // Cookie validity duration in seconds (e.g., 24 hours)
+            path: '/', // Cookie path (e.g., '/' for the root domain)
+            secure: process.env.NODE_ENV === 'production', // Enable secure mode in production
+            sameSite: 'strict', // Same-site constraints for the cookie
         });
 
-        // Retourner une réponse réussie
-        res.status(200).json({ message: 'Authentification réussie.' });
+        // Return a successful response
+        res.status(200).json({ message: 'Authentication successful.' });
     } catch (error) {
-        // Gérer les erreurs en cas d'échec du login
-        res.status(500).json({ error: 'Une erreur s\'est produite lors du login.' });
+        // Handle errors in case login fails
+        res.status(500).json({ error: 'An error occurred during login.' });
     }
 }

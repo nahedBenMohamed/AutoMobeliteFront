@@ -3,14 +3,15 @@ import prisma from "@/lib/prisma";
 export default async function handle(req, res) {
     const { brand, year, price } = req.query;
 
-    // Construisez votre requête Prisma en fonction des critères de filtrage
+    // Build your Prisma query based on the filtering criteria
     const cars = await prisma.car.findMany({
         where: {
-            brand: brand || undefined, // Vérifiez si le critère de filtrage est défini
+            brand: brand || undefined, // Check if the filtering criterion is defined
             year: year ? parseInt(year) : undefined,
             price: price ? parseFloat(price) : undefined,
         },
     });
 
+    // Send the queried cars as a response
     res.json(cars);
 }

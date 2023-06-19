@@ -12,7 +12,7 @@ export default  function DeleteCarPage(){
         if(!id){
             return;
         }
-        axios.get('/api/cars/cars?id='+id,{ withCredentials: true }).then(response =>{
+        axios.get('/api/admin/cars?id='+id,{ withCredentials: true }).then(response =>{
             setCarInfo(response.data);
         });
     }, [id]);
@@ -21,7 +21,7 @@ export default  function DeleteCarPage(){
     }
 
     async function deleteCar(){
-        await axios.delete('/api/cars/cars?id='+id,{ withCredentials: true })
+        await axios.delete('/api/admin/cars?id='+id,{ withCredentials: true })
         goBack()
     }
     return(

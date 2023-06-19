@@ -1,5 +1,6 @@
 import CarForm from "@/components/admin/CarForm";
 import DashboardHeader from "@/components/admin/Header";
+import {protectRoute} from "@/utils/auth";
 
 export default function NewCars(){
     return (
@@ -9,6 +10,8 @@ export default function NewCars(){
           </div>
 
         );
-
-
 }
+
+export const getServerSideProps = (ctx) => {
+    return protectRoute(ctx, ['admin']);
+};

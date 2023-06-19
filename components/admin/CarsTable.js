@@ -6,7 +6,7 @@ const VehicleTable = () => {
     const[cars, setCars] = useState([])
 
     useEffect(() => {
-        axios.get('/api/cars/cars', { withCredentials: true })
+        axios.get('/api/admin/cars', { withCredentials: true })
             .then(response => {
                 setCars(response.data);
             })
@@ -19,6 +19,7 @@ const VehicleTable = () => {
                 <thead>
                 <tr>
                     <th className="px-4 py-2">Agence</th>
+                    <th className="px-4 py-2">Parking</th>
                     <th className="px-4 py-2">Brand</th>
                     <th className="px-4 py-2">Model</th>
                     <th className="px-4 py-2">Registration</th>
@@ -33,6 +34,7 @@ const VehicleTable = () => {
                 {cars.map(car => (
                     <tr key={car.id}>
                         <td className="border px-4 py-2">{car.Agency.name}</td>
+                        <td className="border px-4 py-2">{car.parking?.name}</td>
                         <td className="border px-4 py-2">{car.brand}</td>
                         <td className="border px-4 py-2">{car.model}</td>
                         <td className="border px-4 py-2">{car.registration}</td>

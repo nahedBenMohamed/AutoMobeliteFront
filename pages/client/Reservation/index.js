@@ -1,7 +1,5 @@
 import {TogglersProvider} from "@/components/context/togglers";
-
 import MobileNavConnected from "@/components/client/MobileNavConnected";
-import ReservationForm from "@/pages/ReserveForm";
 import Header from "@/components/client/Header";
 import IndexPage from "@/components/client/RerservationForm";
 

@@ -1,5 +1,5 @@
 import DashboardHeader from "@/components/admin/Header";
-import ReservationDetails from "@/components/admin/DetailsReservation";
+import ParkingForm from "@/components/admin/Parkingform";
 import {protectRoute} from "@/utils/auth";
 
 
@@ -7,8 +7,8 @@ export default function Car ()  {
     return (
         <div>
             <DashboardHeader />
-            <div style={{ margin: '20px 90px' }}>
-                <ReservationDetails/>
+            <div style={{ margin: '0px 90px' }}>
+                <ParkingForm />
             </div>
         </div>
     );
