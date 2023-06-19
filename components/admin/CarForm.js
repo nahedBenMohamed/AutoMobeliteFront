@@ -6,7 +6,6 @@ import Spinner from "@/components/admin/Spinner";
 import Link from "next/link";
 import { parseCookies } from 'nookies';
 import jwt from 'jsonwebtoken';
-import * as cookie from "cookie";
 
 export default function CarForm({ id }) {
     const [agency, setAgency] = useState("");
