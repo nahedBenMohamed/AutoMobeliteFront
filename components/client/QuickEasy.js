@@ -30,7 +30,7 @@ function QuickEasy(){
             <div className="px-8 lg:px-28 py-16 text-center space-y-8 lg:space-y-16">
                 <div className="font-bold space-y-2">
                     <h3 className="text-xl">Plan your trip now</h3>
-                    <h1 className="text-5xl leading-tight">Quick & easy car rental</h1>
+                    <h1 className="text-5xl leading-tight">QUICK & EASY CAR RENTAL</h1>
                 </div>
                 <div className="grid grid-cols-fluid gap-8">
                     {quickEasy.map((data) => (

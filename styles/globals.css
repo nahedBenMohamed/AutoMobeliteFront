@@ -140,11 +140,11 @@ body {
 
 /* START: Hero styles */
 .hero {
-    @apply flex xl:flex-row flex-col gap-5 relative z-0 max-w-[1440px] mx-auto;
+    @apply  flex xl:flex-row flex-col gap-5 relative z-0 max-w-[1740px] mx-auto;
 }
 
 .hero__title {
-    @apply 2xl:text-[60px] sm:text-[46px] text-[40px] font-extrabold;
+    @apply 2xl:text-[60px] sm:text-[46px] text-[40px] font-extrabold ;
 }
 
 

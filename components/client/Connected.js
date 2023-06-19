@@ -40,14 +40,13 @@ function HeaderConnected() {
     };
 
     return (
-        <section id="top header">
-            <header className="absolute top-6 inset-x-6 lg:inset-x-28 flex items-center justify-between z-50">
+        <section id="w-full  absolute z-10">
+            <header className="min-w-[1740px] mx-auto flex justify-between items-center sm:px-16 px-6 py-4 ">
                 <div className="text-2xl">
                     <a href="/client/HomeConnected">
                         AUTO<span className="text-blue-600">MOBELITE</span>
                     </a>
                 </div>
-                <VehicleSearchForm />
                 <div className="relative ml-auto">
                     <button
                         onClick={toggleDropdown}
