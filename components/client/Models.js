@@ -8,7 +8,7 @@ function Models() {
     const [cars, setCars] = useState([]);
 
     useEffect(() => {
-        axios.get('/api/client-cars/AllCars').then(response => {
+        axios.get('/api/auth/AllCars').then(response => {
             setCars(response.data);
         });
     }, []);

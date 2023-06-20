@@ -29,7 +29,6 @@ function HeaderConnected() {
                         AUTO<span className="text-blue-600">MOBELITE</span>
                     </a>
                 </div>
-                <VehicleSearchForm />
                 <div className="relative ml-auto">
                     <button
                         onClick={toggleDropdown}

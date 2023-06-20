@@ -1,6 +1,4 @@
 import React, {useEffect, useState} from 'react';
-
-import Image from "next/image";
 import { AiFillCar, AiFillStar, AiFillTool } from "react-icons/ai";
 import { GiCarDoor } from "react-icons/gi";
 import { BsFillFuelPumpFill } from "react-icons/bs";
@@ -11,7 +9,7 @@ function Modelsconnected() {
     const [cars, setCars] = useState([]);
 
     useEffect(() => {
-        axios.get('/api/client-cars/AllCars').then(response => {
+        axios.get('/api/auth/AllCars').then(response => {
             setCars(response.data);
         });
     }, []);
@@ -33,7 +31,7 @@ function Modelsconnected() {
                                     <div className="space-y-1">
                                         <div>
                                             <h1 className="font-bold text-xl lg:text-2xl">
-                                                {car.marque}
+                                                {car.brand}
                                             </h1>
                                         </div>
                                         <div className="text-[#ffc933] flex items-center">
@@ -46,7 +44,7 @@ function Modelsconnected() {
                                     </div>
                                     <div className="text-right">
                                         <h1 className="font-bold text-xl lg:text-2xl">
-                                            {car.prix} DT
+                                            {car.price} DT
                                         </h1>
                                         <p className="text-custom-grey">per day</p>
                                     </div>
@@ -54,10 +52,10 @@ function Modelsconnected() {
                                 <div className="flex items-center justify-between text-lg">
                                     <div className="flex items-center gap-2">
                                         <span><AiFillCar /></span>
-                                        <span>{car.modele}</span>
+                                        <span>{car.model}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span>{car.agenceName}</span>
+                                        <span>{car.Agency}</span>
                                         <span><GiCarDoor /></span>
                                     </div>
                                 </div>

@@ -18,7 +18,7 @@ const Parkingtable = () => {
             <table className="min-w-full bg-white rounded-lg border-4 shadow-lg">
                 <thead>
                 <tr>
-                    <th className="px-4 py-2">Name Parking</th>
+                    <th className="px-4 py-2">Name Parck</th>
                     <th className="px-4 py-2">Address</th>
                     <th className="px-4 py-2">City</th>
                     <th className="px-4 py-2">Agency</th>

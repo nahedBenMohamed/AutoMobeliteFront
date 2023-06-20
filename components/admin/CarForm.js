@@ -4,11 +4,8 @@ import axios from "axios";
 import { ReactSortable } from "react-sortablejs";
 import Spinner from "@/components/admin/Spinner";
 import Link from "next/link";
-import { parseCookies } from 'nookies';
-import jwt from 'jsonwebtoken';
 
 export default function CarForm({ id }) {
-    const [agency, setAgency] = useState("");
     const [brand, setBrand] = useState("");
     const [model, setModel] = useState("");
     const [year, setYear] = useState("");
@@ -26,19 +23,6 @@ export default function CarForm({ id }) {
 
 
     useEffect(() => {
-        const { token } = parseCookies();
-        // Verify JWT and extract payload
-        if (token) {
-            try {
-                const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-                // Set agency name from JWT
-                setAgency(decodedToken.agency);
-            } catch (error) {
-                console.error("Invalid token.");
-            }
-        } else {
-            console.error("No cookies found.");
-        }
         if (id) {
             axios
                 .get(`/api/admin/cars?id=${id}`, { withCredentials: true })
@@ -64,7 +48,7 @@ export default function CarForm({ id }) {
         ev.preventDefault();
 
         // Vérification des données côté client (facultatif)
-        if ( !brand || !model || !year || !mileage || !price || !registration || !status || !parkingName) {
+        if ( !brand || !model || !year || !mileage || !price || !registration || !status ) {
             setErrorMessage("Veuillez remplir tous les champs.");
             setErrorMessageVisible(true); // Set this to true when you want to show the error message
             setTimeout(() => {
@@ -75,7 +59,6 @@ export default function CarForm({ id }) {
 
 
         const data = {
-            agency,
             brand,
             model,
             year: parseInt(year),
@@ -98,7 +81,7 @@ export default function CarForm({ id }) {
             setGoToCars(true);
         } catch (error) {
             if (error.response) {
-                setErrorMessage(error.response.data.error);
+                setErrorMessage(error.response.data.message);
                 setErrorMessageVisible(true);
                 setTimeout(() => {
                     setErrorMessageVisible(false);
@@ -157,9 +140,6 @@ export default function CarForm({ id }) {
                 <form onSubmit={saveCar} className="mt-8 space-y-6">
                     <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                         <div>
-                            <label htmlFor="parkingName" className="sr-only">
-                                Nom du parking
-                            </label>
                             <input
                                 id="parkingName"
                                 name="parkingName"
@@ -168,6 +148,7 @@ export default function CarForm({ id }) {
                                 onChange={(ev) => setParkingName(ev.target.value)}
                                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                                 placeholder="Nom du parking"
+                                defaultValue=""
                             />
                         </div>
                         <div>

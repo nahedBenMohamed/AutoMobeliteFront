@@ -57,6 +57,23 @@ export default async function handle(req, res) {
             const mileageInt = parseInt(mileage);
             const priceFloat = parseFloat(price);
 
+            let parking = null;
+
+            // Check if parkingName is provided
+            if (parkingName) {
+                // Find the parking by name
+                parking = await prisma.parking.findUnique({
+                    where: {
+                        name: parkingName,
+                    },
+                });
+
+                // If parking is not found, return an error
+                if (!parking) {
+                    return res.status(400).json({ message: "Invalid parking name." });
+                }
+            }
+
             // Create a new car for the agency extracted from the JWT token
             const newCar = await prisma.car.create({
                 data: {
@@ -73,11 +90,13 @@ export default async function handle(req, res) {
                             name: agency,
                         },
                     },
-                    parking: {
-                        connect: {
-                            name: parkingName,
-                        },
-                    },
+                    parking: parking
+                        ? {
+                            connect: {
+                                name: parkingName,
+                            },
+                        }
+                        : undefined,
                 },
                 include: { Agency: true }, // Include the Agency object in the response
             });

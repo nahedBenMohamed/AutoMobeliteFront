@@ -11,7 +11,7 @@ const navigation = [
     { name: 'Users', href: '/admin/dashboard/users'},
     { name: 'Reservation', href: '/admin/dashboard/reservations'},
     { name: 'Profile', href: '/admin/dashboard/profile'},
-    { name: 'Parking', href: '/admin/dashboard/parking'},
+    { name: 'Parck', href: '/admin/dashboard/parking'},
 ];
 
 function classNames(...classes) {

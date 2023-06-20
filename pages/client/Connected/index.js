@@ -11,16 +11,18 @@ import QuickEasy from "@/components/client/QuickEasy";
 
 function page() {
     return (
-        <main>
-            <TogglersProvider>
+        <TogglersProvider>
+        <main className='overflow-hidden'>
+
                         <HeaderConnected/>
                         <MobileNavConnected/>
                         <Hero/>
                         <ToTop />
                         <QuickEasy/>
                         <Footer/>
-            </TogglersProvider>
+
         </main>
+        </TogglersProvider>
 
 
     );

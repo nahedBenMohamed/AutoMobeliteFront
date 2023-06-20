@@ -89,14 +89,14 @@ const ParkingForm = ({ id }) => {
         <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
             <div className="w-full p-4 bg-white rounded-md shadow-md lg:max-w-xl">
                 <h2 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                    {id ? "Edit Parking" : "Add Parking"}
+                    {id ? "Edit Parck" : "Add Parck"}
                 </h2>
                 <div className=" mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <form onSubmit={saveParking}>
                         <div>
                             <div>
                                 <label htmlFor="name" className="block font-semibold">
-                                    Name Parking
+                                    Name Parck
                                 </label>
                                 <div className="relative">
                                     <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />

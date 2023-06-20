@@ -2,21 +2,27 @@ import * as bcrypt from 'bcrypt';
 import nodemailer from "nodemailer";
 import prisma from "@/lib/prisma";
 import jwt from "jsonwebtoken";
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 export default async function handle(req, res) {
     const { name, firstname, email, password, telephone } = req.body;
 
-    try {
-        // Check if the email already exists in the database
-        const existingClient = await prisma.client.findUnique({
-            where: {
-                email: email,
-            },
-        });
+    // Convert telephone to a string
+    const telephoneString = String(telephone);
 
-        // If the email already exists, return an error response
+    try {
+        // Check if the email already exists
+        const existingClient = await prisma.client.findUnique({
+            where: { email: email },
+        });
         if (existingClient) {
-            return res.status(400).json({ message: 'Email already exists.' });
+            throw new Error('Email already exists.');
+        }
+
+        // Validate the phone number using the country code for Tunisia (TN)
+        const phoneNumber = parsePhoneNumberFromString(telephoneString, 'TN');
+        if (!phoneNumber || !phoneNumber.isValid()) {
+            throw new Error('Please enter a valid Tunisian phone number.');
         }
 
         // Hash the password
@@ -29,7 +35,7 @@ export default async function handle(req, res) {
                 firstname: firstname,
                 email: email,
                 password: hashedPassword,
-                telephone: telephone,
+                telephone: telephoneString
             },
         });
 
@@ -53,8 +59,8 @@ export default async function handle(req, res) {
         let mailOptions = {
             from: process.env.EMAIL,
             to: client.email,
-            subject: 'Automobelite validate your account',
-            text: `Please click on the following link to validate your account: ${process.env.BASE_URL}/validate-email?token=${token}`,
+            subject: 'Automobelite valider votre compte',
+            text: `Veuillez cliquer sur le lien suivant pour valider votre compte: ${process.env.BASE_URL}/validate-email?token=${token}`,
         };
 
         try {
@@ -62,13 +68,16 @@ export default async function handle(req, res) {
             await transporter.sendMail(mailOptions);
 
             // Return a success response if the email is sent successfully
-            return res.status(200).json({ message: 'Email sent successfully.' });
+            return res.status(200).json({ message: 'Email envoyé avec succès.' });
         } catch (error) {
-            // Return an error response if there's an issue sending the email
-            return res.status(500).json({ error: 'Error sending the email.' });
+            throw new Error('Erreur lors de l\'envoi de l\'email.');
         }
     } catch (error) {
-        // Return an error response if there's an issue creating the client
-        return res.status(500).json({ error: 'Error creating the client.' });
+        // Return an error response for the specific error scenarios
+        if (error.message === 'Email already exists.') {
+            return res.status(400).json({ message: error.message });
+        } else {
+            return res.status(500).json({ message: error.message });
+        }
     }
 }
