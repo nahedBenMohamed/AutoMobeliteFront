@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import CustomButton from "@/components/client/CustomButton";
+import Link from "next/link";
 
 
 const Hero = () => {
@@ -9,20 +10,22 @@ const Hero = () => {
     }
     return (
         <div className="hero">
-            <div className="flex-1 pt-32 padding-x">
-                <h1 className="hero__title">
+            <div className=" flex-1 pt-32 padding-x">
+                <h1 className="hero__title  ">
                     RENTAL OF <span className="text-blue-600 ">CARS</span> DELIVER TO YOUR HOME
                 </h1>
-                <p className="hero__subtitle">
+                <p className="hero__subtitle ">
                     We deliver and pick up your rental car at the address of your choice.
                 </p>
 
                 <div className="-mt-2">
+                    <Link href="/Models">
                     <CustomButton
                         title="Explore Cars"
                         containerStyles="bg-primary-blue text-white rounded-full mt-10"
                         handleClick={handleScroll}
                     />
+                    </Link>
                 </div>
 
 
