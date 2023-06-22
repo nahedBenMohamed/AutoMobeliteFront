@@ -6,9 +6,12 @@ export default async function handle(req, res) {
     // Handle GET request
     if (method === 'GET') {
         // Retrieve all cars from the database
-        const voitures = await prisma.car.findMany();
+        const cars = await prisma.car.findMany({
+            include: {Agency: true, parking: true},
+        });
+
 
         // Send the queried cars as a response
-        res.json(voitures);
+        res.json(cars);
     }
 }

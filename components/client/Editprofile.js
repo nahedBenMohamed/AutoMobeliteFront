@@ -118,7 +118,7 @@ const EditProfile = () => {
                         </div>
                     </div>
                     <button type="submit" className="mt-6 bg-blue-600 text-white font-semibold py-2 px-4 rounded">
-                        <a href="/pages/client/HomeConnected">Save Changes</a>
+                        <a href="/client/HomeConnected">Save Changes</a>
                     </button>
 
                 </form>

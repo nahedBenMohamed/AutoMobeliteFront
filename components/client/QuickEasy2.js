@@ -1,7 +1,12 @@
 import Image from "next/image";
 import React from "react";
+import Link from "next/link";
+import CustomButton from "@/components/client/CustomButton";
 
 function QuickEasy(){
+    const handleScroll =()=>{
+
+    }
     const quickEasy = [
         {
             id: 1,
@@ -46,8 +51,20 @@ function QuickEasy(){
                         </div>
                     ))}
                 </div>
+              {/*  <div className="flex justify-center">
+                    <Link href="/">
+                        <CustomButton
+                            title="Explore Cars"
+                            containerStyles="bg-primary-blue text-white rounded-full mt-10"
+                            handleClick={handleScroll}
+                        />
+                    </Link>
+                </div>*/}
             </div>
+
+
         </section>
+
     );
 }
 export default QuickEasy

@@ -11,7 +11,7 @@ const navigation = [
     { name: 'Users', href: '/admin/dashboard/users'},
     { name: 'Reservation', href: '/admin/dashboard/reservations'},
     { name: 'Profile', href: '/admin/dashboard/profile'},
-    { name: 'Parck', href: '/admin/dashboard/parking'},
+    { name: 'Park', href: '/admin/dashboard/parking'},
 ];
 
 function classNames(...classes) {
@@ -48,7 +48,7 @@ function DashboardHeader() {
                                 <div className="flex h-16 items-center justify-between">
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <img className="h-10 w-10" src="/mobelite.png" alt="mobelite" />
+                                            <img className="h-10 w-10" src="/images/mobelite.png" alt="mobelite" />
                                         </div>
                                         <div className="hidden md:block">
                                             <div className="ml-10 flex items-baseline space-x-4">

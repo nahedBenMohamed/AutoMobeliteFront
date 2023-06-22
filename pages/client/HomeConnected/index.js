@@ -1,7 +1,6 @@
 import {TogglersProvider} from "@/components/context/togglers";
 import HeaderConnected from "@/components/client/Connected";
 import MobileNavConnected from "@/components/client/MobileNavConnected";
-import Hero from "@/components/client/Hero";
 import QuickEasy from "@/components/client/QuickEasy";
 import Footer from "@/components/client/Footer";
 import VehicleSearchForm from "@/components/client/VehicleSearchForm";
@@ -9,6 +8,7 @@ import React from "react";
 import QuickEasy2 from "@/components/client/QuickEasy2";
 import Slider from "@/components/client/Slider";
 import CitiesSlider from "@/components/client/CitiesSlider";
+import HeroConn from "@/components/client/HeroConn";
 
 
 
@@ -20,7 +20,7 @@ function page() {
 
                         <HeaderConnected/>
                         <MobileNavConnected/>
-                        <Hero/>
+                        <HeroConn/>
                 <div className="-mt-20 flex justify-center ">
                     <VehicleSearchForm />
                 </div>

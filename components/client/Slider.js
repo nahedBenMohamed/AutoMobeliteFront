@@ -3,8 +3,12 @@ import Link from 'next/link';
 import { AiFillCar, AiFillStar, AiFillTool } from 'react-icons/ai';
 import { GiCarDoor } from 'react-icons/gi';
 import { BsFillFuelPumpFill } from 'react-icons/bs';
+import CustomButton from "@/components/client/CustomButton";
 
 const ImageBox = () => {
+    const handleScroll =()=>{
+
+    }
     const images = [
         {
             src: '/images/box-VW Passat CC.png',
@@ -47,6 +51,15 @@ const ImageBox = () => {
                             </div>
                         </Link>
                     ))}
+                </div>
+                <div className="flex justify-center">
+                    <Link href="/Models">
+                        <CustomButton
+                            title="Explore more  Cars"
+                            containerStyles="bg-primary-blue text-white rounded-full mt-10"
+                            handleClick={handleScroll}
+                        />
+                    </Link>
                 </div>
             </div>
         </section>

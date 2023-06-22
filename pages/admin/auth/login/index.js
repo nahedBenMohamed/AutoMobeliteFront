@@ -1,16 +1,11 @@
-import React from "react";
 import Register from "@/components/admin/register";
-
-
-
-
-
-
+import React from "react";
+import LoginAdmin from "@/components/admin/loginAdmin";
 
 function page() {
     return (
         <main>
-            <Register />
+            <LoginAdmin />
         </main>
 
 

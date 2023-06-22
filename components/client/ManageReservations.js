@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import ReservationsEffectuees from './ReservationsEffectuees';
-import ReservationsEnAttente from './ReservationsEnAttente';
-import ReservationsAnnulees from './ReservationsAnnulees';
+
 
 function TabList() {
     const [activeTab, setActiveTab] = useState('effectuées');

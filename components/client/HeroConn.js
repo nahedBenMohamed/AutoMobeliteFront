@@ -4,7 +4,7 @@ import CustomButton from "@/components/client/CustomButton";
 import Link from "next/link";
 
 
-const Hero = () => {
+const HeroConn = () => {
     const handleScroll =()=>{
 
     }
@@ -19,12 +19,12 @@ const Hero = () => {
                 </p>
 
                 <div className="-mt-2">
-                    <Link href="/Models">
-                    <CustomButton
-                        title="Explore Cars"
-                        containerStyles="bg-primary-blue text-white rounded-full mt-10"
-                        handleClick={handleScroll}
-                    />
+                    <Link href="/client/Modelsconnected">
+                        <CustomButton
+                            title="Explore Cars"
+                            containerStyles="bg-primary-blue text-white rounded-full mt-10"
+                            handleClick={handleScroll}
+                        />
                     </Link>
                 </div>
 
@@ -55,4 +55,4 @@ const Hero = () => {
     );
 };
 
-export default Hero;
+export default HeroConn;
