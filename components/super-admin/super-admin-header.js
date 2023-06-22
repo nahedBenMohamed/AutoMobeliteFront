@@ -1,17 +1,16 @@
-import { Disclosure, Menu } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon} from '@heroicons/react/24/outline'
-import {protectRoute} from "@/utils/auth";
+import { Disclosure, Menu } from '@headlessui/react';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { protectRoute } from '@/utils/auth';
 import { useRouter } from 'next/router';
-import React, {useEffect, useState} from "react";
-
+import React, { useState, useEffect } from 'react';
 
 const navigation = [
-    { name: 'Dashboard', href: '/admin/dashboard/home'},
-    { name: 'Cars', href: '/admin/dashboard/cars'},
-    { name: 'Users', href: '/admin/dashboard/users'},
-    { name: 'Reservation', href: '/admin/dashboard/reservations'},
-    { name: 'Profile', href: '/admin/dashboard/profile'},
-    { name: 'Park', href: '/admin/dashboard/parking'},
+    { name: 'Dashboard', href: '/super-admin/dashboard/home' },
+    { name: 'Cars', href: '/super-admin/dashboard/cars'},
+    { name: 'Users', href: '/super-admin/dashboard/users'},
+    { name: 'Profile', href: '/super-admin/dashboard/profile'},
+    { name: 'Agences', href: '/super-admin/dashboard/agence' },
+    { name: 'Parking', href: '/super-admin/dashboard/parking' },
 ];
 
 function classNames(...classes) {
@@ -48,7 +47,7 @@ function DashboardHeader() {
                                 <div className="flex h-16 items-center justify-between">
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <img className="h-10 w-10" src="/images/mobelite.png" alt="mobelite" />
+                                            <img className="h-10 w-10" src="/mobelite.png" alt="mobelite" />
                                         </div>
                                         <div className="hidden md:block">
                                             <div className="ml-10 flex items-baseline space-x-4">
@@ -160,5 +159,5 @@ function DashboardHeader() {
 export default DashboardHeader;
 
 export const getServerSideProps = (ctx) => {
-    return protectRoute(ctx, ['admin']);
+    return protectRoute(ctx, ['superAdmin']);
 };

@@ -15,7 +15,7 @@ const Modal = ({ onClose, car }) => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
                     <div className="flex justify-center md:justify-start">
-                        <img src={car.images} alt="" className="w-64 h-auto rounded" />
+                        <img src={car.image} alt="" className="w-64 h-auto rounded" />
                     </div>
                     <div>
                         <p>Modèle: {car.model}</p>
@@ -26,6 +26,7 @@ const Modal = ({ onClose, car }) => {
                         <p>Nom du parking: {car.parkingName}</p>
                         <p>Status: {car.status}</p>
                         <p>Agence: {car.Agency?.name}</p>
+                        <p>Description: {car.description}</p>
                     </div>
                 </div>
             </div>

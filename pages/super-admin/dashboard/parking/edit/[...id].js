@@ -1,11 +1,13 @@
-import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
-import axios from "axios";
-import SuperAdminHeader from "@/components/super-admin/super-admin-header";
+import {useRouter} from "next/router";
 import SuperAdminParkingform from "@/components/super-admin/super-admin-parkingform";
+import axios from "axios";
+import SuperAdminSidebar from "@/components/super-admin/SuperAdminSidebar";
+import SuperAdminNavbar from "@/components/super-admin/SuperAdminNavbar";
 import {protectRoute} from "@/utils/auth";
 
-export default function EditAgence(){
+
+export default function SuperAdminEditAgence({session}){
 
     const [parkingInfo,setParkingInfo] = useState(null)
     const router = useRouter();
@@ -19,13 +21,21 @@ export default function EditAgence(){
             setParkingInfo(response.data);
         })
     }, [id]);
+
     return(
-            <div>
-                <SuperAdminHeader/>
-                {parkingInfo && (
-                    <SuperAdminParkingform {...parkingInfo}/>
-                )}
-            </div>
+
+        <main>
+            <SuperAdminSidebar />
+            <section id="content">
+                <SuperAdminNavbar session={session}/>
+                <div style={{ margin: '60px 90px' }}>
+                    {parkingInfo && (
+                        <SuperAdminParkingform {...parkingInfo}/>
+                    )}
+                </div>
+
+            </section>
+        </main>
 
     )
 }

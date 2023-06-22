@@ -36,7 +36,7 @@ function Models() {
                     {cars.map((car) => (
                         <div key={car.id} className="border border-lighter-grey bg-white rounded">
                             <div className="image-container">
-                                <img src={car.images} alt="" />
+                                <img src={car.image} alt="" />
                             </div>
                             <div className="p-6 space-y-6">
                                 <div className="flex items-center justify-between">

@@ -1,9 +1,10 @@
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import DashboardHeader from "@/components/admin/Header";
+import SuperAdminSidebar from "@/components/super-admin/SuperAdminSidebar";
 
-export default  function DeleteCarPage(){
+
+export default  function DeleteCarPage({session}){
     const router = useRouter()
     const [carInfo,setCarInfo] = useState('')
     const {id} = router.query;
@@ -12,21 +13,22 @@ export default  function DeleteCarPage(){
         if(!id){
             return;
         }
-        axios.get('/api/admin/cars?id='+id,{ withCredentials: true }).then(response =>{
+        axios.get('/api/super-admin/cars?id='+id,{ withCredentials: true }).then(response =>{
             setCarInfo(response.data);
         });
     }, [id]);
+
     function goBack(){
-        router.push('/admin/dashboard/cars');
+        router.push('/super-admin/dashboard/cars');
     }
 
     async function deleteCar(){
-        await axios.delete('/api/admin/cars?id='+id,{ withCredentials: true })
+        await axios.delete('/api/super-admin/cars?id='+id,{ withCredentials: true })
         goBack()
     }
     return(
         <div>
-            <DashboardHeader />
+            <SuperAdminSidebar />
             <div className="flex items-center justify-center min-h-screen -mt-20">
                 <div className="max-w-md w-full p-6 bg-white rounded-xl shadow-md flex flex-col items-center space-y-4">
                     <h1 className="text-center text-xl">

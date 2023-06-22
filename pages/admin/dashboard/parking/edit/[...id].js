@@ -1,12 +1,15 @@
-import {useRouter} from "next/router";
-import {useEffect, useState} from "react";
-import axios from "axios";
-import DashboardHeader from "@/components/admin/Header";
+import Sidebar from "@/components/admin/Sidebar";
 import Parkingform from "@/components/admin/Parkingform";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/router";
+import Navbar from "@/components/admin/Navbar";
+import axios from "axios";
 import {protectRoute} from "@/utils/auth";
 
 
-export default function EditAgence(){
+
+
+export default function EditParking({session}){
 
     const [parkingInfo,setParkingInfo] = useState(null)
     const router = useRouter();
@@ -20,13 +23,21 @@ export default function EditAgence(){
             setParkingInfo(response.data);
         })
     }, [id]);
+
     return(
-            <div>
-                <DashboardHeader/>
-                {parkingInfo && (
-                    <Parkingform {...parkingInfo}/>
-                )}
-            </div>
+
+        <main>
+            <Sidebar />
+            <section id="content">
+                <Navbar session={session}/>
+                <div style={{ margin: '60px 90px' }}>
+                    {parkingInfo && (
+                        <Parkingform {...parkingInfo}/>
+                    )}
+                </div>
+
+            </section>
+        </main>
 
     )
 }

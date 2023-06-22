@@ -1,17 +1,23 @@
 import React from 'react';
-import DashboardHeader from '@/components/admin/Header';
-import { protectRoute } from '@/utils/auth';
+import Sidebar from "@/components/admin/Sidebar";
+import Navbar from "@/components/admin/Navbar";
+import {protectRoute} from "@/utils/auth";
+import AdminHome from "@/components/admin/DashboardHome";
+
+
 
 function Dashboard({ session }) {
     return (
-        <div>
-            <DashboardHeader />
-            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-                    Bienvenue, {session.name} {session.firstname}. Vous êtes responsable de l'agence {session.agency}.
-                </h1>
-            </div>
-        </div>
+        <main>
+            <Sidebar />
+            <section id="content">
+                <Navbar session={session}/>
+                <div style={{ margin: '60px 90px' }}>
+                    <AdminHome />
+                </div>
+            </section>
+        </main>
+
     );
 }
 

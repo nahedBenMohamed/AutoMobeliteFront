@@ -1,16 +1,23 @@
+import Sidebar from "@/components/admin/Sidebar";
 import Parkingtable from "@/components/admin/Parkingtable";
-import DashboardHeader from "@/components/admin/Header";
+import Navbar from "@/components/admin/Navbar";
+import React from "react";
 import {protectRoute} from "@/utils/auth";
 
 
-export default function Car ()  {
+
+export default function Parking ({session})  {
     return (
-        <div>
-            <DashboardHeader />
-            <div style={{ margin: '60px 90px' }}>
-                <Parkingtable />
-            </div>
-        </div>
+        <main>
+            <Sidebar />
+            <section id="content">
+                <Navbar session={session} />
+                <div style={{ margin: '60px 90px' }}>
+                    <Parkingtable />
+                </div>
+
+            </section>
+        </main>
     );
 };
 export const getServerSideProps = (ctx) => {

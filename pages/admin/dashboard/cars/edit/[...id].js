@@ -1,11 +1,14 @@
 import {useRouter} from "next/router";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
+import Sidebar from "@/components/admin/Sidebar";
 import CarForm from "@/components/admin/CarForm";
-import DashboardHeader from "@/components/admin/Header";
+import Navbar from "@/components/admin/Navbar";
+import {protectRoute} from "@/utils/auth";
 
 
-export default function EditCar(){
+
+export default function EditCar({session}){
 
     const [carInfo,setCarInfo] = useState(null)
     const router = useRouter();
@@ -19,13 +22,25 @@ export default function EditCar(){
             setCarInfo(response.data);
         })
     }, [id]);
+
     return(
-            <div>
-                <DashboardHeader/>
-                {carInfo && (
-                    <CarForm {...carInfo}/>
-                )}
-            </div>
+
+        <main>
+            <Sidebar />
+            <section id="content">
+                <Navbar session={session} />
+                <div style={{ margin: '60px 90px' }}>
+                    {carInfo && (
+                        <CarForm {...carInfo}/>
+                    )}
+                </div>
+
+            </section>
+        </main>
 
     )
 }
+export const getServerSideProps = (ctx) => {
+    return protectRoute(ctx, ['admin']);
+};
+

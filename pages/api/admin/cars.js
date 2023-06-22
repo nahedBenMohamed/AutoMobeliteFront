@@ -49,7 +49,8 @@ export default async function handle(req, res) {
                 price,
                 registration,
                 status,
-                images,
+                image,
+                description,
             } = req.body;
 
             // Convert variables to the appropriate types
@@ -84,7 +85,8 @@ export default async function handle(req, res) {
                     price: priceFloat,
                     registration,
                     status,
-                    images: { set: images },
+                    image,
+                    description,
                     Agency: {
                         connect: {
                             name: agency,
@@ -111,7 +113,7 @@ export default async function handle(req, res) {
                 const carId = req.query.id;
                 const car = await prisma.car.findUnique({
                     where: { id: Number(carId) },
-                    include: {Agency: true, parking: true}, // Include the Agency and parking details
+                    include: { Agency: true, parking: true }, // Include the Agency and parking details
                 });
 
                 // If car does not exist or the agency does not have access to the car, send an error
@@ -122,16 +124,23 @@ export default async function handle(req, res) {
                 // Send the car data as a response
                 res.json(car);
             } else {
+
                 // If no ID query parameter exists, get all car data for the agency
                 const cars = await prisma.car.findMany({
                     where: { Agency: { name: agency } },
-                    include: {Agency: true, parking: true}, // Include the Agency and parking details
+                    include: { Agency: true, parking: { select: { name: true } } },
                 });
 
-                // Send the car data as a response
-                res.json(cars);
+                // Modify the response to include the parking name
+                const carsWithParkingName = cars.map((car) => ({
+                    ...car,
+                    parkingName: car.parking?.name || "", // Utilisez le nom du parking ou une chaîne vide si aucun parking n'est associé
+                }));
+                // Send the car data with parking names as a response
+                res.json(carsWithParkingName);
             }
         }
+
 
         if (method === "PUT") {
             // Extract variables from the request body
@@ -144,7 +153,8 @@ export default async function handle(req, res) {
                 price,
                 registration,
                 status,
-                images,
+                image,
+                description,
                 id,
             } = req.body;
 
@@ -156,7 +166,7 @@ export default async function handle(req, res) {
             // Get car data for the specified ID
             const car = await prisma.car.findUnique({
                 where: { id: Number(id) },
-                include: {Agency: true, parking: true}, // Include the Agency and parking details
+                include: { Agency: true, parking: true }, // Include the Agency and parking details
             });
 
             // If the agency does not have access to the car, send an error
@@ -175,16 +185,18 @@ export default async function handle(req, res) {
                     price: priceFloat,
                     registration,
                     status,
-                    images: { set: images },
-                    parking: {
-                        connect: {
-                            name: parkingName,
-                        },
-                    },
+                    image,
+                    description,
+                    parking: parkingName
+                        ? {
+                            connect: {
+                                name: parkingName,
+                            },
+                        }
+                        : undefined,
                 },
-                include: {Agency: true, parking: true}, // Include the Agency and parking details
+                include: { Agency: true, parking: true }, // Include the Agency and parking details
             });
-
             // Send the updated car data as a response
             res.json(updatedCar);
         }
@@ -195,7 +207,7 @@ export default async function handle(req, res) {
                 const carId = req.query.id;
                 const car = await prisma.car.findUnique({
                     where: { id: Number(carId) },
-                    include: {Agency: true, parking: true}, // Include the Agency and parking details
+                    include: { Agency: true, parking: true }, // Include the Agency and parking details
                 });
 
                 // If the agency does not have access to the car, send an error
@@ -207,7 +219,7 @@ export default async function handle(req, res) {
                 res.json(
                     await prisma.car.delete({
                         where: { id: Number(carId) },
-                        include: {Agency: true, parking: true}, // Include the Agency and parking details
+                        include: { Agency: true, parking: true }, // Include the Agency and parking details
                     })
                 );
             }

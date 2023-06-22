@@ -1,8 +1,9 @@
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import {useRouter} from "next/router";
 import axios from "axios";
-import SuperAdminHeader from "@/components/super-admin/super-admin-header";
+import {useEffect, useState} from "react";
+import SuperAdminSidebar from "@/components/super-admin/SuperAdminSidebar";
 import {protectRoute} from "@/utils/auth";
+
 
 export default function DeleteParkingPage() {
     const router = useRouter();
@@ -29,7 +30,7 @@ export default function DeleteParkingPage() {
 
     return (
         <div>
-            <SuperAdminHeader />
+            <SuperAdminSidebar />
             <div className="flex items-center justify-center min-h-screen -mt-20">
                 <div className="max-w-md w-full p-6 bg-white rounded-xl shadow-md flex flex-col items-center space-y-4">
                     <h1 className="text-center text-xl">

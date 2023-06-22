@@ -5,7 +5,7 @@ import Hero from "@/components/client/Hero";
 import {TogglersProvider} from "@/components/context/togglers";
 import VehicleSearchForm from "@/components/client/VehicleSearchForm";
 import QuickEasy from "@/components/client/QuickEasy";
-import Footer from "@/components/admin/Footer";
+import Footer from "@/components/client/Footer";
 import Slider from "@/components/client/Slider";
 import QuickEasy2 from "@/components/client/QuickEasy2";
 import CitiesSlider from "@/components/client/CitiesSlider";

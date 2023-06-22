@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { ReactSortable } from "react-sortablejs";
-import Spinner from "@/components/admin/Spinner";
-import Link from "next/link";
+import {FiPlus, FiTrash2} from "react-icons/fi";
 
 export default function CarForm({ id }) {
+
     const [brand, setBrand] = useState("");
     const [model, setModel] = useState("");
     const [year, setYear] = useState("");
@@ -13,14 +12,16 @@ export default function CarForm({ id }) {
     const [price, setPrice] = useState("");
     const [registration, setRegistration] = useState("");
     const [status, setStatus] = useState("");
+    const [description, setDescription] = useState("");
     const [images, setImages] = useState([]);
+    const [parkingName, setParkingName] = useState("");
+
     const [isUploading, setIsUploading] = useState(false);
     const [goToCars, setGoToCars] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    const [parkingName, setParkingName] = useState("");
+
     const [errorMessageVisible, setErrorMessageVisible] = useState(true);
     const router = useRouter();
-
 
     useEffect(() => {
         if (id) {
@@ -34,9 +35,10 @@ export default function CarForm({ id }) {
                     setMileage(carData.mileage.toString());
                     setPrice(carData.price.toString());
                     setStatus(carData.status);
-                    setImages(carData.images)
+                    setImages(carData.image ? [carData.image] : []);
                     setRegistration(carData.registration);
-                    setParkingName(carData.parking.name);
+                    setParkingName(carData.parkingName);
+                    setDescription(carData.description);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -47,16 +49,14 @@ export default function CarForm({ id }) {
     async function saveCar(ev) {
         ev.preventDefault();
 
-        // Vérification des données côté client (facultatif)
-        if ( !brand || !model || !year || !mileage || !price || !registration || !status ) {
+        if (!brand || !model || !year || !mileage || !price || !registration || !status) {
             setErrorMessage("Veuillez remplir tous les champs.");
-            setErrorMessageVisible(true); // Set this to true when you want to show the error message
+            setErrorMessageVisible(true);
             setTimeout(() => {
-                setErrorMessageVisible(false); // Set this to false after 5 seconds
+                setErrorMessageVisible(false);
             }, 5000);
             return;
         }
-
 
         const data = {
             brand,
@@ -66,17 +66,16 @@ export default function CarForm({ id }) {
             price: parseFloat(price),
             registration,
             status,
-            images,
-            parkingName,
+            description,
+            image: images.length > 0 ? images[0] : null,
+            parkingName: parkingName !== "" ? parkingName : null,
         };
 
         try {
             if (id) {
-                // Update car
-                await axios.put("/api/admin/cars/", { ...data, id, parkingName},{ withCredentials: true });
+                await axios.put(`/api/admin/cars?id=${id}`, { ...data, id }, { withCredentials: true });
             } else {
-                // Create car
-                await axios.post("/api/admin/cars", data,{ withCredentials: true });
+                await axios.post("/api/admin/cars", data, { withCredentials: true });
             }
             setGoToCars(true);
         } catch (error) {
@@ -99,15 +98,13 @@ export default function CarForm({ id }) {
         if (files?.length > 0) {
             setIsUploading(true);
             const data = new FormData();
-            for (const file of files) {
-                data.append("file", file);
-            }
+            data.append("file", files[0]);
             data.append("id", id);
             try {
                 const res = await axios.post("/api/admin/upload", data, { withCredentials: true });
                 const { message, imagePath } = res.data;
                 if (message === "Image uploaded successfully") {
-                    setImages((oldImages) => [...oldImages, imagePath]);
+                    setImages([imagePath]);
                 } else {
                     setErrorMessage("Upload failed");
                 }
@@ -125,189 +122,182 @@ export default function CarForm({ id }) {
         }
     }
 
-    function updateImageOrder(images){
-        setImages(images)
+    async function deleteImage() {
+        setImages([]);  // Ajoutez cette ligne
+        try {
+            await axios.delete(`/api/admin/imagedelete?id=${id}`, { withCredentials: true });
+            setImages([]);
+        } catch (error) {
+            if (error.response) {
+                setErrorMessage(error.response.data.message);
+                setErrorMessageVisible(true);
+                setTimeout(() => {
+                    setErrorMessageVisible(false);
+                }, 5000);
+            } else {
+                setErrorMessage("An error occurred while deleting the image.");
+                setErrorMessageVisible(true);
+                setTimeout(() => {
+                    setErrorMessageVisible(false);
+                }, 5000);
+            }
+        }
     }
 
-    return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="max-w-md w-full space-y-8 bg-white p-6 rounded-lg shadow-md">
-                <div>
-                        <h2 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                            {id ? "Edit Car" : "Add Car"}
-                        </h2>
-                </div>
-                <form onSubmit={saveCar} className="mt-8 space-y-6">
-                    <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                        <div>
-                            <input
-                                id="parkingName"
-                                name="parkingName"
-                                type="text"
-                                value={parkingName}
-                                onChange={(ev) => setParkingName(ev.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Nom du parking"
-                                defaultValue=""
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="brand" className="sr-only">
-                                Brand
-                            </label>
-                            <input
-                                id="brand"
-                                name="brand"
-                                type="text"
-                                value={brand}
-                                onChange={(ev) => setBrand(ev.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Brand "
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="model" className="sr-only">
-                                Model
-                            </label>
-                            <input
-                                id="model"
-                                name="model"
-                                type="text"
-                                value={model}
-                                onChange={(ev) => setModel(ev.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Model"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="year" className="sr-only">
-                                Year
-                            </label>
-                            <input
-                                id="year"
-                                name="year"
-                                type="text"
-                                value={year}
-                                onChange={(ev) => setYear(ev.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Year"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="mileage" className="sr-only">
-                                Mileage
-                            </label>
-                            <input
-                                id="mileage"
-                                name="mileage"
-                                type="text"
-                                value={mileage}
-                                onChange={(ev) => setMileage(ev.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Mileage"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="price" className="sr-only">
-                                Price
-                            </label>
-                            <input
-                                id="price"
-                                name="price"
-                                type="text"
-                                value={price}
-                                onChange={(ev) => setPrice(ev.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Price"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="status" className="sr-only">
-                                Status
-                            </label>
-                            <input
-                                id="status"
-                                name="status"
-                                type="text"
-                                value={status}
-                                onChange={(ev) => setStatus(ev.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Status"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="registration" className="sr-only">
-                                Registration
-                            </label>
-                            <input
-                                id="registration"
-                                name="registration"
-                                type="text"
-                                value={registration}
-                                onChange={(ev) => setRegistration(ev.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                                placeholder="Registration"
-                            />
-                        </div>
-                    </div>
-                    <div className="mb-2 flex flex-wrap gap-2">
-                        <ReactSortable
-                            list={images}
-                            className="flex flex-wrap gap-3"
-                            setList={updateImageOrder}
-                        >
-                            {!!images?.length && images.map((images) => (
-                                <div key={images} className="h-24">
-                                    <img src={images} alt="" className="rounded-lg"/>
-                                </div>
-                            ))}
-                        </ReactSortable>
-                        {isUploading && (
-                            <div className="h-24 p-1 flex items-center">
-                                <Spinner />
-                            </div>
-                        )}
-                        <label className="w-24 h-24 cursor-pointer text-center flex items-center justify-center text-sm gap-1 text-gray-500 rounded-lg bg-gray-200">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                className="w-6 h-6"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-                                />
-                            </svg>
+    function goBack (){
+        router.push("/admin/dashboard/cars");
+    }
 
-                            <div>Upload</div>
-                            <input type="file" onChange={uploadImage} className="hidden" />
-                        </label>
+
+
+    return (
+        <div className="flex items-center justify-center min-w-full bg-gray-100">
+            <div className="max-w-3xl w-full bg-white p-8 rounded-lg shadow-md">
+                <h2 className="mt-2 mb-8 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+                    {id ? "Edit Car" : "Add Car"}
+                </h2>
+                <div className="flex">
+                    <div className="flex flex-col items-center mr-8">
+                        <div className="w-48 h-48 mb-4 relative">
+                            {images.length > 0 && (
+                                <img src={images[0]} alt="Car" className="w-full h-full object-cover rounded-lg" />
+                            )}
+                        </div>
+                        <div className="flex flex-row space-x-2">
+                            <input
+                                type="file"
+                                id="image"
+                                name="image"
+                                onChange={uploadImage}
+                                hidden
+                            />
+                            <label htmlFor="image" className=" text-blue-500 hover:text-blue-700 mx-1 cursor-pointer">
+                                <FiPlus size={18} />
+                            </label>
+                            <button type="button" className="text-red-500 hover:text-red-700" onClick={deleteImage}>
+                                <FiTrash2 size={18} />
+                            </button>
+                        </div>
                     </div>
-                    <div className="mt-2">
-                        {errorMessageVisible && errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-                    </div>
-                    <div className="flex justify-center gap-4">
+                    <form onSubmit={saveCar} className="flex-1">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <input
+                                    id="parking"
+                                    name="parking"
+                                    type="text"
+                                    value={parkingName}
+                                    onChange={(ev) => setParkingName(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="parking"
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    id="brand"
+                                    name="brand"
+                                    type="text"
+                                    value={brand}
+                                    onChange={(ev) => setBrand(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="Brand"
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    id="model"
+                                    name="model"
+                                    type="text"
+                                    value={model}
+                                    onChange={(ev) => setModel(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="Model"
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    id="year"
+                                    name="year"
+                                    type="text"
+                                    value={year}
+                                    onChange={(ev) => setYear(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="Year"
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    id="mileage"
+                                    name="mileage"
+                                    type="text"
+                                    value={mileage}
+                                    onChange={(ev) => setMileage(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="Mileage"
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    id="price"
+                                    name="price"
+                                    type="text"
+                                    value={price}
+                                    onChange={(ev) => setPrice(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="Price"
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    id="registration"
+                                    name="registration"
+                                    type="text"
+                                    value={registration}
+                                    onChange={(ev) => setRegistration(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="registration"
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    id="status"
+                                    name="status"
+                                    type="text"
+                                    value={status}
+                                    onChange={(ev) => setStatus(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="status"
+                                />
+                            </div>
+                            <div className="col-span-2">
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    value={description}
+                                    onChange={(ev) => setDescription(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    rows={4}
+                                    placeholder="Enter a description..."
+                                />
+                            </div>
+                        </div>
+                    <div className="mt-8 flex justify-end">
                         <button
                             type="submit"
-                            className="group relative w-1/2 flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            className="w-1/2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
-                            <span className="absolute left-0 inset-y-0 flex items-center pl-3" />
-                            Save
+                            {id ? "Update" : "Save"}
                         </button>
-                        <Link
-                            href={"/admin/dashboard/cars"}
+                        <button
                             type="button"
-                            className="group relative w-1/2 flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            className="ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                            onClick={goBack}
                         >
-                            <span className="absolute left-0 inset-y-0 flex items-center pl-3" />
                             Cancel
-                        </Link>
+                        </button>
                     </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     );

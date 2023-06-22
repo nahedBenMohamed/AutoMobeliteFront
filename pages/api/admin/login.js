@@ -32,21 +32,26 @@ export default async function handle(req, res) {
         return res.status(400).json({ error: "You do not have access to the dashboard" });
     }
 
-    // Generate a token for the user
-    const token = jwt.sign({
-        agencyUserId: agencyUser.id,
-        name: agencyUser.name,
-        firstname: agencyUser.firstname,
-        role:agencyUser.role,
-        agency: agencyUser.Agency.name
-    }, process.env.JWT_SECRET, { expiresIn: '3h' });
+// Generate a token for the user
+    const token = jwt.sign(
+        {
+            agencyUserId: agencyUser.id,
+            name: agencyUser.name,
+            firstname: agencyUser.firstname,
+            role: agencyUser.role,
+            agency: agencyUser.Agency.name,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+    );
 
-    // Store the token in a secure cookie
+// Store the token in a secure cookie
     setCookie({ res }, 'token', token, {
         httpOnly: true,
         path: '/',
-        maxAge: 3*3600, // Cookie lifetime in seconds
+        maxAge: 7 * 24 * 3600, // Cookie lifetime in seconds (7 days)
     });
+
 
     // Return the response with the user's role
     return res.status(200).json({  message: 'Successful login', role: agencyUser.role });

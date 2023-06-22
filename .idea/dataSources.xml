@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="automobelite" uuid="b64d62cb-f600-4717-8cbb-fdd507edb7f0">
+    <data-source source="LOCAL" name="automobelite@localhost" uuid="f11be257-46bb-41d5-b7d4-c82dfd0d9586">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/lool</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:5432/automobelite</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

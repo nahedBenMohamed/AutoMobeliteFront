@@ -17,7 +17,7 @@ const RentalTable = () => {
 
     return (
         <div>
-            <table className="min-w-full bg-white">
+            <table className="min-w-full bg-white rounded-b-3xl ">
                 <thead>
                 <tr>
                     <th className="px-4 py-2">Nom</th>

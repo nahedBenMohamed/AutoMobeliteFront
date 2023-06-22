@@ -1,42 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import {AiFillCar, AiFillStar, AiFillTool} from "react-icons/ai";
+import {GiCarDoor} from "react-icons/gi";
+import {BsFillFuelPumpFill} from "react-icons/bs";
 
 const DashboardCards = () => {
+    const [agences, setAgences] = useState([]);
+
+    useEffect(() => {
+        const fetchAgences = async () => {
+            try {
+                const response = await axios.get('/api/admin/agence', {
+                    withCredentials: true,
+                });
+                setAgences(response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchAgences();
+    }, []);
+
     return (
-        <div className="grid grid-cols-3 gap-4">
-            <div className="cookie-card">
-                <span className="title">Cookie Notice</span>
-                <p className="description">
-                    We use cookies to ensure that we give you the best experience on our website. <a href="#">Read cookies policies</a>.
-                </p>
-                <div className="actions">
-                    <button className="pref">Manage your preferences</button>
-                    <button className="accept">Accept</button>
+        <div className="grid grid-cols-2 gap-8">
+            {agences.map((agence) => (
+                <div key={agence.id} className="border border-lighter-grey bg-white rounded-b-3xl">
+                    <div className="p-6 space-y-6">
+                        <h1 className="font-bold text-xl lg:text-2xl">
+                            {agence.totalParkings}
+                        </h1>
+                    </div>
+                    <div className="p-6 space-y-6">
+                        <h1 className="font-bold text-xl lg:text-2xl">
+                            {agence.totalCars}
+                        </h1>
+                    </div>
                 </div>
-            </div>
-            <div className="cookie-card">
-                {/* Deuxième carte */}
-
-                <span className="title">Cookie Notice</span>
-                <p className="description">
-                    We use cookies to ensure that we give you the best experience on our website. <a href="#">Read cookies policies</a>.
-                </p>
-                <div className="actions">
-                    <button className="pref">Manage your preferences</button>
-                    <button className="accept">Accept</button>
-                </div>
-            </div>
-            <div className="cookie-card">
-                {/* Troisième carte */}
-
-                <span className="title">Cookie Notice</span>
-                <p className="description">
-                    We use cookies to ensure that we give you the best experience on our website. <a href="#">Read cookies policies</a>.
-                </p>
-                <div className="actions">
-                    <button className="pref">Manage your preferences</button>
-                    <button className="accept">Accept</button>
-                </div>
-            </div>
+            ))}
         </div>
     );
 };

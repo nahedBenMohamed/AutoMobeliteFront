@@ -3,7 +3,7 @@ import { TogglersProvider } from "@/components/context/togglers";
 import Header from "@/components/client/Header";
 import BannerHero from "@/components/client/BannerHero";
 import Models from "@/components/client/Models";
-    import Footer from "@/components/admin/Footer";
+    import Footer from "@/components/client/Footer";
 
 
 function page() {
