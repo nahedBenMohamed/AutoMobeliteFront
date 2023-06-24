@@ -1,7 +1,6 @@
 import {TogglersProvider} from "@/components/context/togglers";
 import MobileNavConnected from "@/components/client/MobileNavConnected";
 import Header from "@/components/client/Header";
-import IndexPage from "@/components/client/RerservationForm";
 
 
 
@@ -11,7 +10,6 @@ function page() {
             <TogglersProvider>
                 <Header/>
                 <MobileNavConnected/>
-                <IndexPage/>
             </TogglersProvider>
         </main>
 

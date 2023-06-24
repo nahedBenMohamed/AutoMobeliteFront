@@ -55,8 +55,9 @@ model Car {
   year         Int
   mileage      Int
   price        Float
-  registration String
-  images       String[]
+  registration String        @db.VarChar(10)
+  description  String?       @db.VarChar(255)
+  image        String?
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @default(now()) @map("updated_at")
   status       CarStatus     @default(available)

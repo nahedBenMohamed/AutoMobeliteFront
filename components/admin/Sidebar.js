@@ -24,7 +24,7 @@ export default function Sidebar() {
     return (
         <section id="sidebar">
             <Link href="/admin/dashboard/home" className={`brand ${pathname === '/' ? activeLink : inactiveLink}`}>
-                    <img src={"/mobelite.png"} alt="logo"/>
+                    <img src={"/images/mobelite.png"} alt="logo"/>
                     <span className="text">Automobelite</span>
             </Link>
 
