@@ -2,7 +2,6 @@ import React from 'react';
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-
 export default function SuperAdminSidebar() {
     const inactiveLink = 'flex gap-1 p-1';
     const activeLink = inactiveLink + ' bg-white text-blue-900 rounded-l-lg';
@@ -10,13 +9,17 @@ export default function SuperAdminSidebar() {
     const { pathname } = router;
 
     const handleLogout = async () => {
-        const res = await fetch('/api/auth/logout', {
-            method: 'POST',
-        });
+        try {
+            const res = await fetch('/api/auth/logout', {
+                method: 'POST',
+            });
 
-        if (res.ok) {
-            await router.push('/authentification/login');
-        } else {
+            if (res.ok) {
+                await router.push('/super-admin/auth/login');
+            } else {
+                // handle error
+            }
+        } catch (error) {
             // handle error
         }
     };
@@ -56,6 +59,14 @@ export default function SuperAdminSidebar() {
 
                         <i class='bx bxs-building-house'></i>
                         <span className="text">Agences</span>
+
+                    </Link>
+                </li>
+                <li className={pathname === '/super-admin/dashboard/manage-admin' ? 'active' : ''}>
+                    <Link href="/super-admin/dashboard/manage-admin">
+
+                        <i class='bx bx-cog'></i>
+                        <span className="text">Manage Admins</span>
 
                     </Link>
                 </li>

@@ -1,5 +1,5 @@
 import React from "react";
-import Register from "@/components/admin/register";
+import Register from "@/components/super-admin/admin-register";
 
 
 

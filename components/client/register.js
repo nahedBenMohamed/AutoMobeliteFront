@@ -4,12 +4,14 @@ import { HiEye, HiEyeOff, HiLockClosed, HiMail, HiPhone, HiUser } from "react-ic
 import { parsePhoneNumberFromString, getCountryCallingCode } from 'libphonenumber-js';
 
 const RegisterPage = () => {
+
     const router = useRouter();
     const [errorMessage, setErrorMessage] = useState('');
     const [name, setName] = useState('');
     const [firstname, setFirstName] = useState('');
     const [email, setEmail] = useState('');
     const [telephone, setTelephone] = useState('');
+    const [numPermis, setNumPermis] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -21,12 +23,13 @@ const RegisterPage = () => {
         return `+${defaultCountryCode}`;
     };
 
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         // Vérification des données côté client (facultatif)
-        if (!name || !firstname || !email || !telephone || !password || !confirmPassword) {
-            setErrorMessage('Please fill in all fields');
+        if (!name || !firstname || !email || !telephone || !numPermis || !password || !confirmPassword ) {
+            setErrorMessage('Please fill in all fields and upload the license image');
             setErrorMessageVisible(true);
             setTimeout(() => {
                 setErrorMessageVisible(false);
@@ -86,11 +89,11 @@ const RegisterPage = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, firstname, email, password, telephone }),
+                body: JSON.stringify({ name, firstname, email, password, numPermis, telephone }),
             });
 
             if (response.ok) {
-                await router.push('/authentification/login');
+                await router.push('/redirect');
             } else {
                 const errorData = await response.json();
                 setErrorMessage(errorData.message);
@@ -168,6 +171,23 @@ const RegisterPage = () => {
                                 <div className="relative">
                                     <HiPhone className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                                     <input
+                                        id="permis"
+                                        name="permis"
+                                        type="text"
+                                        autoComplete="email"
+                                        placeholder="Enter your Tunisia permis drive"
+                                        value={numPermis}
+                                        onChange={(e) => setNumPermis(e.target.value)}
+                                        className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div className="mt-2 mb-4">
+                                <div className="relative">
+                                    <HiPhone className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
+                                    <input
                                         id="phone"
                                         name="phone"
                                         type="phone"
@@ -228,7 +248,7 @@ const RegisterPage = () => {
                                 type="submit"
                                 className="mt-8 w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
-                                Create an account
+                                Suivant
                             </button>
                         </div>
                     </form>

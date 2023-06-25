@@ -11,12 +11,14 @@ model Client {
   id            Int        @id @default(autoincrement())
   name          String     @db.VarChar(100)
   firstname     String     @db.VarChar(100)
-  email         String     @unique @db.VarChar(200)
+  email         String     @unique @db.VarChar(100)
   password      String     @db.VarChar(200)
+  telephone     String     @db.VarChar(100)
+  numPermis     String     @db.VarChar(15)
+  image         String?
   createdAt     DateTime   @default(now()) @map("created_at")
   updatedAt     DateTime   @default(now()) @map("updated_at")
   emailVerified Boolean    @default(false)
-  telephone     String     @db.VarChar(100)
   role          ClientRole @default(user)
   rentals       Rental[]
 }
@@ -25,8 +27,9 @@ model AgencyUser {
   id        Int      @id @default(autoincrement())
   name      String   @db.VarChar(100)
   firstname String   @db.VarChar(100)
-  email     String   @unique @db.VarChar(200)
+  email     String   @unique @db.VarChar(100)
   password  String   @db.VarChar(200)
+  image     String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
   role      UserRole @default(admin)
@@ -35,11 +38,12 @@ model AgencyUser {
 
 model Agency {
   id            Int        @id @default(autoincrement())
-  name          String     @unique @db.VarChar(100)
-  address       String     @db.VarChar(100)
-  email         String     @unique @db.VarChar(200)
-  telephone     String     @db.VarChar(100)
+  name          String     @unique @db.VarChar(50)
+  address       String     @db.VarChar(200)
+  email         String     @unique @db.VarChar(100)
+  telephone     String     @db.VarChar(15)
   responsibleId Int        @unique
+  image         String?
   createdAt     DateTime   @default(now()) @map("created_at")
   updatedAt     DateTime   @default(now()) @map("updated_at")
   AgencyUser    AgencyUser @relation(fields: [responsibleId], references: [id])
@@ -48,24 +52,25 @@ model Agency {
 }
 
 model Car {
-  id           Int           @id @default(autoincrement())
+  id           Int            @id @default(autoincrement())
   agencyId     Int
-  brand        String        @db.VarChar(100)
-  model        String        @db.VarChar(100)
+  brand        String         @db.VarChar(100)
+  model        String         @db.VarChar(100)
   year         Int
   mileage      Int
   price        Float
-  registration String        @db.VarChar(10)
-  description  String?       @db.VarChar(255)
+  registration String         @db.VarChar(20)
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @default(now()) @map("updated_at")
+  status       CarStatus      @default(available)
+  parkingName  String?        @db.VarChar(100)
+  description  String?        @db.VarChar(350)
   image        String?
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @default(now()) @map("updated_at")
-  status       CarStatus     @default(available)
-  parkingName  String?       @db.VarChar(100)
-  Agency       Agency        @relation(fields: [agencyId], references: [id])
-  parking      Parking?      @relation(fields: [parkingName], references: [name])
+  Agency       Agency         @relation(fields: [agencyId], references: [id])
+  parking      Parking?       @relation(fields: [parkingName], references: [name])
   maintenances Maintenance[]
   rentals      Rental[]
+  availability Availability[]
 }
 
 model Rental {
@@ -83,7 +88,7 @@ model Rental {
 model Maintenance {
   id          Int      @id @default(autoincrement())
   date        DateTime
-  description String   @db.VarChar(300)
+  description String   @db.VarChar(350)
   carId       Int
   cost        Float
   car         Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
@@ -93,12 +98,22 @@ model Parking {
   id        Int      @id @default(autoincrement())
   name      String   @unique @db.VarChar(100)
   agencyId  Int
+  image     String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
-  address   String   @db.VarChar(100)
-  city      String   @db.VarChar(100)
+  address   String   @db.VarChar(200)
+  city      String   @db.VarChar(200)
   Car       Car[]
   Agency    Agency   @relation(fields: [agencyId], references: [id])
+}
+
+model Availability {
+  id        Int      @id @default(autoincrement())
+  carId     Int
+  date      DateTime
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  car       Car      @relation(fields: [carId], references: [id])
 }
 
 enum UserRole {

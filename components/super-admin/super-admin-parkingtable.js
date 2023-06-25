@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FiEdit, FiTrash2, FiInfo } from 'react-icons/fi';
 import axios from 'axios';
+import Modal from "react-modal";
 
 const SuperAdminParkingtable = () => {
+
+    const [modalIsOpen, setModalIsOpen] = useState(false);
     const [parkings, setParkings] = useState([]);
+    const [parkingToDelete, setParkingToDelete] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [parkingsPerPage] = useState(5);
 
@@ -20,6 +24,19 @@ const SuperAdminParkingtable = () => {
     const currentParkings = parkings.slice(indexOfFirstParking, indexOfLastParking);
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    const handleDeleteParking = async () => {
+        try {
+            await axios.delete(`/api/super-admin/parking?id=${parkingToDelete.id}`, { withCredentials: true });
+            const updatedParkings = parkings.filter((parking) => parking.id !== parkingToDelete.id);
+            setParkings(updatedParkings);
+            setModalIsOpen(false);
+            setParkingToDelete(null);
+        } catch (error) {
+            console.log(error);
+            // Gérer l'erreur de suppression de parking
+        }
+    };
 
     return (
         <div className="overflow-x-auto">
@@ -68,9 +85,15 @@ const SuperAdminParkingtable = () => {
                                     <Link href={"/super-admin/dashboard/parking/edit/"+parking.id} className="text-blue-500 hover:text-blue-700 mx-1">
                                             <FiEdit size={18} />
                                     </Link>
-                                    <Link href={"/super-admin/dashboard/parking/delete/"+parking.id} className="text-red-500 hover:text-red-700 mx-1">
-                                            <FiTrash2 size={18} />
-                                    </Link>
+                                    <button
+                                        className="text-red-500 hover:text-red-700 mx-1"
+                                        onClick={() => {
+                                            setModalIsOpen(true);
+                                            setParkingToDelete(parking);
+                                        }}
+                                    >
+                                        <FiTrash2 size={18} />
+                                    </button>
                                     <Link href={"/super-admin/dashboard/parking/details/"+parking.id} className="text-gray-500 hover:text-gray-700 mx-1" >
                                             <FiInfo size={18} />
                                     </Link>
@@ -104,6 +127,62 @@ const SuperAdminParkingtable = () => {
                     ))}
                 </ul>
             </div>
+
+            {/* Modal de confirmation */}
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={() => setModalIsOpen(false)}
+                contentLabel="Confirmation Modal"
+                style={{
+                    overlay: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    },
+                    content: {
+                        maxWidth: '400px',
+                        width: '90%',
+                        height: '35%',
+                        margin: 'auto',
+                        borderRadius: '8px',
+                        padding: '20px',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                        top: '50%',
+                        left: '55%',
+                        transform: 'translate(-50%, -55%)',
+                    },
+                }}
+                contentClassName="custom-modal-content"
+            >
+                <h2 className="text-2xl font-bold text-center mb-4">Confirmation</h2>
+                {parkingToDelete && (
+                    <div>
+                        <p className="text-center mt-4 mb-4">
+                            Êtes-vous sûr de vouloir supprimer le parking&nbsp;
+                            <span className="text-blue-500">
+                                {parkingToDelete.name}
+                            </span> de l'agence <span className="text-blue-500">
+                                     {parkingToDelete.Agency?.name}
+                                </span>
+                        </p>
+                        <div className="flex justify-center space-x-4">
+                            <button
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={handleDeleteParking}
+                            >
+                                OUI
+                            </button>
+                            <button
+                                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={() => setModalIsOpen(false)}
+                            >
+                                NON
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </Modal>
         </div>
     );
 };

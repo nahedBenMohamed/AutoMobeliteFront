@@ -42,7 +42,7 @@ const LoginPage = () => {
                 }, 5000);
             }
         } catch (error) {
-            setMessage('An error occurred while logging in.');
+            setMessage(error.error);
             setErrorMessageVisible(true);
             setTimeout(() => {
                 setErrorMessageVisible(false);
