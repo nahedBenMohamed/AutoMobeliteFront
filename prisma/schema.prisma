@@ -60,17 +60,20 @@ model Car {
   mileage      Int
   price        Float
   registration String         @db.VarChar(20)
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @default(now()) @map("updated_at")
   status       CarStatus      @default(available)
   parkingName  String?        @db.VarChar(100)
-  description  String?        @db.VarChar(350)
+  description  String?        @db.VarChar(300)
+  fuel         String         @db.VarChar(50)
+  door         Int
+  gearBox      String         @db.VarChar(25)
   image        String?
   Agency       Agency         @relation(fields: [agencyId], references: [id])
   parking      Parking?       @relation(fields: [parkingName], references: [name])
   maintenances Maintenance[]
   rentals      Rental[]
   availability Availability[]
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @default(now()) @map("updated_at")
 }
 
 model Rental {
@@ -79,6 +82,8 @@ model Rental {
   carId     Int
   startDate DateTime
   endDate   DateTime
+  startTime DateTime
+  endTime   DateTime
   total     Float
   status    RentalStatus @default(reserved)
   car       Car          @relation(fields: [carId], references: [id], onDelete: Cascade)
