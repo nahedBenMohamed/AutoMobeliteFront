@@ -9,6 +9,7 @@ import Footer from "@/components/client/Footer";
 import Slider from "@/components/client/Slider";
 import QuickEasy2 from "@/components/client/QuickEasy2";
 import CitiesSlider from "@/components/client/CitiesSlider";
+import Footer2 from "@/components/client/Footeur2";
 
 
 
@@ -30,7 +31,7 @@ export default function Home() {
                 </div>
                 <QuickEasy2 />
                 <CitiesSlider />
-                <Footer />
+                <Footer2 />
             </main>
         </TogglersProvider>
     )

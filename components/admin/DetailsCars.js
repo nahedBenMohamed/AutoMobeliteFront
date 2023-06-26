@@ -65,7 +65,8 @@ const DetailsCars = ({ id }) => {
                     </div>
                     <div className="w-1/2 mx-4">
                         <div className="rounded-lg p-4 space-y-4">
-                            <h2 className="text-2xl font-bold">{brand} {model}</h2>
+                            <h2 className="text-2xl font-bold">{brand} </h2>
+                            <p><span className="font-bold">Model:</span>&nbsp;{model}</p>
                             <p><span className="font-bold">Year:</span>&nbsp;{year}</p>
                             <p><span className="font-bold">Mileage:</span>&nbsp;{mileage} km</p>
                             <p><span className="font-bold">Price:</span>&nbsp;{price} DT</p>

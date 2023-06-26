@@ -4,6 +4,7 @@ import { GiCarDoor } from "react-icons/gi";
 import { BsFillFuelPumpFill } from "react-icons/bs";
 import axios from "axios";
 import Modal from "./Modal";
+import {router} from "next/router";
 
 function Modelsconnected() {
     const [cars, setCars] = useState([]);
@@ -24,8 +25,17 @@ function Modelsconnected() {
     };
 
     const handleReservation = (car) => {
-        // Logique pour gérer la réservation du véhicule
-        console.log("Réserver le véhicule :", car);
+        router.push({
+            pathname: "/client/Reservations",
+            query: {
+                id: car.id,
+                image: car.image,
+                price: car.price,
+                brand: car.brand,
+                Agency: car.Agency?.name,
+            },
+
+        });
     };
 
     return (
@@ -35,7 +45,7 @@ function Modelsconnected() {
                     {cars.map((car) => (
                         <div key={car.id} className="border border-lighter-grey bg-white rounded">
                             <div className="image-container">
-                                <img src={car.images} alt="" />
+                                <img src={car.image} alt="" />
                             </div>
                             <div className="p-6 space-y-6">
                                 <div className="flex items-center justify-between">

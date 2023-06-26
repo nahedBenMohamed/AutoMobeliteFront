@@ -1,25 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
-import {
-    AiOutlineCalendar, AiOutlineClockCircle,
-    AiOutlineEnvironment,
-    AiOutlineHome,
-    AiOutlineIdcard,
-    AiOutlineMail,
-    AiOutlinePhone,
-    AiOutlineUser
-} from "react-icons/ai";
-import Link from "next/link";
+import {AiOutlineCalendar, AiOutlineClockCircle, AiOutlineEnvironment, AiOutlineHome, AiOutlineIdcard, AiOutlineMail, AiOutlinePhone, AiOutlineUser} from "react-icons/ai";
+import {FaCar, FaEquals, FaMoneyBillWave} from "react-icons/fa";
+import { motion } from "framer-motion";
+import { useSpring, animated } from 'react-spring';
+import { DateRangePicker } from 'react-dates';
+import moment from 'moment';
+import 'react-dates/initialize';
+import 'react-dates/lib/css/_datepicker.css';
 
 function ReservationForm() {
     const router = useRouter();
     const { id, image, price,brand,Agency } = router.query;
 
-    const [selectedDates, setSelectedDates] = useState([new Date(), new Date()]);
+    const [selectedDates, setSelectedDates] = useState([moment(), moment()]);
     const [selectedStartTime, setSelectedStartTime] = useState('');
     const [selectedReturnTime, setSelectedReturnTime] = useState('');
+    const [focusedInput, setFocusedInput] = useState(null);
     const [name, setName] = useState('');
     const [firstName, setFirstName] = useState('');
     const [email, setEmail] = useState('');
@@ -37,24 +34,14 @@ function ReservationForm() {
 
     const calculatePrice = () => {
         const pricePerDay = parseFloat(price);
-        const differenceInDays = (selectedDates[1] - selectedDates[0]) / (1000 * 60 * 60 * 24);
+        const differenceInDays = selectedDates.endDate
+            ? (selectedDates.endDate.diff(selectedDates.startDate, 'days') )
+            : 0;
         const totalPrice = pricePerDay * differenceInDays;
 
-        return totalPrice.toFixed(2);
+        return totalPrice.toFixed(1);
     };
-
-    const handleDateChange = (date) => {
-        setSelectedDates(date);
-    };
-
-    const handleStartTimeChange = (event) => {
-        setSelectedStartTime(event.target.value);
-    };
-
-    const handleReturnTimeChange = (event) => {
-        setSelectedReturnTime(event.target.value);
-    };
-
+    
     const handleNextStep = () => {
         setStep(step + 1);
     };
@@ -82,101 +69,132 @@ function ReservationForm() {
             </div>
         );
     };
+    const fade = useSpring({
+        from: { opacity: 3 },
+        to: { opacity: 6 },
+        delay: 600,
+    });
+    const unavailableDates = ['2023-06-29', '2023-07-02']
+    const isDayBlocked = (day) => {
+        return unavailableDates.some((unavailableDate) => moment(unavailableDate).isSame(day, 'day'));
+    };
+
 return(
-    <form onSubmit={handleSubmit} className="mt-20 max-w-4xl mx-auto bg-white p-6 rounded shadow-lg">
-        {/*<ProgressBar step={step} />*/}
-        <div className="text-center text-blue-600"> Etape {step}/3</div>
+    <form onSubmit={handleSubmit} className="mt-20 w-full mx-auto  p-6 rounded ">
+        <ProgressBar step={step} />
+        <div className="mt-4 text-center text-blue-600"> Etape {step}/3</div>
         {step === 1 && (
             <>
 
-                <div className="mt-2 max-w-4xl mx-auto  p-6 rounded ">
+                <div className="mt-2 max-w-3xl mx-auto  p-6 rounded ">
                     <div className="mt-6 mx-auto flex flex-col md:flex-row">
 
-                        <div className="md:w-1/2">
+                        <div className="-mt-4 md:w-1/2">
                             <img src={image} alt="" className="w-full h-auto mb-6" />
-                            <div className="mt-4 flex justify-between items-center bg-blue-100 p-2 rounded-lg shadow mb-6">
-                                <h3 className="text-2xl text-blue-500 font-semibold">Marque</h3>
-                                <p className="text-2xl text-blue-700 font-bold">{brand} </p>
-                            </div>
-                            <div className="flex justify-between items-center bg-blue-100 p-2 rounded-lg shadow mb-6">
-                                <h3 className="text-2xl text-blue-500 font-semibold">Prix initial</h3>
-                                <p className="text-2xl text-blue-700 font-bold">{price} DT</p>
-                            </div>
+                            <div className="bg-white p-5 rounded-lg shadow-lg flex flex-wrap justify-between items-start">
+                                <div className="flex items-center  p-2 rounded-lg  mb-8 w-full md:w-auto md:flex-3">
+                                    <FaCar size={20} className="text-blue-500" />
+                                    <div className="ml-4">
+                                        <p className="text-xl text-blue-700 font-bold">{brand}</p>
+                                    </div>
+                                </div>
 
-                            <div className="flex justify-between items-center bg-red-100 p-2 rounded-lg shadow">
-                                <h3 className="text-2xl text-red-500 font-semibold">Total</h3>
-                                <p className="text-2xl text-red-500 font-bold">{calculatePrice()} DT</p>
+                                <div className="flex items-center  p-2 rounded-lg  mb-6 w-full md:w-auto md:flex-2">
+                                    <FaMoneyBillWave size={20} className="text-blue-500" />
+                                    <div className="ml-4">
+                                        <p className="text-xl text-blue-700 font-bold">{price} DT</p>
+                                    </div>
+                                </div>
+
+                                <motion.div
+                                    className=" flex items-center  p-2 rounded-lg shadow w-full md:w-auto md:flex-2"
+                                    initial={{opacity: 0, y: -100}}
+                                    animate={{opacity: 20, y: 0}}
+                                    transition={{type: 'spring', stiffness: 90}}
+                                >
+                                    <FaEquals size={20} className="text-green-400" />
+                                    <div className="ml-4">
+                                        <p className="text-xl text-green-400 font-bold">{calculatePrice()} DT</p>
+                                    </div>
+                                </motion.div>
                             </div>
-
-
 
                         </div>
-                        <div className="mt-4 md:w-1/2 md:pl-12">
-                            <div className="mb-12 flex">
-                                <div className="w-1/2 pr-2">
-                                    <div className="flex items-center mb-2">
-                                        <AiOutlineCalendar className="mr-2" />
-                                        <label className="text-gray-700">StartDate :</label>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        value={selectedDates[0].toLocaleDateString()}
-                                        readOnly
-                                        className="w-full px-4 py-2 border border-gray-300 rounded"
-                                    />
-                                </div>
-                                <div className="w-1/2 pl-2">
-                                    <div className="flex items-center mb-2">
-                                        <AiOutlineCalendar className="mr-2" />
-                                        <label className="text-gray-700">EndDate :</label>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        value={selectedDates[1].toLocaleDateString()}
-                                        readOnly
-                                        className="w-full px-4 py-2 border border-gray-300 rounded"
-                                    />
-                                </div>
-                            </div>
-                            <div className="mb-12 flex">
-                                <div className="w-1/2 pr-2">
-                                    <div className="flex items-center mb-2">
-                                        <AiOutlineClockCircle className="mr-2" />
-                                        <label className="text-gray-700">Start time :</label>
-                                    </div>
-                                    <input
-                                        type="time"
-                                        value={selectedStartTime}
-                                        onChange={(event) => setSelectedStartTime(event.target.value)}
-                                        required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded"
-                                    />
-                                </div>
-                                <div className="w-1/2 pl-2">
-                                    <div className="flex items-center mb-2">
-                                        <AiOutlineClockCircle className="mr-2" />
-                                        <label className="text-gray-700">End time :</label>
-                                    </div>
-                                    <input
-                                        type="time"
-                                        value={selectedReturnTime}
-                                        onChange={(event) => setSelectedReturnTime(event.target.value)}
-                                        required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded"
-                                    />
-                                </div>
-                            </div>
-                            <div className="mb-12">
-                                <Calendar
-                                    selectRange
-                                    onChange={handleDateChange}
-                                    value={selectedDates}
-                                    className="border border-gray-300 rounded p-4 w-full"
+                        <div className="mt-12 md:w-1/2 md:pl-12">
+
+                            <animated.div style={fade} className="-mt-8 mb-12 bg-blue-100 p-6 rounded-lg shadow">
+                                <DateRangePicker
+                                    startDate={selectedDates.startDate} // used as an object here
+                                    startDateId="start_date_id"
+                                    endDate={selectedDates.endDate} // used as an object here
+                                    endDateId="end_date_id"
+                                    onDatesChange={({ startDate, endDate }) => setSelectedDates({ startDate, endDate })} // define as an object
+                                    focusedInput={focusedInput}
+                                    onFocusChange={focusedInput => setFocusedInput(focusedInput)}
+                                    numberOfMonths={1} // For mobile responsiveness
+                                    isDayBlocked={isDayBlocked}
                                 />
-                            </div>
+                            </animated.div>
+                            <animated.div style={fade} className="mb-8 bg-blue-100 p-6 rounded-lg shadow">
+                                <div className="flex justify-between mb-6">
+                                    <div className="w-1/2 pr-3">
+                                        <div className="flex items-center mb-2">
+                                            <AiOutlineCalendar className="mr-2" />
+                                            <label className="text-gray-700">StartDate :</label>
+                                        </div>
+                                        <input
+                                            type="text"
+                                            value={selectedDates.startDate ? selectedDates.startDate.format('DD/MM/YYYY') : ''}
+                                            readOnly
+                                            className="w-full px-4 py-2 border border-gray-300 rounded"
+                                        />
+                                    </div>
+                                    <div className="w-1/2 pl-2">
+                                        <div className="flex items-center mb-2">
+                                            <AiOutlineCalendar className="mr-2" />
+                                            <label className="text-gray-700">EndDate :</label>
+                                        </div>
+                                        <input
+                                            type="text"
+                                            value={selectedDates.endDate ? selectedDates.endDate.format('DD/MM/YYYY') : ''}
+                                            readOnly
+                                            className="w-full px-4 py-2 border border-gray-300 rounded"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex justify-between">
+                                    <div className="w-1/2 pr-2">
+                                        <div className="flex items-center mb-2">
+                                            <AiOutlineClockCircle className="mr-2" />
+                                            <label className="text-gray-700">Start time :</label>
+                                        </div>
+                                        <input
+                                            type="time"
+                                            value={selectedStartTime}
+                                            onChange={(event) => setSelectedStartTime(event.target.value)}
+                                            required
+                                            className="w-full px-4 py-2 border border-gray-300 rounded"
+                                        />
+                                    </div>
+                                    <div className="w-1/2 pl-2">
+                                        <div className="flex items-center mb-2">
+                                            <AiOutlineClockCircle className="mr-2" />
+                                            <label className="text-gray-700">End time :</label>
+                                        </div>
+                                        <input
+                                            type="time"
+                                            value={selectedReturnTime}
+                                            onChange={(event) => setSelectedReturnTime(event.target.value)}
+                                            required
+                                            className="w-full px-4 py-2 border border-gray-300 rounded"
+                                        />
+                                    </div>
+                                </div>
+                            </animated.div>
+                        </div>
                         </div>
 
-                    </div>
+
 
                     <button
                         type="button"
@@ -191,7 +209,7 @@ return(
 
         {step === 2 && (
             <>
-                <div className="mt-10 max-w-xl mx-auto bg-white p-6 rounded shadow-lg">
+                <div className="mt-10 max-w-3xl mx-auto  p-6 rounded shadow-xl">
                     <h3 className=" text-center mb-4">Informations personnelles</h3>
 
                     <div className="flex flex-wrap -mx-2 mb-4">
@@ -312,8 +330,8 @@ return(
             <>
 
                 <h3 className="mt-12 text-center mb-6 text-lg font-bold">Recapitulatif</h3>
-                <div className="mt-4 flex justify-between items-center  p-2 rounded-lg shadow">
-                    <h3 className="text-2xl text-black font-semibold">Agence</h3>
+                <div className="mt-4  flex justify-between items-center  p-2 rounded-lg shadow">
+                    <h3 className="  text-2xl text-black font-semibold">Agence</h3>
                     <p className="text-2xl text-black font-bold">{Agency} </p>
                 </div>
             <div className="mt-12 max-w-4xl mx-auto p-6 rounded ">
@@ -333,7 +351,8 @@ return(
                             <div className="w-full md:w-1/2 p-2">
                                 <div className="border p-4 rounded shadow">
                                     <h4 className="font-semibold mb-2">Dates de réservation:</h4>
-                                    <p className="text-lg">{selectedDates[0].toLocaleDateString()} - {selectedDates[1].toLocaleDateString()}</p>
+                                    <p className="text-lg">  {selectedDates.startDate ? selectedDates.startDate.format('MM/DD/YYYY') : '...'} -
+                                        {selectedDates.endDate ? selectedDates.endDate.format('MM/DD/YYYY') : '...'}</p>
                                 </div>
                             </div>
                             <div className="w-full md:w-1/2 p-2">
@@ -360,9 +379,9 @@ return(
                                     <p className="text-lg">{firstName}</p>
                                 </div>
                             </div>
-                            <div className="w-full md:w-1/2 p-2">
+                            <div className="w-full md:w-1/2 p-2 ">
                                 <div className="border p-4 rounded shadow">
-                                    <h4 className="font-semibold mb-2">Email:</h4>
+                                    <h4 className="font-semibold mb-2 ">Email:</h4>
                                     <p className="text-lg">{email}</p>
                                 </div>
                             </div>
