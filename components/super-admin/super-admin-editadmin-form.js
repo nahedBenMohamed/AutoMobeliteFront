@@ -1,21 +1,19 @@
 import React, {useEffect, useState} from "react";
 import { useRouter } from 'next/router';
-import {HiEye, HiEyeOff, HiHome, HiLocationMarker, HiLockClosed, HiMail, HiPhone, HiUser} from "react-icons/hi";
+import { HiHome, HiMail, HiUser} from "react-icons/hi";
 import axios from "axios";
 import {FiPlus, FiTrash2} from "react-icons/fi";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const EditAdmin = ({id}) => {
 
     const router = useRouter();
-    const [errorMessage, setErrorMessage] = useState('');
     const [name, setName] = useState('');
     const [firstname, setFirstName] = useState('');
     const [email, setEmail] = useState('');
     const [agencyName, setAgencyName] = useState('');
     const [images, setImages] = useState([]);
-    const [isUploading, setIsUploading] = useState(false);
-
-    const [errorMessageVisible, setErrorMessageVisible] = useState(true);
     const [goToAdmin, setGoToAdmin] = useState(false);
 
     useEffect(() => {
@@ -32,7 +30,19 @@ const EditAdmin = ({id}) => {
                 })
                 .catch((error) => {
                     console.log(error);
-                    setErrorMessage("Erreur lors du chargement depuis la base de données");
+                    if (error.response) {
+                        toast.warning('An error occurred while loading data',
+                            {
+                                position: "top-center",
+                                autoClose: 3000,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: false,
+                                draggable: false,
+                                progress: undefined,
+                                theme: "colored",
+                            });
+                    }
                 });
         }
     }, [id]);
@@ -42,11 +52,16 @@ const EditAdmin = ({id}) => {
 
         // Vérification des données côté client (facultatif)
         if (!name || !firstname || !email) {
-            setErrorMessage("Veuillez remplir tous les champs.");
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.error('Please complete all fields.', {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
             return;
         }
 
@@ -67,22 +82,112 @@ const EditAdmin = ({id}) => {
                     await axios.put("/api/super-admin/manage-admin/admin/", { ...adminData, id });
                 }
             }
-            setGoToAdmin(true);
+
+            toast.success('The Agency has been successfully registered!', {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
+            setTimeout(() => {
+                setGoToAdmin(true);
+            }, 2000);
+
         } catch (error) {
-            if (error.response) {
-                setErrorMessage(error.response.data.message);
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
+            if (error.response && error.response.data && error.response.data.message) {
+                const errorMessage = error.response.data.message;
+                if (errorMessage === 'Admin ID is required.') {
+                    toast.warning('Please provide an admin ID.', {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: false,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                } else if (errorMessage === 'Admin not found.') {
+                    toast.warning('Admin not found.', {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: false,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                } else if (errorMessage === 'Invalid agency name.') {
+                    toast.warning('Invalid agency name.', {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: false,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                } else if (errorMessage === 'The specified agency already has a responsible.') {
+                    toast.warning('The specified agency already has a responsible.', {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: false,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                } else if (errorMessage === 'An agency name is required when the admin is responsible for an agency.') {
+                    toast.warning('An agency name is required when the admin is responsible for an agency.', {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: false,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                }
+                else {
+                    // Si le message d'erreur ne correspond à aucune erreur spécifique, affichez un message générique
+                    toast.warning(errorMessage, {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: false,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                }
+            } else {
+                toast.error('An error occurred. Please try again later', {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                });
             }
         }
     }
 
+
     async function uploadImage(ev) {
         const files = ev.target?.files;
         if (files?.length > 0) {
-            setIsUploading(true);
             const data = new FormData();
             data.append("file", files[0]);
             data.append("id", id);
@@ -91,42 +196,86 @@ const EditAdmin = ({id}) => {
                 const {message, imagePath} = res.data;
                 if (message === "Image uploaded successfully") {
                     setImages([imagePath]);
+                    toast.info(res.data.message,
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 } else {
-                    setErrorMessage("Upload failed");
+                    toast.warning("Upload failed",
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 }
             } catch (error) {
                 if (error.response) {
-                    setErrorMessage(error.response.data.error);
-                    setErrorMessageVisible(true);
-                    setTimeout(() => {
-                        setErrorMessageVisible(false);
-                    }, 5000);
+                    toast.warning(error.response.data.error,
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 }
-            } finally {
-                setIsUploading(false);
             }
         }
     }
 
     async function deleteImage() {
-        setImages([]);  // Ajoutez cette ligne
+        if (images.length === 0) {
+            toast.error("No image to delete", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
+            return;
+        }
         try {
             await axios.delete(`/api/super-admin/manage-admin/delete?id=${id}`, {withCredentials: true});
+            toast.success("Image deleted successfully!", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
             setImages([]);
         } catch (error) {
-            if (error.response) {
-                setErrorMessage(error.response.data.message);
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
-            } else {
-                setErrorMessage("An error occurred while deleting the image.");
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
-            }
+            toast.error(`An error occurred while deleting the image`, {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
         }
     }
 
@@ -140,6 +289,18 @@ const EditAdmin = ({id}) => {
 
     return (
         <div className="flex items-center justify-center min-w-full bg-gray-100">
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick={true}
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable={true}
+                pauseOnHover={false}
+                theme="colored"
+            />
             <div className="max-w-3xl w-full bg-white p-8 rounded-lg shadow-md">
                 <h2 className="mt-2 mb-8 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                     {id ? "Edit Admin" : "Add Agency"}

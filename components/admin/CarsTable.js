@@ -3,7 +3,9 @@ import Modal from 'react-modal';
 import Link from 'next/link';
 import axios from 'axios';
 import { FiEdit, FiInfo, FiTrash2 } from 'react-icons/fi';
-import {useRouter} from "next/router";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const VehicleTable = () => {
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -11,13 +13,27 @@ const VehicleTable = () => {
     const [cars, setCars] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [carsPerPage] = useState(5);
-    const router = useRouter()
-
 
     useEffect(() => {
-        axios.get('/api/admin/manage-cars/cars', { withCredentials: true }).then((response) => {
-            setCars(response.data);
-        });
+        axios.get('/api/admin/manage-cars/cars', { withCredentials: true })
+            .then((response) => {
+                setCars(response.data);
+            })
+            .catch((error) => {
+                if (error.response) {
+                    toast.warning('An error occurred while loading data',
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                }
+            });
     }, []);
 
     // Pagination logic
@@ -35,9 +51,30 @@ const VehicleTable = () => {
             setCars(updatedCars);
             setModalIsOpen(false);
             setCarToDelete(null);
+            toast.success('The car has been deleted successfully!', {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
         } catch (error) {
-            console.log(error);
-            // Gérer l'erreur de suppression de voiture
+            if (error.response) {
+                toast.warning('An error occurred while deleting the car',
+                    {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: false,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+            }
         }
     };
 
@@ -152,9 +189,20 @@ const VehicleTable = () => {
                         </ul>
                     </div>
                 </div>
-
-                {/* Modal de confirmation */}
+                <ToastContainer
+                    position="top-center"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop
+                    closeOnClick={true}
+                    rtl={false}
+                    pauseOnFocusLoss={false}
+                    draggable={true}
+                    pauseOnHover={false}
+                    theme="colored"
+                />
                 <Modal
+
                     isOpen={modalIsOpen}
                     onRequestClose={() => setModalIsOpen(false)}
                     contentLabel="Confirmation Modal"

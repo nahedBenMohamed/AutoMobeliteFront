@@ -4,6 +4,8 @@ import { HiLocationMarker, HiMail, HiPhone, HiUser } from "react-icons/hi";
 import axios from "axios";
 import {FiPlus, FiTrash2} from "react-icons/fi";
 import {getCountryCallingCode, parsePhoneNumberFromString} from "libphonenumber-js";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const SuperAdminAgenceForm = ({ id }) => {
 
@@ -14,10 +16,8 @@ const SuperAdminAgenceForm = ({ id }) => {
     const [address, setAddress] = useState("");
     const [responsibleEmail, setResponsibleEmail] = useState("");
     const [images, setImages] = useState([]);
-    const [isUploading, setIsUploading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
     const [goToAgency, setGoToAgency] = useState(false);
-    const [errorMessageVisible, setErrorMessageVisible] = useState(true);
+
 
 
     // Function to set the default telephone value with country code
@@ -40,8 +40,19 @@ const SuperAdminAgenceForm = ({ id }) => {
                     setResponsibleEmail(agencyData.AgencyUser?.email);
                 })
                 .catch((error) => {
-                    console.log(error);
-                    setErrorMessage("Erreur lors du chargement depuis la base de données");
+                    if (error.response) {
+                        toast.warning('An error occurred while loading data',
+                            {
+                                position: "top-center",
+                                autoClose: 3000,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: false,
+                                draggable: false,
+                                progress: undefined,
+                                theme: "colored",
+                            });
+                    }
                 });
         }
     }, [id]);
@@ -51,11 +62,16 @@ const SuperAdminAgenceForm = ({ id }) => {
 
         // Vérification des données côté client (facultatif)
         if (!name || !telephone || !email || !address || !responsibleEmail) {
-            setErrorMessage("Please fill in all fields");
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.error('Please complete all fields.', {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
             return;
         }
 
@@ -70,11 +86,16 @@ const SuperAdminAgenceForm = ({ id }) => {
         const isPhoneNumberValid = phoneNumber && phoneNumber.isValid() && phoneNumberRegex.test(telephoneString);
 
         if (!isPhoneNumberValid) {
-            setErrorMessage("Please enter a valid Tunisian phone number.");
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.error('Please enter a valid Tunisian phone number.', {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
             return;
         }
 
@@ -84,30 +105,65 @@ const SuperAdminAgenceForm = ({ id }) => {
             email,
             telephone,
             image: images.length > 0 ? images[0] : null,
-            responsibleEmail };
+            responsibleEmail
+        };
+
         try {
             if (id) {
                 // Update
-                await axios.put("/api/super-admin/manage-agence/agence/",{ ...data, id });
+                await axios.put("/api/super-admin/manage-agence/agence", { ...data, id });
             } else {
                 // Create
                 await axios.post("/api/super-admin/manage-agence/agence", data);
             }
-            setGoToAgency(true);
-        } catch (error) {
-            setErrorMessage(error.response.data.message);
-            setErrorMessageVisible(true);
+            toast.success('The Agency has been successfully registered!', {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
+
             setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+                setGoToAgency(true);
+            }, 2000);
+        } catch (error) {
+            if (error.response) {
+                if (error.response.data.message) {
+                    toast.warning(error.response.data.message, {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: false,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                }
+            } else {
+                toast.error('An error occurred while saving the agency.', {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                });
+            }
         }
     }
+
 
 
     async function uploadImage(ev) {
         const files = ev.target?.files;
         if (files?.length > 0) {
-            setIsUploading(true);
             const data = new FormData();
             data.append("file", files[0]);
             data.append("id", id);
@@ -116,46 +172,91 @@ const SuperAdminAgenceForm = ({ id }) => {
                 const {message, imagePath} = res.data;
                 if (message === "Image uploaded successfully") {
                     setImages([imagePath]);
+                    toast.info(res.data.message,
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 } else {
-                    setErrorMessage("Upload failed");
+                    toast.warning("Upload failed",
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 }
             } catch (error) {
                 if (error.response) {
-                    setErrorMessage(error.response.data.error);
-                    setErrorMessageVisible(true);
-                    setTimeout(() => {
-                        setErrorMessageVisible(false);
-                    }, 5000);
+                    toast.warning(error.response.data.error,
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 }
-            } finally {
-                setIsUploading(false);
             }
         }
     }
 
     async function deleteImage() {
-        setImages([]);  // Ajoutez cette ligne
+        if (images.length === 0) {
+            toast.error("No image to delete", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
+            return;
+        }
+
         try {
-            await axios.delete(`/api/super-admin/manage-agence/delete?id=${id}`, {withCredentials: true});
+            await axios.delete(`/api/super-admin/manage-agence/delete?id=${id}`, { withCredentials: true });
+            toast.success("Image deleted successfully!", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
             setImages([]);
         } catch (error) {
-            if (error.response) {
-                setErrorMessage(error.response.data.message);
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
-            } else {
-                setErrorMessage("An error occurred while deleting the image.");
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
-            }
+            toast.error(`An error occurred while deleting the image`, {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
+
+
         }
     }
-
-
 
     if (goToAgency) {
         router.push("/super-admin/dashboard/agence");
@@ -168,6 +269,18 @@ const SuperAdminAgenceForm = ({ id }) => {
 
     return (
         <div className="flex items-center justify-center min-w-full bg-gray-100">
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick={true}
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable={true}
+                pauseOnHover={false}
+                theme="colored"
+            />
             <div className="max-w-3xl w-full bg-white p-8 rounded-lg shadow-md">
                 <h2 className="mt-2 mb-8 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                     {id ? "Edit Agency" : "Add Agency"}
@@ -209,12 +322,12 @@ const SuperAdminAgenceForm = ({ id }) => {
                                     autoComplete="given-name"
                                     placeholder="Enter agency Name"
                                     value={name}
-                                    onChange={(e) => setName(e.target.value)}
+                                    onChange={(ev) => setName(ev.target.value)}
                                     className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                             </div>
                             <div className="relative">
-                                <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
+                                <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600"/>
                                 <input
                                     id="responsable"
                                     name="responsable"
@@ -222,12 +335,12 @@ const SuperAdminAgenceForm = ({ id }) => {
                                     autoComplete="responsable-name"
                                     placeholder="Enter responsible email"
                                     value={responsibleEmail}
-                                    onChange={(e) => setResponsibleEmail(e.target.value)}
+                                    onChange={(ev) => setResponsibleEmail(ev.target.value)}
                                     className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                             </div>
                             <div className="relative">
-                                <HiMail className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
+                                <HiMail className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600"/>
                                 <input
                                     id="email"
                                     name="email"
@@ -235,25 +348,25 @@ const SuperAdminAgenceForm = ({ id }) => {
                                     autoComplete="email"
                                     placeholder="Enter agency email"
                                     value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(ev) => setEmail(ev.target.value)}
                                     className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                             </div>
                             <div className="relative">
-                                <HiPhone className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
+                                <HiPhone className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600"/>
                                 <input
                                     id="phone"
                                     name="phone"
                                     type="phone"
                                     autoComplete="email"
                                     placeholder="Enter your Tunisia phone number"
-                                    value={telephone || getDefaultTelephone()} // Set default value with country code
-                                    onChange={(e) => setTelephone(e.target.value)}
+                                    value={telephone || getDefaultTelephone()}
+                                    onChange={(ev) => setTelephone(ev.target.value)}
                                     className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                             </div>
                             <div className="relative">
-                                <HiLocationMarker className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
+                                <HiLocationMarker className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600"/>
                                 <input
                                     id="location"
                                     name="location"
@@ -261,15 +374,15 @@ const SuperAdminAgenceForm = ({ id }) => {
                                     autoComplete="new-location"
                                     placeholder="Enter agency location"
                                     value={address}
-                                    onChange={(e) => setAddress(e.target.value)}
-                                    className="pl-10 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    onChange={(ev) => setAddress(ev.target.value)}
+                                    className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                             </div>
                         </div>
                         <div className="mt-8 flex justify-end">
                             <button
                                 type="submit"
-                                className="w-1/2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
                             >
                                 {id ? "Update" : "Save"}
                             </button>

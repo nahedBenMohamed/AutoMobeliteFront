@@ -190,8 +190,6 @@ li {
     border-radius: 100%;
 
 }
-
-
 /* NAVBAR */
 
 
@@ -201,7 +199,7 @@ li {
 #content main {
     width: 100%;
     padding: 20px 25px;
-    margin: 20px;
+    margin: 20px 0px;
     font-family: var(--poppins);
     max-height: calc(100vh - 56px);
     overflow-y: auto;
@@ -437,22 +435,4 @@ body {
     padding: 0;
     box-sizing: border-box;
     font-family: "Manrope", sans-serif;
-}
-
-.fade-enter {
-    opacity: 0.01;
-}
-
-.fade-enter-active {
-    opacity: 1;
-    transition: opacity 300ms ease-in;
-}
-
-.fade-exit {
-    opacity: 1;
-}
-
-.fade-exit-active {
-    opacity: 0.01;
-    transition: opacity 300ms ease-in;
 }

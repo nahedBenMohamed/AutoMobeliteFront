@@ -3,6 +3,8 @@ import Link from 'next/link';
 import axios from 'axios';
 import {FiEdit, FiInfo, FiTrash2} from "react-icons/fi";
 import Modal from "react-modal";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const SuperAdminCartable = () => {
 
@@ -32,9 +34,30 @@ const SuperAdminCartable = () => {
             setCars(updatedCars);
             setModalIsOpen(false);
             setCarToDelete(null);
+            toast.success('The car has been deleted successfully!', {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
         } catch (error) {
-            console.log(error);
-            // Gérer l'erreur de suppression de voiture
+            if (error.response) {
+                toast.warning('An error occurred while deleting the car',
+                    {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: false,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+            }
         }
     };
 
@@ -125,7 +148,7 @@ const SuperAdminCartable = () => {
                         </div>
                     </div>
                     <div className="mt-8">
-                        <Link href="/super-admin/dashboard/cars/new" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        <Link href="/super-admin/dashboard/cars/new" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             Add Car
                         </Link>
                     </div>
@@ -148,8 +171,18 @@ const SuperAdminCartable = () => {
                         </ul>
                     </div>
                 </div>
-
-                {/* Modal de confirmation */}
+                <ToastContainer
+                    position="top-center"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop
+                    closeOnClick={true}
+                    rtl={false}
+                    pauseOnFocusLoss={false}
+                    draggable={true}
+                    pauseOnHover={false}
+                    theme="colored"
+                />
                 <Modal
                     isOpen={modalIsOpen}
                     onRequestClose={() => setModalIsOpen(false)}

@@ -18,7 +18,7 @@ export default async function handle(req, res) {
             });
 
             if (existingAgence) {
-                return res.status(400).json({message: 'Cette agence existe déjà.'});
+                return res.status(400).json({message: 'This agency already exists'});
             }
 
             // Vérifier si le responsable existe et obtenir son id
@@ -29,7 +29,7 @@ export default async function handle(req, res) {
             });
 
             if (!responsible) {
-                return res.status(400).json({message: 'Le responsable n\'existe pas.'});
+                return res.status(400).json({message: 'Manager does not exist'});
             }
 
             // Vérifier si le responsable est déjà relié à une agence
@@ -40,7 +40,7 @@ export default async function handle(req, res) {
             });
 
             if (existingUserId) {
-                return res.status(400).json({message: 'Cet agent est déjà responsable d\'une autre agence.'});
+                return res.status(400).json({message: 'This agent is already responsible for another Agency'});
             }
 
             // Créer la nouvelle agence avec la référence au responsable
@@ -55,7 +55,7 @@ export default async function handle(req, res) {
             });
 
             // Envoyer une réponse de succès
-            return res.status(200).json({message: 'Agence ajoutée avec succès.', newAgence});
+            return res.status(200).json({message: 'Agency added successfully', newAgence});
         } else if (method === 'GET') {
             // Handle GET method
             const {id} = req.query;

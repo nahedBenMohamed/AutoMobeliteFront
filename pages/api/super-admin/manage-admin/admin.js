@@ -17,7 +17,7 @@ export default async function handle(req, res) {
 
             if (existingUser) {
                 // Return an error response if the email is already in use
-                return res.status(400).json({ message: 'Cet email est déjà utilisé.' });
+                return res.status(400).json({ message: 'This email is already in use' });
             }
 
             // Hash the password
@@ -35,7 +35,7 @@ export default async function handle(req, res) {
             });
 
             // Send a success response
-            return res.status(200).json({ message: 'Utilisateur enregistré avec succès.', newUser });
+            return res.status(200).json({ message: 'User registered successfully', newUser });
         }
 
         if (method === "GET") {
@@ -84,10 +84,22 @@ export default async function handle(req, res) {
                     where: { name: agencyName },
                 });
 
-                if (agency && agency.responsibleId && agency.responsibleId !== admin.id) {
+                if (!agency) {
+                    return res.status(400).json({ message: 'Invalid agency name.' });
+                }
+
+                const agencyResponsibleId = agency.responsibleId;
+
+                if (agencyResponsibleId && agencyResponsibleId !== admin.id) {
                     return res.status(400).json({ message: 'The specified agency already has a responsible.' });
                 }
+            } else {
+                // Vérifier si l'administrateur est responsable d'une agence existante
+                if (admin.Agency && admin.Agency.responsibleId === admin.id) {
+                    return res.status(400).json({ message: 'An agency name is required when the admin is responsible for an agency.' });
+                }
             }
+
             const updatedAdmin = await prisma.agencyUser.update({
                 where: { id: parseInt(id) },
                 data: {
@@ -106,6 +118,7 @@ export default async function handle(req, res) {
 
             res.json(updatedAdmin);
         }
+
 
         if (method === 'DELETE') {
             const { id } = req.query;
@@ -142,6 +155,6 @@ export default async function handle(req, res) {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal server error." });
+        res.status(500).json({ error: "Internal server error." });
     }
 }

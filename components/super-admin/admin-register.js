@@ -1,56 +1,77 @@
 import React, { useState } from "react";
 import { useRouter } from 'next/router';
 import {HiEye, HiEyeOff, HiLockClosed, HiMail, HiUser} from "react-icons/hi";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const RegisterAdmin = () => {
 
     const router = useRouter();
-    const [errorMessage, setErrorMessage] = useState('');
     const [name, setName] = useState('');
     const [firstname, setFirstName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordVisible, setPasswordVisible]= useState();
-    const [errorMessageVisible, setErrorMessageVisible] = useState(true);
+    const [goToAdmin, setGoToAdmin] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         // Vérification des données côté client (facultatif)
-        if (!name || !firstname || !email || !password) {
-            setErrorMessage('Please fill in all fields');
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+        if (!name || !firstname || !email || !password || !confirmPassword) {
+            toast.error('Please complete all fields.', {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            })
             return;
         }
         if (password !== confirmPassword) {
-            setErrorMessage('Passwords do not match.');
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.error('Passwords do not match', {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            })
             return;
         }
 
         if (password.length < 8) {
-            setErrorMessage("Password must be at least 8 characters");
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.warning('Password must be at least 8 characters', {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            })
             return;
         }
 
         const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*]).{8,}$/;
         if (!passwordRegex.test(password)) {
-            setErrorMessage("The password must contain at least one uppercase letter, one lowercase letter, one number and one special character");
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.warning('The password must contain at least one uppercase letter, one lowercase letter, one number and one special character', {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            })
             return;
         }
 
@@ -64,23 +85,51 @@ const RegisterAdmin = () => {
             });
 
             if (response.ok) {
-                await router.push('/super-admin/dashboard/manage-admin');
+                toast.success('User has been registered successfully!', {
+                    position: "top-center",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                });
+                setTimeout(() => {
+                    setGoToAdmin(true);
+                }, 2000);
+
             }  else {
                 const errorData = await response.json();
-                setErrorMessage(errorData.message);
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
+                toast.error(errorData.message, {
+                    position: "top-center",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                });
+
             }
         } catch (errorData) {
-            setErrorMessage(errorData.error);
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.success(errorData.message, {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
         }
     };
+
+    if (goToAdmin) {
+        router.push("/super-admin/dashboard/manage-admin");
+    }
 
     function goBack (){
         router.push('/super-admin/dashboard/manage-admin')
@@ -89,6 +138,18 @@ const RegisterAdmin = () => {
 
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick={true}
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable={true}
+                pauseOnHover={false}
+                theme="colored"
+            />
             <div className="w-full p-4 bg-white rounded-md shadow-md lg:max-w-xl">
                 <h2 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Add Admin</h2>
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -180,9 +241,6 @@ const RegisterAdmin = () => {
                                         className="pl-10 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
                                 </div>
-                            </div>
-                            <div className="mt-2">
-                                {errorMessageVisible && errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                             </div>
                         </div>
                         <div className="mt-8">

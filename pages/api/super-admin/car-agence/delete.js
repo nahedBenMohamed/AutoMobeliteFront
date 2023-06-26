@@ -11,7 +11,7 @@ export default async function handle(req, res) {
             // If an ID query parameter exists, delete the car with that ID
             if (req.query?.id) {
                 const carId = req.query.id;
-                const car = await prisma.agency.findUnique({
+                const car = await prisma.car.findUnique({
                     where: {id: Number(carId)},
                     include: {Agency: true}, // Include the Agency
                 });

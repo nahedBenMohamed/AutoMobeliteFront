@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import {FiPlus, FiTrash2} from "react-icons/fi";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function SuperAdminCarform({ id }) {
 
@@ -14,13 +16,14 @@ export default function SuperAdminCarform({ id }) {
     const [registration, setRegistration] = useState("");
     const [status, setStatus] = useState("");
     const [images, setImages] = useState([]);
+    const [fuel, setFuel] = useState("");
+    const [door, setDoor] = useState("");
+    const [gearBox, setGearBox] = useState("");
+    const [startDate,setStartDate] =useState('')
+    const [endDate,setEndDate] =useState('')
     const [description, setDescription] = useState("");
     const [parkingName, setParkingName] = useState("");
-
-    const [isUploading, setIsUploading] = useState(false);
     const [goToCars, setGoToCars] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [errorMessageVisible, setErrorMessageVisible] = useState(true);
 
 
     const router = useRouter();
@@ -42,10 +45,24 @@ export default function SuperAdminCarform({ id }) {
                     setRegistration(carData.registration);
                     setParkingName(carData.parking?.name);
                     setDescription(carData.description);
+                    setFuel(carData.fuel);
+                    setDoor(carData.door.toString());
+                    setGearBox(carData.gearBox);
                 })
                 .catch((error) => {
-                    console.log(error);
-                    setErrorMessage("Erreur lors du chargement depuis la base de données");
+                        if (error.response) {
+                            toast.warning('An error occurred while loading data',
+                                {
+                                    position: "top-center",
+                                    autoClose: 3000,
+                                    hideProgressBar: false,
+                                    closeOnClick: true,
+                                    pauseOnHover: false,
+                                    draggable: false,
+                                    progress: undefined,
+                                    theme: "colored",
+                                });
+                        }
                 });
         }
     }, [id]);
@@ -54,12 +71,17 @@ export default function SuperAdminCarform({ id }) {
         ev.preventDefault();
 
         // Vérification des données côté client (facultatif)
-        if ( !brand || !model || !year || !mileage || !price || !registration || !status || !agencyName || !parkingName ) {
-            setErrorMessage("Veuillez remplir tous les champs.");
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+        if (!brand || !model || !year || !mileage || !price || !registration || !status) {
+            toast.error('Please complete all fields.', {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
             return;
         }
 
@@ -70,37 +92,88 @@ export default function SuperAdminCarform({ id }) {
             year: parseInt(year),
             mileage: parseInt(mileage),
             price: parseFloat(price),
+            door: parseInt(door),
+            fuel,
+            gearBox,
+            startDate,
+            endDate,
             registration,
             status,
             image: images.length > 0 ? images[0] : null,
-            parkingName,
+            parkingName: parkingName !== "" ? parkingName : null,
             description,
         };
+
         try {
             if (id) {
                 // Update car
-                await axios.put("/api/super-admin/car-agence/cars", { ...data, id, parkingName });
+                await axios.put("/api/super-admin/car-agence/cars", { ...data, id });
             } else {
-                // Create
+                // Create car
                 await axios.post("/api/super-admin/car-agence/cars", data);
             }
-            setGoToCars(true);
+            toast.success('The car has been successfully registered!', {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
+            setTimeout(() => {
+                setGoToCars(true);
+            }, 2000);
         } catch (error) {
             if (error.response) {
-                setErrorMessage(error.response.data.error);
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
+                if (error.response.data.error) {
+                    if (error.response.data.error === "Parking not found") {
+                        toast.warning("Parking not found", {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        return;
+                    } else if (error.response.data.error === "Parking does not belong to the agency.") {
+                        toast.warning("Parking does not belong to the agency.", {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        return;
+                    }
+                }
+                toast.warning("An error occurred while saving the car.", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                });
             }
         }
     }
 
 
+
+
     async function uploadImage(ev) {
         const files = ev.target?.files;
         if (files?.length > 0) {
-            setIsUploading(true);
             const data = new FormData();
             data.append("file", files[0]);
             data.append("id", id);
@@ -109,41 +182,88 @@ export default function SuperAdminCarform({ id }) {
                 const {message, imagePath} = res.data;
                 if (message === "Image uploaded successfully") {
                     setImages([imagePath]);
-                } else {
-                    setErrorMessage("Upload failed");
+                    toast.info(res.data.message,
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                }
+                else {
+                    toast.warning("Upload failed",
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 }
             } catch (error) {
                 if (error.response) {
-                    setErrorMessage(error.response.data.error);
-                    setErrorMessageVisible(true);
-                    setTimeout(() => {
-                        setErrorMessageVisible(false);
-                    }, 5000);
+                    toast.warning(error.response.data.error,
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 }
-            } finally {
-                setIsUploading(false);
             }
         }
     }
 
         async function deleteImage() {
-            setImages([]);  // Ajoutez cette ligne
+            if (images.length === 0) {
+                toast.error("No image to delete", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                });
+                return;
+            }
             try {
                 await axios.delete(`/api/super-admin/car-agence/delete?id=${id}`, {withCredentials: true});
+                toast.success("Image deleted successfully!", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                });
                 setImages([]);
             } catch (error) {
                 if (error.response) {
-                    setErrorMessage(error.response.data.message);
-                    setErrorMessageVisible(true);
-                    setTimeout(() => {
-                        setErrorMessageVisible(false);
-                    }, 5000);
-                } else {
-                    setErrorMessage("An error occurred while deleting the image.");
-                    setErrorMessageVisible(true);
-                    setTimeout(() => {
-                        setErrorMessageVisible(false);
-                    }, 5000);
+                    toast.error("An error occurred while deleting the image.", {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: false,
+                        progress: undefined,
+                        theme: "colored",
+                    });
                 }
             }
         }
@@ -157,6 +277,18 @@ export default function SuperAdminCarform({ id }) {
 
             return (
                 <div className="flex items-center justify-center min-w-full bg-gray-100">
+                    <ToastContainer
+                        position="top-center"
+                        autoClose={3000}
+                        hideProgressBar={false}
+                        newestOnTop
+                        closeOnClick={true}
+                        rtl={false}
+                        pauseOnFocusLoss={false}
+                        draggable={true}
+                        pauseOnHover={false}
+                        theme="colored"
+                    />
                     <div className="max-w-3xl w-full bg-white p-8 rounded-lg shadow-md">
                         <h2 className="mt-2 mb-8 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                             {id ? "Edit Car" : "Add Car"}
@@ -288,6 +420,65 @@ export default function SuperAdminCarform({ id }) {
                                             placeholder="status"
                                         />
                                     </div>
+                                    <div>
+                                        <input
+                                            id="fuel"
+                                            name="fuel"
+                                            type="text"
+                                            value={fuel}
+                                            onChange={(ev) => setFuel(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Fuel"
+                                        />
+                                    </div>
+                                    <div>
+                                        <input
+                                            id="door"
+                                            name="door"
+                                            type="number"
+                                            value={door}
+                                            onChange={(ev) => setDoor(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Door"
+                                        />
+                                    </div>
+                                    <div>
+                                        <input
+                                            id="gearBox"
+                                            name="gearBox"
+                                            type="text"
+                                            value={gearBox}
+                                            onChange={(ev) => setGearBox(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Gear Box"
+                                        />
+                                    </div>
+                                    { id && (
+                                        <>
+                                            <div>
+                                                <input
+                                                    id="startDate"
+                                                    name="startDate"
+                                                    type="date"
+                                                    value={startDate}
+                                                    onChange={(ev) => setStartDate(ev.target.value)}
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                                    placeholder="Start Date"
+                                                />
+                                            </div>
+                                            <div>
+                                                <input
+                                                    id="endDate"
+                                                    name="endDate"
+                                                    type="date"
+                                                    value={endDate}
+                                                    onChange={(ev) => setEndDate(ev.target.value)}
+                                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                                    placeholder="End Date"
+                                                />
+                                            </div>
+                                        </>
+                                    )}
                                     <div className="col-span-2">
                                 <textarea
                                     id="description"
@@ -303,7 +494,7 @@ export default function SuperAdminCarform({ id }) {
                                 <div className="mt-8 flex justify-end">
                                     <button
                                         type="submit"
-                                        className="w-1/2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                        className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
                                     >
                                         {id ? "Update" : "Save"}
                                     </button>

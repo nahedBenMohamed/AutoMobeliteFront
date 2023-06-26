@@ -69,27 +69,42 @@ export default async function handle(req, res) {
 
         } else if (method === 'PUT') {
             // Handle PUT method
-            const { id, name, city, address, image } = req.body;
+            const { id, name, city, address, image, agencyName } = req.body;
 
             // Check if the parking exists
             const existingParking = await prisma.parking.findUnique({
                 where: { id: parseInt(id) },
+                include: { Agency: true },
             });
 
             if (!existingParking) {
                 return res.status(404).json({ message: 'Parking not found.' });
             }
 
+            // Check if the agency exists
+            const existingAgency = await prisma.agency.findUnique({
+                where: { name: agencyName },
+            });
+
+            if (!existingAgency) {
+                return res.status(400).json({ message: 'No agency matching this name.' });
+            }
+
+            // Check if the parking is already assigned to an agency
+            if (existingParking.Agency && existingParking.Agency.id !== existingAgency.id) {
+                return res.status(400).json({ message: 'This parking is already assigned to an agency.' });
+            }
+
             // Update the parking
             const updatedParking = await prisma.parking.update({
                 where: { id: parseInt(id) },
-                data: { name, city, address,image },
+                data: { name, city, address, image, agencyId: existingAgency.id },
                 include: { Agency: true },
             });
 
             return res.json(updatedParking);
-
-        } else if (method === 'DELETE') {
+        }
+        else if (method === 'DELETE') {
             // Handle DELETE method
             if (req.query?.id) {
                 const parkingId = req.query.id;

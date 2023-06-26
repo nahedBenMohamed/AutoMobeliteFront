@@ -67,13 +67,13 @@ model Car {
   door         Int
   gearBox      String         @db.VarChar(25)
   image        String?
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @default(now()) @map("updated_at")
+  availability Availability[]
   Agency       Agency         @relation(fields: [agencyId], references: [id])
   parking      Parking?       @relation(fields: [parkingName], references: [name])
   maintenances Maintenance[]
   rentals      Rental[]
-  availability Availability[]
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @default(now()) @map("updated_at")
 }
 
 model Rental {

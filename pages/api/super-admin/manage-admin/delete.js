@@ -1,41 +1,40 @@
 import prisma from "@/lib/prisma";
 import fs from "fs";
-import path from 'path';
-
+import path from "path";
 
 export default async function handle(req, res) {
     const { method } = req;
 
     if (method === "DELETE") {
         try {
-            // If an ID query parameter exists, delete the car with that ID
             if (req.query?.id) {
                 const agencyUserId = req.query.id;
-                const user = await prisma.agencyUser.findUnique({
-                    where: {id: Number(agencyUserId)},
-                    include: {Agency: true}, // Include the Agency
+                const agencyUser = await prisma.agencyUser.findUnique({
+                    where: { id: Number(agencyUserId) },
                 });
 
-                if (!user) {
-                    return res.status(404).json({message: "User not found."});
+                if (!agencyUser) {
+                    return res.status(404).json({ message: "Admin not found." });
                 }
 
-                if (user.image) {
-                    const imagePath = path.join(process.cwd(), '/public', user.image);
-                    fs.unlinkSync(imagePath);
+                if (agencyUser.image) {
+                    const imagePath = path.join(process.cwd(), "public", "admin", agencyUser.image);
+                    if (fs.existsSync(imagePath)) {
+                        fs.unlinkSync(imagePath);
+                        await prisma.agencyUser.update({
+                            where: { id: Number(agencyUserId) },
+                            data: { image: null },
+                        });
+                    } else {
+                        return res.status(404).json({ message: `Image not found at path: ${imagePath}` });
+                    }
                 }
 
-                // Delete the car and send the deleted car data as a response
-                res.json(
-                    await prisma.agencyUser.update({
-                        where: {id: Number(agencyUserId)},
-                        data: {image: null},
-                    })
-                );
+                return res.status(200).json({ message: "Image deleted successfully." });
             }
-
         } catch (error) {
-            res.status(500).json({message: "Error deleting image.", error: error.message});
+            console.error(error);
+            res.status(500).json({ error: `An error occurred while deleting the image for agency with id: ${req.query?.id}.` });
         }
     }
 }

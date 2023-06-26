@@ -37,37 +37,64 @@ const getAgencyIdFromToken = async (req) => {
 export default async function handle(req, res) {
     const { method } = req;
 
-    // Extract the agency id from the token or query parameters
-    let agencyId;
     try {
-        agencyId = await getAgencyIdFromToken(req);
-    } catch (error) {
-        // Return an error response if agency id extraction fails
-        return res.status(401).json({ message: error.message });
-    }
+        // Extract the agency id from the token or query parameters
+        let agencyId;
+        try {
+            agencyId = await getAgencyIdFromToken(req);
+        } catch (error) {
+            // Return an error response if agency id extraction fails
+            return res.status(401).json({ message: error.message });
+        }
 
-    const include = { Agency: true };
+        const include = { Agency: true, availability: true };
 
-    try {
         if (method === "POST") {
             // Handle POST method
             const {
                 agencyName,
                 parkingName,
                 brand,
+                model,
                 year,
                 mileage,
-                model,
                 price,
                 registration,
                 status,
                 image,
                 description,
+                door,
+                fuel,
+                gearBox,
             } = req.body;
 
-            const parsedYear = parseInt(year);
-            const parsedMileage = parseInt(mileage);
-            const parsedPrice = parseFloat(price);
+            // Convert variables to the appropriate types
+            const yearInt = parseInt(year);
+            const mileageInt = parseInt(mileage);
+            const priceFloat = parseFloat(price);
+            const doorInt = parseInt(door);
+
+            let parking = null;
+
+            // Check if parkingName is provided
+            if (parkingName) {
+                // Find the parking by name
+                parking = await prisma.parking.findUnique({
+                    where: {
+                        name: parkingName,
+                    },
+                });
+
+                // If parking is not found, return an error
+                if (!parking) {
+                    return res.status(400).json({ error: "Invalid Parking name." });
+                }
+
+                // Check if the parking belongs to the agency
+                if (parking.agencyId !== agencyId) {
+                    return res.status(400).json({ error: "Parking does not belong to the agency." });
+                }
+            }
 
             // If agencyName is provided, find the corresponding agency id
             const agency = await prisma.agency.findUnique({
@@ -75,7 +102,7 @@ export default async function handle(req, res) {
             });
 
             if (!agency) {
-                throw new Error("Invalid agency name.");
+                throw new Error("Invalid Agency name.");
             }
 
             // Create a new car with the provided data
@@ -83,27 +110,54 @@ export default async function handle(req, res) {
                 data: {
                     brand,
                     model,
-                    year: parsedYear,
-                    mileage: parsedMileage,
-                    price: parsedPrice,
                     status,
                     registration,
                     description,
                     image,
+                    fuel,
+                    gearBox,
+                    year: yearInt,
+                    mileage: mileageInt,
+                    price: priceFloat,
+                    door: doorInt,
                     Agency: {
                         connect: {
                             id: agency.id,
                         },
                     },
-                    parking: {
-                        connect: {
-                            name: parkingName,
-                        },
-                    },
+                    parking: parking
+                        ? {
+                            connect: {
+                                name: parkingName,
+                            },
+                        }
+                        : undefined,
                 },
                 include,
             });
 
+            // Generate availability dates for the next 365 days
+            const currentDate = new Date();
+            const availabilityDates = [];
+            for (let i = 0; i < 5; i++) {
+                const date = new Date();
+                date.setDate(currentDate.getDate() + i);
+                availabilityDates.push(date);
+            }
+
+            // Insert availability records for the new car
+            const availabilityRecords = availabilityDates.map((date) => {
+                return {
+                    carId: newCar.id,
+                    date,
+                };
+            });
+
+            await prisma.availability.createMany({
+                data: availabilityRecords,
+            });
+
+            // Send the new car data with availability as a response
             res.json(newCar);
         }
 
@@ -120,13 +174,42 @@ export default async function handle(req, res) {
                 price,
                 registration,
                 status,
-                description,
                 image,
+                description,
+                door,
+                fuel,
+                gearBox,
+                startDate,
+                endDate,
             } = req.body;
 
-            const parsedYear = parseInt(year);
-            const parsedMileage = parseInt(mileage);
-            const parsedPrice = parseFloat(price);
+            // Convert variables to the appropriate types
+            const yearInt = parseInt(year);
+            const mileageInt = parseInt(mileage);
+            const priceFloat = parseFloat(price);
+            const doorInt = parseInt(door);
+
+            let parking = null;
+
+            // Check if parkingName is provided
+            if (parkingName) {
+                // Find the parking by name
+                parking = await prisma.parking.findUnique({
+                    where: {
+                        name: parkingName,
+                    },
+                });
+
+                // If parking is not found, return an error
+                if (!parking) {
+                    return res.status(400).json({ error: "Parking not found" });
+                }
+
+                // Check if the parking belongs to the agency
+                if (parking.agencyId !== agencyId) {
+                    return res.status(400).json({ error: "Parking does not belong to the agency." });
+                }
+            }
 
             // If agencyName is provided, find the corresponding agency id
             const agency = await prisma.agency.findUnique({
@@ -134,7 +217,7 @@ export default async function handle(req, res) {
             });
 
             if (!agency) {
-                throw new Error("Invalid agency name.");
+                throw new Error("Invalid Agency name.");
             }
 
             // Update the car with the provided data
@@ -143,27 +226,67 @@ export default async function handle(req, res) {
                 data: {
                     brand,
                     model,
-                    year: parsedYear,
-                    mileage: parsedMileage,
-                    price: parsedPrice,
                     status,
                     registration,
                     description,
                     image,
+                    fuel,
+                    gearBox,
+                    year: yearInt,
+                    mileage: mileageInt,
+                    price: priceFloat,
+                    door: doorInt,
                     Agency: {
                         connect: {
                             id: agency.id,
                         },
                     },
-                    parking: {
-                        connect: {
-                            name: parkingName,
-                        },
-                    },
+                    parking: parkingName
+                        ? {
+                            connect: {
+                                name: parkingName,
+                            },
+                        }
+                        : undefined,
                 },
                 include,
             });
 
+            // Delete existing availability records for the car only if new dates are provided
+            if (startDate && endDate) {
+                await prisma.availability.deleteMany({
+                    where: { carId: Number(id) },
+                });
+            }
+
+            // Generate availability dates for the new range
+            let availabilityDates = [];
+
+            if (startDate && endDate) {
+                const startDateObj = new Date(startDate);
+                const endDateObj = new Date(endDate);
+                const currentDate = new Date(startDateObj); // Start from the specified start date
+
+                while (currentDate <= endDateObj) {
+                    availabilityDates.push(new Date(currentDate)); // Add a new date instance to the list
+                    currentDate.setDate(currentDate.getDate() + 1); // Advance by one day
+                }
+            }
+
+            // Insert new availability records for the car if dates are available
+            if (availabilityDates.length > 0) {
+                const availabilityRecords = availabilityDates.map((date) => {
+                    return {
+                        carId: updatedCar.id,
+                        date,
+                    };
+                });
+
+                await prisma.availability.createMany({
+                    data: availabilityRecords,
+                });
+            }
+            // Send the updated car data as a response
             res.json(updatedCar);
         }
 
@@ -174,14 +297,14 @@ export default async function handle(req, res) {
                 const carId = req.query.id;
                 const car = await prisma.car.findUnique({
                     where: { id: Number(carId) },
-                    include: {Agency: true, parking: true}, // Include the Agency and parking details
+                    include: { Agency: true, parking: true }, // Include the Agency and parking details
                 });
                 res.json(car);
             } else {
                 // Retrieve all cars belonging to the agency
                 const cars = await prisma.car.findMany({
                     where: { Agency: { id: agencyId } },
-                    include: {Agency: true, parking: true}, // Include the Agency and parking details
+                    include: { Agency: true, parking: true }, // Include the Agency and parking details
                 });
                 res.json(cars);
             }
@@ -196,18 +319,21 @@ export default async function handle(req, res) {
                     include,
                 });
 
+                // Delete the car's availability records
+                await prisma.availability.deleteMany({
+                    where: { carId: Number(carId) },
+                });
+
                 res.json(
                     await prisma.car.delete({
                         where: { id: Number(carId) },
-                        include: {Agency: true, parking: true}, // Include the Agency and parking details
+                        include: { Agency: true, parking: true }, // Include the Agency and parking details
                     })
                 );
             }
         }
     } catch (error) {
         // Handle errors that occur during database interactions
-        return res
-            .status(500)
-            .json({ message: "An error occurred when interacting with the database.", error: error.message });
+        res.status(500).json({ message: "An error occurred when interacting with the database.", error: error.message });
     }
 }

@@ -1,23 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import {HiHome, HiLocationMarker, HiMail, HiUser} from "react-icons/hi";
+import {HiHome, HiLocationMarker, HiUser} from "react-icons/hi";
 import axios from "axios";
-import Link from "next/link";
-import {parseCookies} from "nookies";
-import jwt from "jsonwebtoken";
 import {FiPlus, FiTrash2} from "react-icons/fi";
+import {toast, ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ParkingForm = ({ id }) => {
     const router = useRouter();
-    const [agency, setAgency] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
     const [name, setName] = useState("");
     const [city, setCity] = useState("");
     const [address, setAddress] = useState("");
     const [images, setImages] = useState([]);
-    const [isUploading, setIsUploading] = useState(false);
     const [goToParkings, setGoToParkings] = useState(false);
-    const [errorMessageVisible, setErrorMessageVisible] = useState(true);
 
     useEffect(() => {
         if (id) {
@@ -31,7 +26,19 @@ const ParkingForm = ({ id }) => {
                     setImages(parkingData.image ? [parkingData.image] : []);
                 })
                 .catch((error) => {
-                    console.log(error);
+                    if (error.response) {
+                        toast.warning('An error occurred while loading data',
+                            {
+                                position: "top-center",
+                                autoClose: 3000,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: false,
+                                draggable: false,
+                                progress: undefined,
+                                theme: "colored",
+                            });
+                    }
                 });
         }
     }, [id]);
@@ -41,11 +48,17 @@ const ParkingForm = ({ id }) => {
 
         // Vérification des données côté client (facultatif)
         if (!name || !city || !address) {
-            setErrorMessage("Veuillez remplir tous les champs.");
-            setErrorMessageVisible(true); // Set this to true when you want to show the error message
-            setTimeout(() => {
-                setErrorMessageVisible(false); // Set this to false after 5 seconds
-            }, 5000);
+            toast.error('Please complete all fields.',
+                {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                });
             return;
         }
 
@@ -64,15 +77,34 @@ const ParkingForm = ({ id }) => {
                 // Create
                 await axios.post("/api/admin/manage-parking/parking/", data,{ withCredentials: true });
             }
-            setGoToParkings(true);
+            toast.success('The parking has been successfully registered!', {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
+
+            setTimeout(() => {
+                setGoToParkings(true);
+            }, 2000);
         } catch (error) {
             if (error.response) {
-            setErrorMessage(error.response.data.message);
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
-        }
+                toast.warning('An error occurred while saving the parking',
+                    {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: false,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+            }
     }
 
 }
@@ -80,7 +112,6 @@ const ParkingForm = ({ id }) => {
     async function uploadImage(ev) {
         const files = ev.target?.files;
         if (files?.length > 0) {
-            setIsUploading(true);
             const data = new FormData();
             data.append("file", files[0]);
             data.append("id", id);
@@ -89,43 +120,91 @@ const ParkingForm = ({ id }) => {
                 const {message, imagePath} = res.data;
                 if (message === "Image uploaded successfully") {
                     setImages([imagePath]);
+                    toast.info("Image uploaded successfully",
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 } else {
-                    setErrorMessage("Upload failed");
+                    toast.warning("Upload failed",
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 }
             } catch (error) {
                 if (error.response) {
-                    setErrorMessage(error.response.data.error);
-                    setErrorMessageVisible(true);
-                    setTimeout(() => {
-                        setErrorMessageVisible(false);
-                    }, 5000);
+                    toast.warning('An error occurred while downloading the image',
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 }
-            } finally {
-                setIsUploading(false);
             }
         }
     }
 
     async function deleteImage() {
-        setImages([]);  // Ajoutez cette ligne
-        try {
-            await axios.delete(`/api/admin/manage-parking/delete?id=${id}`, {withCredentials: true});
-            setImages([]);
-        } catch (error) {
-            if (error.response) {
-                setErrorMessage(error.response.data.message);
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
-            } else {
-                setErrorMessage("An error occurred while deleting the image.");
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
-            }
+        if (images.length === 0) {
+            toast.error("No image to delete", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
+            return;
         }
+        setImages([]);
+        try {
+
+            await axios.delete(`/api/admin/manage-parking/delete?id=${id}`, {withCredentials: true});
+            toast.success("Image deleted successfully!", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
+            setImages([]);
+
+        } catch (error) {
+            toast.error("An error occurred while deleting the image.", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
+        }
+
     }
 
     if (goToParkings) {
@@ -137,6 +216,18 @@ const ParkingForm = ({ id }) => {
 
     return (
         <div className="flex items-center justify-center min-w-full bg-gray-100">
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick={true}
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable={true}
+                pauseOnHover={false}
+                theme="colored"
+            />
             <div className="max-w-3xl w-full bg-white p-8 rounded-lg shadow-md">
                 <h2 className="mt-2 mb-8 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                     {id ? "Edit Parking" : "Add Parking"}

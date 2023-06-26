@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {AiFillCar, AiFillStar, AiFillTool} from "react-icons/ai";
-import {GiCarDoor} from "react-icons/gi";
-import {BsFillFuelPumpFill} from "react-icons/bs";
 
 const DashboardCards = () => {
     const [agences, setAgences] = useState([]);

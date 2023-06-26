@@ -3,8 +3,11 @@ import Link from 'next/link';
 import { FiEdit, FiTrash2, FiInfo } from 'react-icons/fi';
 import axios from 'axios';
 import Modal from "react-modal";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const Parkingtable = () => {
+
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [parkings, setParkings] = useState([]);
     const [parkingToDelete, setParkingToDelete] = useState(null);
@@ -17,8 +20,19 @@ const Parkingtable = () => {
                 setParkings(response.data);
             })
             .catch((error) => {
-                console.log(error);
-                // Gérer l'erreur de récupération des parkings
+                if (error.response) {
+                    toast.warning('An error occurred while loading data',
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                }
             });
     }, []);
 
@@ -36,9 +50,30 @@ const Parkingtable = () => {
             setParkings(updatedParkings);
             setModalIsOpen(false);
             setParkingToDelete(null);
+            toast.success('The parking has been deleted successfully!', {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
         } catch (error) {
-            console.log(error);
-            // Gérer l'erreur de suppression de parking
+            if (error.response) {
+                toast.warning('An error occurred while deleting the parking',
+                    {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: false,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+            }
         }
     };
 
@@ -119,6 +154,18 @@ const Parkingtable = () => {
                         </ul>
                     </div>
                 </div>
+                <ToastContainer
+                    position="top-center"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop
+                    closeOnClick={true}
+                    rtl={false}
+                    pauseOnFocusLoss={false}
+                    draggable={true}
+                    pauseOnHover={false}
+                    theme="colored"
+                />
                 <Modal
                     isOpen={modalIsOpen}
                     onRequestClose={() => setModalIsOpen(false)}

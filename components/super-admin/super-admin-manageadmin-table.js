@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { FiEdit, FiInfo, FiTrash2 } from 'react-icons/fi';
 import axios from 'axios';
 import Modal from "react-modal";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const SuperAdminManageTable = () => {
 
@@ -11,7 +13,7 @@ const SuperAdminManageTable = () => {
 
     const [admin, setAdmin] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [adminPerPage] = useState(3);
+    const [adminPerPage] = useState(5);
 
     useEffect(() => {
         axios.get('/api/super-admin/manage-admin/admin').then((response) => {
@@ -33,8 +35,30 @@ const SuperAdminManageTable = () => {
             setAdmin(updatedAdmin);
             setModalIsOpen(false);
             setAdminToDelete(null);
+            toast.success('The User has been deleted successfully!', {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
         } catch (error) {
-            console.log(error);
+            if (error.response) {
+                toast.error(error.response.data.message,
+                    {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: false,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+            }
         }
     };
 
@@ -108,7 +132,7 @@ const SuperAdminManageTable = () => {
             <div className="mt-4">
                 <Link
                     href="/super-admin/dashboard/manage-admin/new"
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 >
                     Add Admin
                 </Link>
@@ -131,7 +155,18 @@ const SuperAdminManageTable = () => {
                     ))}
                 </ul>
             </div>
-            {/* Modal de confirmation */}
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick={true}
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable={true}
+                pauseOnHover={false}
+                theme="colored"
+            />
             <Modal
                 isOpen={modalIsOpen}
                 onRequestClose={() => setModalIsOpen(false)}

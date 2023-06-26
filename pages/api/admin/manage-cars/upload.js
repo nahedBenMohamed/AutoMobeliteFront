@@ -19,7 +19,7 @@ export default async function handle(req, res) {
         const { path: tempPath, originalFilename: fileName } = files.file[0];
 
         // Define the target path where the file will be saved
-        const targetPath = path.join(process.cwd(), '/public/agences/', fileName);
+        const targetPath = path.join(process.cwd(), '/public/car/', fileName);
 
         // Parse the car ID from the form fields
         const carId = parseInt(fields.id[0]);
@@ -34,14 +34,14 @@ export default async function handle(req, res) {
         });
 
         // Define the image path to be sent in the response
-        const imagePath = `/agences/${fileName}`;
+        const imagePath = `/car/${fileName}`;
 
         // Send a success response with the image path
         res.status(200).json({ message: 'Image uploaded successfully', imagePath });
     } catch (error) {
         console.error(error);
         // Send an error response if an error occurs during file processing
-        res.status(500).json({ error: 'An error occurred while processing the file' });
+        res.status(500).json({ error: 'Add car before picture please' });
     }
 }
 

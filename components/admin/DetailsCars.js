@@ -5,7 +5,7 @@ import Spinner from "@/components/admin/Spinner";
 
 const DetailsCars = ({ id }) => {
     const [carData, setCarData] = useState(null);
-    const [errorMessage, setErrorMessage] = useState("");
+
     const router = useRouter();
 
     useEffect(() => {
@@ -16,7 +16,6 @@ const DetailsCars = ({ id }) => {
                     setCarData(response.data);
                 })
                 .catch((error) => {
-                    setErrorMessage("Failed to fetch car data");
                     console.log(error);
                 });
         }
@@ -30,7 +29,7 @@ const DetailsCars = ({ id }) => {
         return <p><Spinner /></p>;
     }
 
-    const { brand, model, year, mileage, price, registration, status, parkingName, description, image } = carData;
+    const { brand, model, year, mileage, fuel,door,gearBox,price, registration, status, parkingName, description, image } = carData;
 
     return (
         <div className="flex items-center justify-center min-w-fit bg-gray-100">
@@ -72,6 +71,9 @@ const DetailsCars = ({ id }) => {
                             <p><span className="font-bold">Price:</span>&nbsp;{price} DT</p>
                             <p><span className="font-bold">Registration:</span>&nbsp;{registration}</p>
                             <p><span className="font-bold">Status:</span>&nbsp;{status}</p>
+                            <p><span className="font-bold">Fuel:</span>&nbsp;{fuel}</p>
+                            <p><span className="font-bold">Door:</span>&nbsp;{door}</p>
+                            <p><span className="font-bold">Gear Box:</span>&nbsp;{gearBox}</p>
                             <p><span className="font-bold">Parking:</span>&nbsp;{parkingName}</p>
                         </div>
                     </div>

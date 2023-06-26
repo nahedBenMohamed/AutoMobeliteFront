@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import {HiHome, HiLocationMarker, HiMail, HiPhone, HiUser} from "react-icons/hi";
+import {HiHome, HiLocationMarker, HiUser} from "react-icons/hi";
 import axios from "axios";
-import Link from "next/link";
 import {FiPlus, FiTrash2} from "react-icons/fi";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const SuperAdminParkingForm = ({ id }) => {
-    const router = useRouter();
 
-    const [errorMessage, setErrorMessage] = useState("");
+    const router = useRouter();
     const [name, setName] = useState("");
     const [city, setCity] = useState("");
     const [address, setAddress] = useState("");
     const [agencyName, setAgencyName] = useState("");
     const [images, setImages] = useState([]);
-    const [isUploading, setIsUploading] = useState(false);
     const [goToParking, setGoToParking] = useState(false);
-    const [errorMessageVisible, setErrorMessageVisible] = useState(true);
+
 
     useEffect(() => {
         if (id) {
@@ -31,8 +30,19 @@ const SuperAdminParkingForm = ({ id }) => {
                     setAgencyName(parkingData.Agency?.name);
                 })
                 .catch((error) => {
-                    console.log(error);
-                    setErrorMessage("Erreur lors du chargement depuis la base de données");
+                    if (error.response) {
+                        toast.warning('An error occurred while loading data',
+                            {
+                                position: "top-center",
+                                autoClose: 3000,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: false,
+                                draggable: false,
+                                progress: undefined,
+                                theme: "colored",
+                            });
+                    }
                 });
         }
     }, [id]);
@@ -41,12 +51,17 @@ const SuperAdminParkingForm = ({ id }) => {
         ev.preventDefault();
 
         // Vérification des données côté client (facultatif)
-        if (!name || !city || !address || !agencyName) {
-            setErrorMessage("Veuillez remplir tous les champs.");
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+        if (!name || !city || !address) {
+            toast.error('Please complete all fields.', {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
             return;
         }
 
@@ -55,7 +70,8 @@ const SuperAdminParkingForm = ({ id }) => {
             address,
             city,
             image: images.length > 0 ? images[0] : null,
-            agencyName };
+            agencyName
+        };
         try {
             if (id) {
                 // Update
@@ -64,22 +80,52 @@ const SuperAdminParkingForm = ({ id }) => {
                 // Create
                 await axios.post("/api/super-admin/parking-agence/parking/", data);
             }
-            setGoToParking(true);
+            toast.success('The parking has been successfully registered!', {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
+
+            setTimeout(() => {
+                setGoToParking(true);
+            }, 2000);
         } catch (error) {
-            if (error.response) {
-                setErrorMessage(error.response.data.message);
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
+            if (error.response && error.response.data && error.response.data.message) {
+                const errorMessage = error.response.data.message;
+                toast.warning(errorMessage, {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                });
+            } else {
+                toast.error('An error occurred. Please try again later.', {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                });
             }
         }
     }
 
+
     async function uploadImage(ev) {
         const files = ev.target?.files;
         if (files?.length > 0) {
-            setIsUploading(true);
             const data = new FormData();
             data.append("file", files[0]);
             data.append("id", id);
@@ -88,41 +134,87 @@ const SuperAdminParkingForm = ({ id }) => {
                 const {message, imagePath} = res.data;
                 if (message === "Image uploaded successfully") {
                     setImages([imagePath]);
+                    toast.info(res.data.message,
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 } else {
-                    setErrorMessage("Upload failed");
+                    toast.warning("Upload failed",
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 }
             } catch (error) {
                 if (error.response) {
-                    setErrorMessage(error.response.data.error);
-                    setErrorMessageVisible(true);
-                    setTimeout(() => {
-                        setErrorMessageVisible(false);
-                    }, 5000);
+                    toast.warning(error.response.data.error,
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 }
-            } finally {
-                setIsUploading(false);
             }
         }
     }
 
     async function deleteImage() {
-        setImages([]);  // Ajoutez cette ligne
+        if (images.length === 0) {
+            toast.error("No image to delete", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
+            return;
+        }
         try {
             await axios.delete(`/api/super-admin/parking-agence/delete?id=${id}`, {withCredentials: true});
+            toast.success("Image deleted successfully!", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
             setImages([]);
         } catch (error) {
             if (error.response) {
-                setErrorMessage(error.response.data.message);
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
-            } else {
-                setErrorMessage("An error occurred while deleting the image.");
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
+                toast.error("An error occurred while deleting the image.", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                });
             }
         }
     }
@@ -137,6 +229,18 @@ const SuperAdminParkingForm = ({ id }) => {
 
     return (
         <div className="flex items-center justify-center min-w-full bg-gray-100">
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick={true}
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable={true}
+                pauseOnHover={false}
+                theme="colored"
+            />
             <div className="max-w-3xl w-full bg-white p-8 rounded-lg shadow-md">
                 <h2 className="mt-2 mb-8 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                     {id ? "Edit Parking" : "Add Parking"}

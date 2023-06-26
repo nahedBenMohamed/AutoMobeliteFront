@@ -108,7 +108,7 @@ const SuperAdminAgencetable = () => {
             <div className="mt-4">
                 <Link
                     href="/super-admin/dashboard/agence/new"
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                 >
                     Add Agence
                 </Link>

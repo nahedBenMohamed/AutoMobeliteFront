@@ -16,14 +16,16 @@ export default function CarForm({ id }) {
     const [registration, setRegistration] = useState("");
     const [status, setStatus] = useState("");
     const [description, setDescription] = useState("");
+    const [fuel, setFuel] = useState("");
+    const [door, setDoor] = useState("");
+    const [gearBox, setGearBox] = useState("");
     const [images, setImages] = useState([]);
+    const [startDate,setStartDate] =useState('')
+    const [endDate,setEndDate] =useState('')
     const [parkingName, setParkingName] = useState("");
-
-    const [isUploading, setIsUploading] = useState(false);
+    const [availabilityDates, setAvailabilityDates] = useState([]);
     const [goToCars, setGoToCars] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
 
-    const [errorMessageVisible, setErrorMessageVisible] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
@@ -42,26 +44,47 @@ export default function CarForm({ id }) {
                     setRegistration(carData.registration);
                     setParkingName(carData.parkingName);
                     setDescription(carData.description);
+                    setFuel(carData.fuel);
+                    setDoor(carData.door.toString());
+                    setGearBox(carData.gearBox);
+                    setAvailabilityDates(carData.availability.map((avail) => new Date(avail.date)));
                 })
                 .catch((error) => {
-                    console.log(error);
+                    if (error.response) {
+                            toast.warning('An error occurred while loading data',
+                            {
+                                position: "top-center",
+                                autoClose: 3000,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: false,
+                                draggable: false,
+                                progress: undefined,
+                                theme: "colored",
+                            });
+                    }
                 });
         }
     }, [id]);
 
+
     async function saveCar(ev) {
         ev.preventDefault();
 
-        if (!brand || !model || !year || !mileage || !price || !registration || !status) {
-            setErrorMessage("Veuillez remplir tous les champs.");
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
-            toast.error('Veuillez remplir tous les champs.');
+        if (!brand || !model || !year || !mileage || !price || !registration || !fuel || !door|| !gearBox|| !status) {
+            toast.error('Please complete all fields.',
+                {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                });
             return;
         }
-
 
         const data = {
             brand,
@@ -69,9 +92,14 @@ export default function CarForm({ id }) {
             year: parseInt(year),
             mileage: parseInt(mileage),
             price: parseFloat(price),
+            door: parseInt(door),
+            fuel,
+            gearBox,
             registration,
             status,
             description,
+            startDate,
+            endDate,
             image: images.length > 0 ? images[0] : null,
             parkingName: parkingName !== "" ? parkingName : null,
         };
@@ -80,18 +108,35 @@ export default function CarForm({ id }) {
             if (id) {
                 await axios.put(`/api/admin/manage-cars/cars?id=${id}`, { ...data, id }, { withCredentials: true });
             } else {
-                await axios.post("/api/admin/manage-cars/cars", data, { withCredentials: true });
+                await axios.post("/api/admin/manage-cars/cars/" ,data, { withCredentials: true });
             }
-            setGoToCars(true);
-            toast.success('La voiture a été enregistrée avec succès !');
+            toast.success('The car has been successfully registered!', {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
+
+            setTimeout(() => {
+                setGoToCars(true);
+            }, 2000);
         } catch (error) {
             if (error.response) {
-                setErrorMessage(error.response.data.message);
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
-                toast.error('Une erreur est survenue lors de la sauvegarde de la voiture.');
+                toast.warning('An error occurred while saving the car',
+                    {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                });
             }
         }
     }
@@ -103,63 +148,119 @@ export default function CarForm({ id }) {
     async function uploadImage(ev) {
         const files = ev.target?.files;
         if (files?.length > 0) {
-            setIsUploading(true);
             const data = new FormData();
             data.append("file", files[0]);
             data.append("id", id);
             try {
-                const res = await axios.post("/api/admin/manage-cars/upload", data, { withCredentials: true });
-                const { message, imagePath } = res.data;
+                const res = await axios.post("/api/admin/manage-cars/upload", data, {withCredentials: true});
+                const {message, imagePath} = res.data;
                 if (message === "Image uploaded successfully") {
                     setImages([imagePath]);
+                    toast.info(res.data.message,
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 } else {
-                    setErrorMessage("Upload failed");
+                    toast.warning("Upload failed",
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 }
             } catch (error) {
                 if (error.response) {
-                    setErrorMessage(error.response.data.error);
-                    setErrorMessageVisible(true);
-                    setTimeout(() => {
-                        setErrorMessageVisible(false);
-                    }, 5000);
+                    toast.warning(error.response.data.error,
+                        {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                 }
-            } finally {
-                setIsUploading(false);
             }
         }
     }
 
     async function deleteImage() {
-        setImages([]);  // Ajoutez cette ligne
+        if (images.length === 0) {
+            toast.error("No image to delete", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
+            return;
+        }
+        setImages([]);
         try {
             await axios.delete(`/api/admin/manage-cars/delete?id=${id}`, { withCredentials: true });
+            toast.success("Image deleted successfully!", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: false,
+                progress: undefined,
+                theme: "colored",
+            });
             setImages([]);
         } catch (error) {
             if (error.response) {
-                setErrorMessage(error.response.data.message);
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
-            } else {
-                setErrorMessage("An error occurred while deleting the image.");
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
+                toast.error("An error occurred while deleting the image.", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "colored",
+                });
             }
         }
     }
+
 
     function goBack (){
         router.push("/admin/dashboard/cars");
     }
 
-
-
     return (
         <div className="flex items-center justify-center min-w-full bg-gray-100">
-            <ToastContainer />
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick={true}
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable={true}
+                pauseOnHover={false}
+                theme="colored"
+            />
             <div className="max-w-3xl w-full bg-white p-8 rounded-lg shadow-md">
                 <h2 className="mt-2 mb-8 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                     {id ? "Edit Car" : "Add Car"}
@@ -172,14 +273,8 @@ export default function CarForm({ id }) {
                             )}
                         </div>
                         <div className="flex flex-row space-x-2">
-                            <input
-                                type="file"
-                                id="image"
-                                name="image"
-                                onChange={uploadImage}
-                                hidden
-                            />
-                            <label htmlFor="image" className=" text-blue-500 hover:text-blue-700 mx-1 cursor-pointer">
+                            <input type="file" id="image" name="image" onChange={uploadImage} hidden />
+                            <label htmlFor="image" className="text-blue-500 hover:text-blue-700 mx-1 cursor-pointer">
                                 <FiPlus size={18} />
                             </label>
                             <button type="button" className="text-red-500 hover:text-red-700" onClick={deleteImage}>
@@ -197,7 +292,7 @@ export default function CarForm({ id }) {
                                     value={parkingName}
                                     onChange={(ev) => setParkingName(ev.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="parking"
+                                    placeholder="Parking"
                                 />
                             </div>
                             <div>
@@ -263,7 +358,7 @@ export default function CarForm({ id }) {
                                     value={registration}
                                     onChange={(ev) => setRegistration(ev.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="registration"
+                                    placeholder="Registration"
                                 />
                             </div>
                             <div>
@@ -274,8 +369,81 @@ export default function CarForm({ id }) {
                                     value={status}
                                     onChange={(ev) => setStatus(ev.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="status"
+                                    placeholder="Status"
                                 />
+                            </div>
+                            { id && (
+                                <>
+                                    <div>
+                                        <input
+                                            id="startDate"
+                                            name="startDate"
+                                            type="date"
+                                            value={startDate}
+                                            onChange={(ev) => setStartDate(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Start Date"
+                                        />
+                                    </div>
+                                    <div>
+                                        <input
+                                            id="endDate"
+                                            name="endDate"
+                                            type="date"
+                                            value={endDate}
+                                            onChange={(ev) => setEndDate(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="End Date"
+                                        />
+                                    </div>
+                                </>
+                            )}
+                            <div>
+                                <input
+                                    id="fuel"
+                                    name="fuel"
+                                    type="text"
+                                    value={fuel}
+                                    onChange={(ev) => setFuel(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="Fuel"
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    id="door"
+                                    name="door"
+                                    type="number"
+                                    value={door}
+                                    onChange={(ev) => setDoor(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="Door"
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    id="gearBox"
+                                    name="gearBox"
+                                    type="text"
+                                    value={gearBox}
+                                    onChange={(ev) => setGearBox(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="Gear Box"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Availability:</label>
+                                {availabilityDates.map((date, index) => (
+                                    <div key={index}>
+                                        {" "}
+                                        {date.toLocaleDateString("fr-FR", {
+                                            weekday: "long",
+                                            year: "numeric",
+                                            month: "long",
+                                            day: "numeric",
+                                        })}
+                                    </div>
+                                ))}
                             </div>
                             <div className="col-span-2">
                                 <textarea
@@ -289,24 +457,25 @@ export default function CarForm({ id }) {
                                 />
                             </div>
                         </div>
-                    <div className="mt-8 flex justify-end">
-                        <button
-                            type="submit"
-                            className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        >
-                            {id ? "Update" : "Save"}
-                        </button>
-                        <button
-                            type="button"
-                            className="ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                            onClick={goBack}
-                        >
-                            Cancel
-                        </button>
-                    </div>
+                        <div className="mt-8 flex justify-end">
+                            <button
+                                type="submit"
+                                className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                            >
+                                {id ? "Update" : "Save"}
+                            </button>
+                            <button
+                                type="button"
+                                className="ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                onClick={goBack}
+                            >
+                                Cancel
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
+
     );
 }

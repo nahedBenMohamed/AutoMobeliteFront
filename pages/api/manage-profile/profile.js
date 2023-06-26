@@ -15,22 +15,27 @@ export default async function handle(req, res) {
         return res.status(401).json({ error: 'Invalid token' });
     }
 
-    if(req.method === 'GET'){
+    if (req.method === 'GET') {
         // Use the id to make the API call
-        const userAgency = await prisma.agencyUser.findUnique({
-            where: {
-                id: payload.agencyUserId,
-            },
-        });
+        try {
+            const userAgency = await prisma.agencyUser.findUnique({
+                where: {
+                    id: payload.agencyUserId,
+                },
+            });
 
-        // If the user doesn't exist
-        if (!userAgency) {
-            return res.status(404).json({ error: "L'utilisateur n'existe pas" });
+            // If the user doesn't exist
+            if (!userAgency) {
+                return res.status(404).json({ error: "The user does not exist" });
+            }
+
+            // Return the user data
+            return res.status(200).json({ userAgency });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'Une erreur est survenue lors de la récupération des données de l\'utilisateur' });
         }
-
-        // Return the user data
-        return res.status(200).json({ userAgency });
-    } else if(req.method === 'PUT'){
+    } else if (req.method === 'PUT') {
         const { name, firstname, email, image, oldPassword, newPassword } = req.body;
 
         try {
@@ -43,12 +48,12 @@ export default async function handle(req, res) {
 
             // If the user doesn't exist
             if (!userAgencyPut) {
-                return res.status(404).json({ error: "L'utilisateur n'existe pas" });
+                return res.status(404).json({ error: "The user does not exist" });
             }
 
             // Check if the old password matches the current password
             if (oldPassword && !(await bcrypt.compare(oldPassword, userAgencyPut.password))) {
-                return res.status(400).json({ error: 'Ancien mot de passe incorrect' });
+                return res.status(400).json({ error: 'Old incorrect password' });
             }
 
             // Update the user's information
@@ -69,7 +74,7 @@ export default async function handle(req, res) {
             return res.status(200).json({ userAgency: updatedUserAgency });
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de la base de données' });
+            return res.status(500).json({ error: 'An error occurred while updating the database' });
         }
     } else {
         return res.status(405).json({ error: 'Method not allowed' });

@@ -8,7 +8,7 @@ import EditAdmin from "@/components/super-admin/super-admin-editadmin-form";
 
 
 
-export default function SuperAdminEditCar({session}){
+export default function SuperAdminEditAdmin({session}){
 
     const [adminInfo,setAdminInfo] = useState(null)
     const router = useRouter();

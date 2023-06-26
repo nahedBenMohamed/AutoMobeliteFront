@@ -51,12 +51,16 @@ export default async function handle(req, res) {
                 status,
                 image,
                 description,
+                door,
+                fuel,
+                gearBox,
             } = req.body;
 
             // Convert variables to the appropriate types
             const yearInt = parseInt(year);
             const mileageInt = parseInt(mileage);
             const priceFloat = parseFloat(price);
+            const doorInt= parseInt(door);
 
             let parking = null;
 
@@ -80,13 +84,16 @@ export default async function handle(req, res) {
                 data: {
                     brand,
                     model,
-                    year: yearInt,
-                    mileage: mileageInt,
-                    price: priceFloat,
                     registration,
                     status,
                     image,
                     description,
+                    fuel,
+                    gearBox,
+                    year: yearInt,
+                    mileage: mileageInt,
+                    price: priceFloat,
+                    door:doorInt,
                     Agency: {
                         connect: {
                             name: agency,
@@ -100,10 +107,34 @@ export default async function handle(req, res) {
                         }
                         : undefined,
                 },
-                include: { Agency: true }, // Include the Agency object in the response
+                include: {
+                    Agency: true,
+                    availability: true, // Include availability records in the response
+                },
             });
 
-            // Send the new car data as a response
+            // Generate availability dates for the next 365 days
+            const currentDate = new Date();
+            const availabilityDates = [];
+            for (let i = 0; i < 5; i++) {
+                const date = new Date();
+                date.setDate(currentDate.getDate() + i);
+                availabilityDates.push(date);
+            }
+
+            // Insert availability records for the new car
+            const availabilityRecords = availabilityDates.map((date) => {
+                return {
+                    carId: newCar.id,
+                    date,
+                };
+            });
+
+            await prisma.availability.createMany({
+                data: availabilityRecords,
+            });
+
+            // Send the new car data with availability as a response
             res.json(newCar);
         }
 
@@ -113,7 +144,11 @@ export default async function handle(req, res) {
                 const carId = req.query.id;
                 const car = await prisma.car.findUnique({
                     where: { id: Number(carId) },
-                    include: { Agency: true, parking: true }, // Include the Agency and parking details
+                    include: {
+                        Agency: true,
+                        parking: true,
+                        availability: true,
+                    },
                 });
 
                 // If car does not exist or the agency does not have access to the car, send an error
@@ -145,28 +180,34 @@ export default async function handle(req, res) {
         if (method === "PUT") {
             // Extract variables from the request body
             const {
+                id,
                 parkingName,
                 brand,
                 model,
                 year,
                 mileage,
                 price,
+                fuel,
+                gearBox,
+                door,
                 registration,
                 status,
                 image,
                 description,
-                id,
+                startDate,
+                endDate,
             } = req.body;
 
             // Convert variables to the appropriate types
             const yearInt = parseInt(year);
             const mileageInt = parseInt(mileage);
             const priceFloat = parseFloat(price);
+            const doorInt = parseInt(door);
 
             // Get car data for the specified ID
             const car = await prisma.car.findUnique({
                 where: { id: Number(id) },
-                include: { Agency: true, parking: true }, // Include the Agency and parking details
+                include: { Agency: true, parking: true, availability: true }, // Include the Agency, parking, and availability details
             });
 
             // If the agency does not have access to the car, send an error
@@ -183,7 +224,10 @@ export default async function handle(req, res) {
                     year: yearInt,
                     mileage: mileageInt,
                     price: priceFloat,
+                    door: doorInt,
                     registration,
+                    fuel,
+                    gearBox,
                     status,
                     image,
                     description,
@@ -197,9 +241,47 @@ export default async function handle(req, res) {
                 },
                 include: { Agency: true, parking: true }, // Include the Agency and parking details
             });
+
+            // Delete existing availability records for the car only if new dates are provided
+            if (startDate && endDate) {
+                await prisma.availability.deleteMany({
+                    where: { carId: Number(id) },
+                });
+            }
+
+            // Generate availability dates for the new range
+            let availabilityDates = [];
+
+            if (startDate && endDate) {
+                const startDateObj = new Date(startDate);
+                const endDateObj = new Date(endDate);
+                const currentDate = new Date(startDateObj); // Start from the specified start date
+
+                while (currentDate <= endDateObj) {
+                    availabilityDates.push(new Date(currentDate)); // Add a new date instance to the list
+                    currentDate.setDate(currentDate.getDate() + 1); // Advance by one day
+                }
+            }
+
+            // Insert new availability records for the car if dates are available
+            if (availabilityDates.length > 0) {
+                const availabilityRecords = availabilityDates.map((date) => {
+                    return {
+                        carId: updatedCar.id,
+                        date,
+                    };
+                });
+
+                await prisma.availability.createMany({
+                    data: availabilityRecords,
+                });
+            }
+
             // Send the updated car data as a response
             res.json(updatedCar);
+
         }
+
 
         if (method === "DELETE") {
             // If an ID query parameter exists, delete the car with that ID
@@ -214,6 +296,11 @@ export default async function handle(req, res) {
                 if (car.Agency.name !== agency) {
                     return res.status(403).json({ message: "You are not authorized to delete this car." });
                 }
+
+                // Delete the car's availability records
+                await prisma.availability.deleteMany({
+                    where: { carId: Number(carId) },
+                });
 
                 // Delete the car and send the deleted car data as a response
                 res.json(
