@@ -67,15 +67,15 @@ const ParkingForm = ({ id }) => {
             address,
             city,
             image: images.length > 0 ? images[0] : null,
-            };
+        };
 
         try {
             if (id) {
                 // Update
-                await axios.put("/api/admin/manage-parking/parking/", { ...data, id },{ withCredentials: true });
+                await axios.put("/api/admin/manage-parking/parking/", {...data, id}, {withCredentials: true});
             } else {
                 // Create
-                await axios.post("/api/admin/manage-parking/parking/", data,{ withCredentials: true });
+                await axios.post("/api/admin/manage-parking/parking/", data, {withCredentials: true});
             }
             toast.success('The parking has been successfully registered!', {
                 position: "top-center",
@@ -105,9 +105,8 @@ const ParkingForm = ({ id }) => {
                         theme: "colored",
                     });
             }
+        }
     }
-
-}
 
     async function uploadImage(ev) {
         const files = ev.target?.files;

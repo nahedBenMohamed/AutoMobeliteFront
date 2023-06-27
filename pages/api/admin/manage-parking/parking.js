@@ -40,14 +40,7 @@ export default async function handle(req, res) {
             if (!agency) {
                 return res.status(400).json({ message: 'No agency matching this name.' });
             }
-
-            // Check if the parking already exists
-            const existingParking = await prisma.parking.findUnique({ where: { name: name } });
-
-            if (existingParking) {
-                return res.status(400).json({ message: 'The parking already exists.' });
-            }
-
+            
             const newParking = await prisma.parking.create({
                 data: {
                     name: name,

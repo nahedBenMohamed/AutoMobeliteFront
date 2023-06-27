@@ -4,6 +4,13 @@ import axios from "axios";
 import {FiPlus, FiTrash2} from "react-icons/fi";
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { isSameDay } from "date-fns";
+
+
+
+
 
 
 export default function CarForm({ id }) {
@@ -20,8 +27,8 @@ export default function CarForm({ id }) {
     const [door, setDoor] = useState("");
     const [gearBox, setGearBox] = useState("");
     const [images, setImages] = useState([]);
-    const [startDate,setStartDate] =useState('')
-    const [endDate,setEndDate] =useState('')
+    const [startDate,setStartDate] =useState(null)
+    const [endDate,setEndDate] =useState(null)
     const [parkingName, setParkingName] = useState("");
     const [availabilityDates, setAvailabilityDates] = useState([]);
     const [goToCars, setGoToCars] = useState(false);
@@ -39,14 +46,14 @@ export default function CarForm({ id }) {
                     setYear(carData.year.toString());
                     setMileage(carData.mileage.toString());
                     setPrice(carData.price.toString());
+                    setDoor(carData.door.toString());
                     setStatus(carData.status);
+                    setFuel(carData.fuel);
+                    setGearBox(carData.gearBox);
                     setImages(carData.image ? [carData.image] : []);
                     setRegistration(carData.registration);
-                    setParkingName(carData.parkingName);
+                    setParkingName(carData.parking.name);
                     setDescription(carData.description);
-                    setFuel(carData.fuel);
-                    setDoor(carData.door.toString());
-                    setGearBox(carData.gearBox);
                     setAvailabilityDates(carData.availability.map((avail) => new Date(avail.date)));
                 })
                 .catch((error) => {
@@ -98,8 +105,8 @@ export default function CarForm({ id }) {
             registration,
             status,
             description,
-            startDate,
-            endDate,
+            startDate: startDate ? startDate.toISOString() : null,
+            endDate: endDate ? endDate.toISOString() : null,
             image: images.length > 0 ? images[0] : null,
             parkingName: parkingName !== "" ? parkingName : null,
         };
@@ -126,8 +133,34 @@ export default function CarForm({ id }) {
             }, 2000);
         } catch (error) {
             if (error.response) {
-                toast.warning('An error occurred while saving the car',
-                    {
+                if (error.response.data.error) {
+                    if (error.response.data.error === "Parking not found") {
+                        toast.warning("Parking not found", {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        return;
+                    } else if (error.response.data.error === "Invalid Parking name") {
+                        toast.warning("Invalid Parking name", {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        return;
+                    }
+                }
+                toast.error("Verify your informations", {
                     position: "top-center",
                     autoClose: 3000,
                     hideProgressBar: false,
@@ -374,28 +407,19 @@ export default function CarForm({ id }) {
                             </div>
                             { id && (
                                 <>
-                                    <div>
-                                        <input
-                                            id="startDate"
-                                            name="startDate"
-                                            type="date"
-                                            value={startDate}
-                                            onChange={(ev) => setStartDate(ev.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="Start Date"
-                                        />
-                                    </div>
-                                    <div>
-                                        <input
-                                            id="endDate"
-                                            name="endDate"
-                                            type="date"
-                                            value={endDate}
-                                            onChange={(ev) => setEndDate(ev.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="End Date"
-                                        />
-                                    </div>
+                                    <DatePicker
+                                        selected={startDate}
+                                        onChange={(date) => setStartDate(date)}
+                                        placeholderText="Start Date"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    />
+                                    <DatePicker
+                                        selected={endDate}
+                                        onChange={(date) => setEndDate(date)}
+                                        placeholderText="End Date"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    />
+
                                 </>
                             )}
                             <div>
@@ -433,17 +457,26 @@ export default function CarForm({ id }) {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Availability:</label>
-                                {availabilityDates.map((date, index) => (
-                                    <div key={index}>
-                                        {" "}
-                                        {date.toLocaleDateString("fr-FR", {
-                                            weekday: "long",
-                                            year: "numeric",
-                                            month: "long",
-                                            day: "numeric",
-                                        })}
-                                    </div>
-                                ))}
+                                <DatePicker
+                                    selected={null}
+                                    inline
+                                    minDate={new Date()}
+                                    highlightDates={[
+                                        {
+                                            selectable: false,
+                                            startDate,
+                                            endDate,
+                                            dates: availabilityDates.filter((date) => isSameDay(date, startDate) || isSameDay(date, endDate)),
+                                        },
+                                        {
+                                            selectable: true,
+                                            dates: availabilityDates,
+                                        },
+                                    ]}
+                                    dayClassName={(date) =>
+                                        availabilityDates.some((availableDate) => isSameDay(date, availableDate)) ? "available-day" : ""
+                                    }
+                                />
                             </div>
                             <div className="col-span-2">
                                 <textarea

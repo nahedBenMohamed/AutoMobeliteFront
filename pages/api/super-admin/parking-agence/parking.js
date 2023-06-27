@@ -8,16 +8,6 @@ export default async function handle(req, res) {
             // Handle POST method
             const { name, city, address, agencyName } = req.body;
 
-            // Check if the parking already exists
-            const existingParking = await prisma.parking.findUnique({
-                where: {
-                    name: name,
-                },
-            });
-            if (existingParking) {
-                return res.status(400).json({ message: 'This parking already exists.' });
-            }
-
             // Find the agency by its name
             const agency = await prisma.agency.findUnique({
                 where: {
@@ -119,7 +109,7 @@ export default async function handle(req, res) {
 
                 res.json(await prisma.parking.delete({
                     where: { id: Number(parkingId) },
-                    include: { Agency: true }, // Include Agency object in the response
+                    include: { Agency: true },
                 }));
                 res.json(parking)
             }

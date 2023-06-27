@@ -29,7 +29,7 @@ const DetailsCars = ({ id }) => {
         return <p><Spinner /></p>;
     }
 
-    const { brand, model, year, mileage, fuel,door,gearBox,price, registration, status, parkingName, description, image } = carData;
+    const { brand, model, year, mileage, fuel,door,gearBox,price, registration, status, parking, description, image } = carData;
 
     return (
         <div className="flex items-center justify-center min-w-fit bg-gray-100">
@@ -74,7 +74,7 @@ const DetailsCars = ({ id }) => {
                             <p><span className="font-bold">Fuel:</span>&nbsp;{fuel}</p>
                             <p><span className="font-bold">Door:</span>&nbsp;{door}</p>
                             <p><span className="font-bold">Gear Box:</span>&nbsp;{gearBox}</p>
-                            <p><span className="font-bold">Parking:</span>&nbsp;{parkingName}</p>
+                            <p><span className="font-bold">Parking:</span>&nbsp;{parking.name || "N/A"}</p>
                         </div>
                     </div>
                 </div>

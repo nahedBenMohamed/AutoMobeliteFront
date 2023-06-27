@@ -39,9 +39,9 @@ const SuperAdminAgencetable = () => {
     };
 
     return (
-        <div className="overflow-x-auto">
+        <div className="flex justify-center mt-16">
             <main className="flex-grow">
-                <div className="w-full">
+                <div className="table-auto">
                     <div className="bg-white shadow-md rounded-lg overflow-x-auto">
                         <div className="inline-block min-w-full overflow-hidden">
                             <table className="min-w-full divide-y divide-gray-200">
@@ -76,7 +76,7 @@ const SuperAdminAgencetable = () => {
                                     </th>
                                 </tr>
                                 </thead>
-                                <tbody>
+                                <tbody className="divide-y divide-gray-200">
                                 {currentAgences.map((agence) => (
                                     <tr key={agence.id} className="hover:bg-gray-100">
                                         <td className="px-6 py-4 whitespace-nowrap">{agence.name}</td>
@@ -103,18 +103,16 @@ const SuperAdminAgencetable = () => {
                             </table>
                         </div>
                     </div>
-                </div>
-            </main>
-            <div className="mt-4">
-                <Link
-                    href="/super-admin/dashboard/agence/new"
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                >
-                    Add Agence
-                </Link>
-            </div>
-            <div className="flex justify-center mt-4">
-                <ul className="flex items-center">
+                    <div className="mt-4">
+                        <Link
+                            href="/super-admin/dashboard/agence/new"
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        >
+                            Add Agence
+                        </Link>
+                    </div>
+                    <div className="flex justify-center mt-4">
+                        <ul className="flex items-center">
                     {Array.from({ length: Math.ceil(agences.length / agencesPerPage) }).map((_, index) => (
                         <li key={index}>
                             <button
@@ -131,7 +129,7 @@ const SuperAdminAgencetable = () => {
                     ))}
                 </ul>
             </div>
-            {/* Modal de confirmation */}
+        </div>
             <Modal
                 isOpen={modalIsOpen}
                 onRequestClose={() => setModalIsOpen(false)}
@@ -185,6 +183,7 @@ const SuperAdminAgencetable = () => {
                     </div>
                 )}
             </Modal>
+            </main>
         </div>
     );
 };

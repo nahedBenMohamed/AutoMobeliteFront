@@ -67,15 +67,16 @@ export default async function handle(req, res) {
             // Check if parkingName is provided
             if (parkingName) {
                 // Find the parking by name
-                parking = await prisma.parking.findUnique({
+                parking = await prisma.parking.findFirst({
                     where: {
                         name: parkingName,
+                        agencyId: agency.id, // Check if the parking belongs to the right agency
                     },
                 });
 
                 // If parking is not found, return an error
                 if (!parking) {
-                    return res.status(400).json({ message: "Invalid parking name." });
+                    return res.status(400).json({ error: "Invalid Parking name." });
                 }
             }
 
@@ -102,7 +103,7 @@ export default async function handle(req, res) {
                     parking: parking
                         ? {
                             connect: {
-                                name: parkingName,
+                                id: parking.id,
                             },
                         }
                         : undefined,
@@ -204,6 +205,8 @@ export default async function handle(req, res) {
             const priceFloat = parseFloat(price);
             const doorInt = parseInt(door);
 
+            let parking = null;
+
             // Get car data for the specified ID
             const car = await prisma.car.findUnique({
                 where: { id: Number(id) },
@@ -213,6 +216,22 @@ export default async function handle(req, res) {
             // If the agency does not have access to the car, send an error
             if (car.Agency.name !== agency) {
                 return res.status(403).json({ message: "You are not authorized to modify this car." });
+            }
+
+            // Check if parkingName is provided
+            if (parkingName) {
+                // Find the parking by name
+                parking = await prisma.parking.findFirst({
+                    where: {
+                        name: parkingName,
+                        agencyId: agency.id, // Check if the parking belongs to the right agency
+                    },
+                });
+
+                // If parking is not found, return an error
+                if (!parking) {
+                    return res.status(400).json({ error: "Invalid Parking name." });
+                }
             }
 
             // Update the car data
@@ -231,13 +250,15 @@ export default async function handle(req, res) {
                     status,
                     image,
                     description,
-                    parking: parkingName
+                    parking: parking
                         ? {
                             connect: {
-                                name: parkingName,
+                                id: parking.id,
                             },
                         }
-                        : undefined,
+                        : {
+                            disconnect: true,
+                        },
                 },
                 include: { Agency: true, parking: true }, // Include the Agency and parking details
             });

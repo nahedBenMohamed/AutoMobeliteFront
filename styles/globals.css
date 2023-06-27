@@ -192,6 +192,35 @@ li {
 }
 /* NAVBAR */
 
+input:checked ~ .toggle__dot {
+    transform: translateX(100%);
+}
+
+input:checked ~ .toggle__line {
+    background-color: #48bb78;
+}
+
+.toggle__dot {
+    top: -.25rem;
+    left: -.25rem;
+    transition: all 0.3s ease-in-out;
+}
+
+.toggle__line {
+    transition: background 0.3s ease-in-out;
+}
+
+.available-day {
+    background-color: lightgreen !important;
+    color: black !important;
+    cursor: pointer;
+}
+
+.react-datepicker__day--disabled {
+    color: grey !important;
+    cursor: not-allowed;
+}
+
 
 
 /* MAIN */

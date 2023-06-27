@@ -15,6 +15,8 @@ const EditAdmin = ({id}) => {
     const [agencyName, setAgencyName] = useState('');
     const [images, setImages] = useState([]);
     const [goToAdmin, setGoToAdmin] = useState(false);
+    const [isActive, setIsActive] = useState(true); // default to true
+
 
     useEffect(() => {
         if (id) {
@@ -27,6 +29,7 @@ const EditAdmin = ({id}) => {
                     setEmail(adminData.email);
                     setImages(adminData.image ? [adminData.image] : []);
                     setAgencyName(adminData.Agency?.name);
+                    setIsActive(adminData.status === 'activate');
                 })
                 .catch((error) => {
                     console.log(error);
@@ -70,9 +73,11 @@ const EditAdmin = ({id}) => {
             firstname,
             email,
             image: images.length > 0 ? images[0] : null,
-            agencyName
+            agencyName,
+            isActive
         };
         try {
+            console.log(data)
             if (id) {
                 // Update
                 if (agencyName) {
@@ -382,6 +387,19 @@ const EditAdmin = ({id}) => {
                                     className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
                             </div>
+                        </div>
+                        <div className="relative flex items-center mt-8">
+                            <label htmlFor="toggle" className="flex items-center cursor-pointer">
+                                <div className="relative">
+                                    <input id="toggle" type="checkbox" className="hidden" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
+                                    <div className="toggle__line w-10 h-4 bg-gray-400 rounded-full shadow-inner"
+                                         style={{backgroundColor: isActive ? 'blue' : 'gray'}}></div>
+                                    <div className="toggle__dot absolute w-6 h-6 bg-white rounded-full shadow inset-y-0 left-0"></div>
+                                </div>
+                                <div className="ml-3 text-gray-700 font-medium">
+                                    {isActive ? 'Active' : 'Inactive'}
+                                </div>
+                            </label>
                         </div>
                         <div className="mt-8 flex justify-end">
                             <button

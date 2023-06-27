@@ -5,7 +5,6 @@ import Spinner from "@/components/admin/Spinner";
 
 const SuperAdminDetailsCars = ({ id }) => {
     const [carData, setCarData] = useState(null);
-    const [errorMessage, setErrorMessage] = useState("");
     const router = useRouter();
 
     useEffect(() => {
@@ -16,7 +15,6 @@ const SuperAdminDetailsCars = ({ id }) => {
                     setCarData(response.data);
                 })
                 .catch((error) => {
-                    setErrorMessage("Failed to fetch car data");
                     console.log(error);
                 });
         }
@@ -30,7 +28,7 @@ const SuperAdminDetailsCars = ({ id }) => {
         return <p><Spinner /></p>;
     }
 
-    const { brand, model, year, mileage, price, registration, status, parkingName, description, image, Agency } = carData;
+    const { brand, model, year, mileage, price, registration, status, parking, description, image, Agency } = carData;
 
     return (
         <div className="flex items-center justify-center min-w-fit bg-gray-100">
@@ -76,7 +74,7 @@ const SuperAdminDetailsCars = ({ id }) => {
                             <p><span className="font-bold">Price:</span>&nbsp;{price} DT</p>
                             <p><span className="font-bold">Registration:</span>&nbsp;{registration}</p>
                             <p><span className="font-bold">Status:</span>&nbsp;{status}</p>
-                            <p><span className="font-bold">Parking:</span>&nbsp;{parkingName || "N/A"}</p>
+                            <p><span className="font-bold">Parking:</span>&nbsp;{parking.name || "N/A"}</p>
                         </div>
                     </div>
                 </div>

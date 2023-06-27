@@ -5,6 +5,7 @@ import LoginPage from "@/components/client/login";
 
 
 function page() {
+
     return (
         <main>
             <Header/>

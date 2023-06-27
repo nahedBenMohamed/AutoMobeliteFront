@@ -40,14 +40,14 @@ export default function SuperAdminCarform({ id }) {
                     setYear(carData.year.toString());
                     setMileage(carData.mileage.toString());
                     setPrice(carData.price.toString());
+                    setDoor(carData.door.toString());
+                    setFuel(carData.fuel);
+                    setGearBox(carData.gearBox);
                     setStatus(carData.status);
                     setImages(carData.image ? [carData.image] : []);
                     setRegistration(carData.registration);
-                    setParkingName(carData.parking?.name);
+                    setParkingName(carData.parking.name);
                     setDescription(carData.description);
-                    setFuel(carData.fuel);
-                    setDoor(carData.door.toString());
-                    setGearBox(carData.gearBox);
                 })
                 .catch((error) => {
                         if (error.response) {
@@ -140,8 +140,8 @@ export default function SuperAdminCarform({ id }) {
                             theme: "colored",
                         });
                         return;
-                    } else if (error.response.data.error === "Parking does not belong to the agency.") {
-                        toast.warning("Parking does not belong to the agency.", {
+                    } else if (error.response.data.error === "Invalid Parking name") {
+                        toast.warning("Invalid Parking name", {
                             position: "top-center",
                             autoClose: 3000,
                             hideProgressBar: false,
@@ -154,7 +154,7 @@ export default function SuperAdminCarform({ id }) {
                         return;
                     }
                 }
-                toast.warning("An error occurred while saving the car.", {
+                toast.error("Verify your informations", {
                     position: "top-center",
                     autoClose: 3000,
                     hideProgressBar: false,
@@ -268,9 +268,11 @@ export default function SuperAdminCarform({ id }) {
             }
         }
 
-    if (goToCars) {
-        router.push("/super-admin/dashboard/cars");
-    }
+
+        if (goToCars) {
+            router.push('/super-admin/dashboard/cars');
+        }
+
     function goBack (){
         router.push("/super-admin/dashboard/cars");
     }

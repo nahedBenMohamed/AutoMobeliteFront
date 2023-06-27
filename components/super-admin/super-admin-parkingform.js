@@ -69,7 +69,7 @@ const SuperAdminParkingForm = ({ id }) => {
             name,
             address,
             city,
-            image: images.length > 0 ? images[0] : null,
+            image: images && images.length > 0 ? images[0] : null,
             agencyName
         };
         try {

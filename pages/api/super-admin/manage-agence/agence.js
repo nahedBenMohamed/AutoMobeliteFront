@@ -21,6 +21,17 @@ export default async function handle(req, res) {
                 return res.status(400).json({message: 'This agency already exists'});
             }
 
+            // Check if an agency with the same email already exists
+            const existingAgencyEmail = await prisma.agency.findUnique({
+                where: {
+                    email: email,
+                },
+            });
+
+            if (existingAgencyEmail) {
+                return res.status(400).json({message: 'An agency with this email already exists'});
+            }
+
             // Vérifier si le responsable existe et obtenir son id
             const responsible = await prisma.agencyUser.findUnique({
                 where: {

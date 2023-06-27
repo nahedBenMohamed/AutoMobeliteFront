@@ -65,6 +65,7 @@ export async function getServerSideProps(context) {
             },
             data: {
                 emailVerified: true,
+                status:"activate",
             },
         });
 

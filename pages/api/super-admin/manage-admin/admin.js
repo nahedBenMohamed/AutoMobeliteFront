@@ -62,7 +62,8 @@ export default async function handle(req, res) {
         }
 
         if (method === 'PUT') {
-            const { id, name, firstname, email, image, agencyName } = req.body;
+            const { id, name, firstname, email, image, agencyName, isActive } = req.body;
+            console.log(req.body)
 
             if (!id) {
                 return res.status(400).json({ message: 'Admin ID is required.' });
@@ -107,16 +108,18 @@ export default async function handle(req, res) {
                     firstname: firstname || admin.firstname,
                     email: email || admin.email,
                     image,
+                    status: isActive ? 'activate' : 'deactivate', // Update the user's status
                     Agency: agency
-                        ? { connect: { name: agencyName } }
+                        ? {
+                            connect: { name: agencyName },
+                        }
                         : admin.Agency
                             ? { disconnect: true }
                             : undefined,
                 },
                 include: { Agency: true },
             });
-
-            res.json(updatedAdmin);
+            return res.json(updatedAdmin);
         }
 
 

@@ -76,26 +76,6 @@ export default async function handle(req, res) {
 
             let parking = null;
 
-            // Check if parkingName is provided
-            if (parkingName) {
-                // Find the parking by name
-                parking = await prisma.parking.findUnique({
-                    where: {
-                        name: parkingName,
-                    },
-                });
-
-                // If parking is not found, return an error
-                if (!parking) {
-                    return res.status(400).json({ error: "Invalid Parking name." });
-                }
-
-                // Check if the parking belongs to the agency
-                if (parking.agencyId !== agencyId) {
-                    return res.status(400).json({ error: "Parking does not belong to the agency." });
-                }
-            }
-
             // If agencyName is provided, find the corresponding agency id
             const agency = await prisma.agency.findUnique({
                 where: { name: agencyName },
@@ -104,6 +84,23 @@ export default async function handle(req, res) {
             if (!agency) {
                 throw new Error("Invalid Agency name.");
             }
+
+            // Check if parkingName is provided
+            if (parkingName) {
+                // Find the parking by name
+                parking = await prisma.parking.findFirst({
+                    where: {
+                        name: parkingName,
+                        agencyId: agency.id, // Check if the parking belongs to the right agency
+                    },
+                });
+
+                // If parking is not found, return an error
+                if (!parking) {
+                    return res.status(400).json({ error: "Invalid Parking name." });
+                }
+            }
+
 
             // Create a new car with the provided data
             const newCar = await prisma.car.create({
@@ -128,10 +125,11 @@ export default async function handle(req, res) {
                     parking: parking
                         ? {
                             connect: {
-                                name: parkingName,
+                                id: parking.id,
                             },
                         }
                         : undefined,
+
                 },
                 include,
             });
@@ -191,26 +189,6 @@ export default async function handle(req, res) {
 
             let parking = null;
 
-            // Check if parkingName is provided
-            if (parkingName) {
-                // Find the parking by name
-                parking = await prisma.parking.findUnique({
-                    where: {
-                        name: parkingName,
-                    },
-                });
-
-                // If parking is not found, return an error
-                if (!parking) {
-                    return res.status(400).json({ error: "Parking not found" });
-                }
-
-                // Check if the parking belongs to the agency
-                if (parking.agencyId !== agencyId) {
-                    return res.status(400).json({ error: "Parking does not belong to the agency." });
-                }
-            }
-
             // If agencyName is provided, find the corresponding agency id
             const agency = await prisma.agency.findUnique({
                 where: { name: agencyName },
@@ -219,6 +197,22 @@ export default async function handle(req, res) {
             if (!agency) {
                 throw new Error("Invalid Agency name.");
             }
+
+                // Check if parkingName is provided
+                if (parkingName) {
+                    // Find the parking by name
+                    parking = await prisma.parking.findFirst({
+                        where: {
+                            name: parkingName,
+                            agencyId: agency.id, // Check if the parking belongs to the right agency
+                        },
+                    });
+
+                    // If parking is not found, return an error
+                    if (!parking) {
+                        return res.status(400).json({ error: "Invalid Parking name." });
+                    }
+                }
 
             // Update the car with the provided data
             const updatedCar = await prisma.car.update({
@@ -241,13 +235,15 @@ export default async function handle(req, res) {
                             id: agency.id,
                         },
                     },
-                    parking: parkingName
+                    parking: parking
                         ? {
                             connect: {
-                                name: parkingName,
+                                id: parking.id,
                             },
                         }
-                        : undefined,
+                        : {
+                            disconnect: true,
+                        },
                 },
                 include,
             });

@@ -21,6 +21,11 @@ export default async function handle(req, res) {
         return res.status(401).json({ error: 'Incorrect email or password.' });
     }
 
+    // Verify if the user status is active
+    if (agencyUser.status !== 'activate') {
+        return res.status(403).json({ error: 'Your account is deactivated. Please contact the admin.' });
+    }
+
     // Verify the password
     const passwordMatch = await bcrypt.compare(password, agencyUser.password);
     if (!passwordMatch) {

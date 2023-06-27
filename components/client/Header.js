@@ -2,8 +2,7 @@ import Link from "next/link";
 
 import {AiOutlineMenu} from "react-icons/ai";
 import {useTogglersContext} from "@/components/context/togglers";
-import VehicleSearchForm from "@/components/client/VehicleSearchForm";
-
+import React from "react";
 
 function Header () {
     const { setMobileNavbar } = useTogglersContext();
@@ -13,10 +12,6 @@ function Header () {
                 <Link href="/" className="text-2xl justify-center items-center">
                     AUTO<span className="text-blue-600">MOBELITE</span>
                 </Link>
-              {/*  <div className="-mt-12">
-                    <VehicleSearchForm />
-                </div>*/}
-
                 <div className="hidden lg:flex items-center text-black gap-4 font-medium">
                     <button className="hover:text-blue-600 transition-all duration-300 ease-linear">
                         <Link href="/authentification/login">
@@ -26,9 +21,7 @@ function Header () {
                     <button className="hover:text-blue-600 bg-white py-3 px-7 text-black rounded-full">
                         <Link href="/authentification/register">Register</Link>
                     </button>
-
                 </div>
-
                 <div className="lg:hidden">
                     <button
                         className="text-3xl transition-all duration-300 ease-linear hover:text-custom-blue"
@@ -37,12 +30,9 @@ function Header () {
                         <AiOutlineMenu />
                     </button>
                 </div>
-
             </nav>
         </header>
-    )
-
-        ;
+    );
 }
 
 

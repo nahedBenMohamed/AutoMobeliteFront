@@ -238,7 +238,6 @@ const SuperAdminCartable = () => {
                         </div>
                     )}
                 </Modal>
-
             </main>
         </div>
     );

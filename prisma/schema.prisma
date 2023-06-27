@@ -20,6 +20,7 @@ model Client {
   updatedAt     DateTime   @default(now()) @map("updated_at")
   emailVerified Boolean    @default(false)
   role          ClientRole @default(user)
+  status        Status     @default(deactivate)
   rentals       Rental[]
 }
 
@@ -33,6 +34,7 @@ model AgencyUser {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
   role      UserRole @default(admin)
+  status    Status   @default(activate)
   Agency    Agency?
 }
 
@@ -46,9 +48,23 @@ model Agency {
   image         String?
   createdAt     DateTime   @default(now()) @map("created_at")
   updatedAt     DateTime   @default(now()) @map("updated_at")
+  status        Status     @default(activate)
   AgencyUser    AgencyUser @relation(fields: [responsibleId], references: [id])
   Cars          Car[]
   Parking       Parking[]
+}
+
+model Parking {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  agencyId  Int
+  image     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  address   String   @db.VarChar(200)
+  city      String   @db.VarChar(200)
+  Car       Car[]
+  Agency    Agency   @relation(fields: [agencyId], references: [id])
 }
 
 model Car {
@@ -61,7 +77,7 @@ model Car {
   price        Float
   registration String         @db.VarChar(20)
   status       CarStatus      @default(available)
-  parkingName  String?        @db.VarChar(100)
+  parkingId    Int?
   description  String?        @db.VarChar(300)
   fuel         String         @db.VarChar(50)
   door         Int
@@ -71,7 +87,7 @@ model Car {
   updatedAt    DateTime       @default(now()) @map("updated_at")
   availability Availability[]
   Agency       Agency         @relation(fields: [agencyId], references: [id])
-  parking      Parking?       @relation(fields: [parkingName], references: [name])
+  parking      Parking?       @relation(fields: [parkingId], references: [id])
   maintenances Maintenance[]
   rentals      Rental[]
 }
@@ -97,19 +113,6 @@ model Maintenance {
   carId       Int
   cost        Float
   car         Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
-}
-
-model Parking {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique @db.VarChar(100)
-  agencyId  Int
-  image     String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-  address   String   @db.VarChar(200)
-  city      String   @db.VarChar(200)
-  Car       Car[]
-  Agency    Agency   @relation(fields: [agencyId], references: [id])
 }
 
 model Availability {
@@ -140,4 +143,9 @@ enum RentalStatus {
   reserved
   ongoing
   completed
+}
+
+enum Status {
+  activate
+  deactivate
 }

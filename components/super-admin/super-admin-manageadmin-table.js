@@ -63,9 +63,9 @@ const SuperAdminManageTable = () => {
     };
 
     return (
-        <div className="overflow-x-auto">
+        <div className="flex justify-center mt-16">
             <main className="flex-grow">
-                <div className="w-full">
+                <div className="table-auto">
                     <div className="bg-white shadow-md rounded-lg overflow-x-auto">
                         <div className="inline-block min-w-full overflow-hidden">
                             <table className="min-w-full divide-y divide-gray-200">
@@ -127,13 +127,11 @@ const SuperAdminManageTable = () => {
                             </table>
                         </div>
                     </div>
-                </div>
-            </main>
-            <div className="mt-4">
-                <Link
-                    href="/super-admin/dashboard/manage-admin/new"
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                >
+                    <div className="mt-4">
+                        <Link
+                            href="/super-admin/dashboard/manage-admin/new"
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        >
                     Add Admin
                 </Link>
             </div>
@@ -155,6 +153,7 @@ const SuperAdminManageTable = () => {
                     ))}
                 </ul>
             </div>
+                </div>
             <ToastContainer
                 position="top-center"
                 autoClose={3000}
@@ -221,8 +220,8 @@ const SuperAdminManageTable = () => {
                         </div>
                     </div>
                 )}
-
             </Modal>
+            </main>
         </div>
     );
 };
