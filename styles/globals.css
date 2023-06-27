@@ -465,3 +465,26 @@ body {
     box-sizing: border-box;
     font-family: "Manrope", sans-serif;
 }
+
+.fade-enter {
+    opacity: 0.01;
+}
+
+.fade-enter-active {
+    opacity: 1;
+    transition: opacity 300ms ease-in;
+}
+
+.fade-exit {
+    opacity: 1;
+}
+
+.fade-exit-active {
+    opacity: 0.01;
+    transition: opacity 300ms ease-in;
+}
+
+
+/*
+Calendar*/
+>>>>>>> Stashed changes
