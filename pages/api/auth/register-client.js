@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 export default async function handle(req, res) {
-    const { name, firstname, email, password, telephone, numPermis } = req.body;
+    const { name, firstname, email, password, telephone, numPermis , address , city } = req.body;
 
     // Convert telephone to a string
     const telephoneString = String(telephone);
@@ -40,7 +40,9 @@ export default async function handle(req, res) {
                 email: email,
                 password: hashedPassword,
                 telephone: telephoneString,
-                numPermis: numPermis
+                numPermis: numPermis,
+                address : address,
+                city : city,
             },
         });
 

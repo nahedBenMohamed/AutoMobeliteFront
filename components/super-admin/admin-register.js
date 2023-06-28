@@ -126,7 +126,7 @@ const RegisterAdmin = () => {
             });
         }
     };
-
+// lors de l'enregistrement d'un super admin il faut supprimer la redirection ensuite modifier son status dans la base de données
     if (goToAdmin) {
         router.push("/super-admin/dashboard/manage-admin");
     }

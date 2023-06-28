@@ -32,7 +32,15 @@ export default async function handle(req, res) {
 
         // Generate a token for the user
         const token = jwt.sign(
-            { clientId: client.id },
+            { clientId: client.id,
+            name : client.name,
+                firstname : client.firstname,
+                address : client.address,
+                city : client.city,
+                telephone : client.telephone,
+                email : client.email,
+                numPermis: client.numPermis,
+            },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );

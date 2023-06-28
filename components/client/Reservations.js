@@ -8,6 +8,8 @@ import { DateRangePicker } from 'react-dates';
 import moment from 'moment';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
+import jwt from 'jsonwebtoken';
+import Cookies from 'js-cookie';
 
 function ReservationForm() {
     const router = useRouter();
@@ -18,19 +20,42 @@ function ReservationForm() {
     const [selectedReturnTime, setSelectedReturnTime] = useState('');
     const [focusedInput, setFocusedInput] = useState(null);
     const [name, setName] = useState('');
-    const [firstName, setFirstName] = useState('');
+    const [firstname, setFirstName] = useState('');
     const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [address, setAddress] = useState('');
+    const [telephone, setTelephone] = useState('');
+    const [numPermis, setNumPermis] = useState('');    const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
-    const [licenseNumber, setLicenseNumber] = useState('');
     const [step, setStep] = useState(1);
+    const [clientInfo, setClientInfo] = useState(null);
 
     useEffect(() => {
         if (id && image && price && brand && Agency) {
             // setCarDetails ici
         }
     }, [id, image, price, brand , Agency]);
+
+    useEffect(() => {
+        const userToken = Cookies.get('authToken'); // Vérifiez le nom de votre cookie contenant le JWT
+
+        if (userToken) {
+            try {
+                const decodedToken = jwt.decode(userToken);
+
+                if (decodedToken) {
+                    setClientInfo(decodedToken);
+                    setName(decodedToken.name);
+                    setFirstName(decodedToken.firstname);
+                    setEmail(decodedToken.email);
+                    setNumPermis(decodedToken.numPermis);
+                    setTelephone(decodedToken.telephone);
+                    setAddress(decodedToken.address);
+                    setCity(decodedToken.city);
+                }
+            } catch (error) {
+                console.log('Erreur de décodage du JWT :', error);
+            }
+        }
+    }, []);
 
     const calculatePrice = () => {
         const pricePerDay = parseFloat(price);
@@ -208,7 +233,10 @@ return(
         )}
 
         {step === 2 && (
+            <div>
+            {clientInfo && (
             <>
+
                 <div className="mt-10 max-w-3xl mx-auto  p-6 rounded shadow-xl">
                     <h3 className=" text-center mb-4">Informations personnelles</h3>
 
@@ -230,7 +258,7 @@ return(
                             <div className="relative">
                                 <input
                                     type="text"
-                                    value={firstName}
+                                    value={firstname}
                                     onChange={(event) => setFirstName(event.target.value)}
                                     required
                                     placeholder="Enter your first name"
@@ -256,8 +284,8 @@ return(
                             <div className="relative">
                                 <input
                                     type="tel"
-                                    value={phone}
-                                    onChange={(event) => setPhone(event.target.value)}
+                                    value={telephone}
+                                    onChange={(event) => setTelephone(event.target.value)}
                                     required
                                     placeholder="Enter your phone number"
                                     className="w-full px-4 py-2 border border-gray-300 rounded pl-10"
@@ -295,8 +323,8 @@ return(
                             <div className="relative">
                                 <input
                                     type="text"
-                                    value={licenseNumber}
-                                    onChange={(event) => setLicenseNumber(event.target.value)}
+                                    value={numPermis}
+                                    onChange={(event) => setNumPermis(event.target.value)}
                                     required
                                     placeholder="Enter your driver's license number"
                                     className="w-full px-4 py-2 border border-gray-300 rounded pl-10"
@@ -305,6 +333,7 @@ return(
                             </div>
                         </div>
                     </div>
+
 
                     <div className="flex justify-between">
                         <button
@@ -324,7 +353,10 @@ return(
                     </div>
                 </div>
             </>
-        )}
+            )}
+            </div>
+            )}
+
 
         {step === 3 && (
             <>
@@ -376,7 +408,7 @@ return(
                             <div className="w-full md:w-1/2 p-2">
                                 <div className="border p-4 rounded shadow">
                                     <h4 className="font-semibold mb-2">Prénom:</h4>
-                                    <p className="text-lg">{firstName}</p>
+                                    <p className="text-lg">{firstname}</p>
                                 </div>
                             </div>
                             <div className="w-full md:w-1/2 p-2 ">
@@ -388,7 +420,7 @@ return(
                             <div className="w-full md:w-1/2 p-2">
                                 <div className="border p-4 rounded shadow">
                                     <h4 className="font-semibold mb-2">Téléphone:</h4>
-                                    <p className="text-lg">{phone}</p>
+                                    <p className="text-lg">{telephone}</p>
                                 </div>
                             </div>
                             <div className="w-full md:w-1/2 p-2">
@@ -406,7 +438,7 @@ return(
                             <div className="w-full md:w-1/2 p-2">
                                 <div className="border p-4 rounded shadow">
                                     <h4 className="font-semibold mb-2">Numéro de permis de conduire:</h4>
-                                    <p className="text-lg">{licenseNumber}</p>
+                                    <p className="text-lg">{numPermis}</p>
                                 </div>
                             </div>
                             <div className="w-full md:w-1/2 p-2">
