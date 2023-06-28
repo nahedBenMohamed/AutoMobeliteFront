@@ -5,11 +5,12 @@ import {FaCar, FaEquals, FaMoneyBillWave} from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useSpring, animated } from 'react-spring';
 import { DateRangePicker } from 'react-dates';
-import moment from 'moment';
+import moment from 'moment/moment';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import jwt from 'jsonwebtoken';
 import Cookies from 'js-cookie';
+import axios from "axios";
 
 function ReservationForm() {
     const router = useRouter();
@@ -27,6 +28,7 @@ function ReservationForm() {
     const [city, setCity] = useState('');
     const [step, setStep] = useState(1);
     const [clientInfo, setClientInfo] = useState(null);
+    const [clientId, setClientId] = useState(null);
 
     useEffect(() => {
         if (id && image && price && brand && Agency) {
@@ -41,8 +43,10 @@ function ReservationForm() {
             try {
                 const decodedToken = jwt.decode(userToken);
 
+
                 if (decodedToken) {
                     setClientInfo(decodedToken);
+                    setClientId(decodedToken.id);
                     setName(decodedToken.name);
                     setFirstName(decodedToken.firstname);
                     setEmail(decodedToken.email);
@@ -51,6 +55,7 @@ function ReservationForm() {
                     setAddress(decodedToken.address);
                     setCity(decodedToken.city);
                 }
+
             } catch (error) {
                 console.log('Erreur de décodage du JWT :', error);
             }
@@ -77,9 +82,37 @@ function ReservationForm() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        // Ajoutez ici la logique de gestion de la réservation
-    };
 
+        try {
+            const response = await fetch('/api/reservation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    carId: parseInt(id), // Ensure 'id' is defined somewhere in the scope
+                    startDate: selectedDates.startDate.format(),
+                    endDate: selectedDates.endDate.format(),
+                    startTime: selectedStartTime,
+                    endTime: selectedReturnTime,
+                    total: parseFloat(calculatePrice()), // Ensure 'calculatePrice()' is defined and returns a number
+                    status: 'reserved',
+                    clientId: clientInfo.clientId, // here, // Assuming 'clientId' is defined somewhere in the scope
+                }),
+            });
+
+            if (response.status === 201) {
+                // Alert the user of success
+                /*alert('Rental created successfully!');*/
+                console.log("Rental created successfully finally le Zeus!")
+                await router.push("/");
+            } else {
+                console.error('Error creating rental:', response);
+            }
+        } catch (error) {
+            console.error('Error creating rental:', error);
+        }
+    };
 
     const ProgressBar = ({ step }) => {
         const totalSteps = 3;
@@ -468,7 +501,7 @@ return(
                     <button
                         type="button"
                         className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                        onClick={handleNextStep}
+                        onClick={handleSubmit}
                     >
                         Valider
                     </button>

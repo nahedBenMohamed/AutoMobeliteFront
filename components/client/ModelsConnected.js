@@ -9,6 +9,9 @@ import {router} from "next/router";
 function Modelsconnected() {
     const [cars, setCars] = useState([]);
     const [selectedCar, setSelectedCar] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [carsPerPage] = useState(9);
+    const [paginationRange, setPaginationRange] = useState([]);
 
     useEffect(() => {
         axios.get("/api/auth/AllCars").then((response) => {
@@ -37,12 +40,54 @@ function Modelsconnected() {
 
         });
     };
+    // Pagination logic
+    const indexOfLastCar = currentPage * carsPerPage;
+    const indexOfFirstCar = indexOfLastCar - carsPerPage;
+    const currentCars = cars.slice(indexOfFirstCar, indexOfLastCar);
+
+    // Change page
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    useEffect(() => {
+        const range = [];
+        const totalPages = Math.ceil(cars.length / carsPerPage);
+        const maxButtonsToShow = 5; // Adjust the number of buttons to show
+
+        let startPage, endPage;
+        if (totalPages <= maxButtonsToShow) {
+            // Show all buttons
+            startPage = 1;
+            endPage = totalPages;
+        } else {
+            // Determine the range of buttons to show
+            const middlePage = Math.floor(maxButtonsToShow / 2);
+            if (currentPage <= middlePage) {
+                // Show first n buttons
+                startPage = 1;
+                endPage = maxButtonsToShow;
+            } else if (currentPage + middlePage >= totalPages) {
+                // Show last n buttons
+                startPage = totalPages - maxButtonsToShow + 1;
+                endPage = totalPages;
+            } else {
+                // Show middle n buttons
+                startPage = currentPage - middlePage;
+                endPage = currentPage + middlePage;
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            range.push(i);
+        }
+
+        setPaginationRange(range);
+    }, [currentPage, cars, carsPerPage]);
 
     return (
         <section id="models-main">
-            <div className="py-8 px-8 lg:px-48 lg:py-16 my-8">
+            <div className="py-8 px-8 lg:px-32 lg:py-16 my-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {cars.map((car) => (
+                    {currentCars.map((car) => (
                         <div key={car.id} className="border border-lighter-grey bg-white rounded">
                             <div className="image-container">
                                 <img src={car.image} alt="" />
@@ -51,24 +96,7 @@ function Modelsconnected() {
                                 <div className="flex items-center justify-between">
                                     <div className="space-y-1">
                                         <div>
-                                            <h1 className="font-bold text-xl lg:text-2xl">{car.brand}</h1>
-                                        </div>
-                                        <div className="text-[#ffc933] flex items-center">
-                      <span>
-                        <AiFillStar />
-                      </span>
-                                            <span>
-                        <AiFillStar />
-                      </span>
-                                            <span>
-                        <AiFillStar />
-                      </span>
-                                            <span>
-                        <AiFillStar />
-                      </span>
-                                            <span>
-                        <AiFillStar />
-                      </span>
+                                            <h1 className="-mt-6  font-bold text-xl lg:text-2xl">{car.brand}</h1>
                                         </div>
                                     </div>
                                     <div className="text-right">
@@ -77,31 +105,31 @@ function Modelsconnected() {
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-between text-lg">
-                                    <div className="flex items-center gap-2">
+                                    <div className="-mt-8 flex items-center gap-2">
                     <span>
-                      <AiFillCar />
+                      <AiFillCar className="text-blue-600" />
                     </span>
-                                        <span>{car.model}</span>
+                                        <span>{car.brand}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <span>{car.name}</span>
-                                        <span>4</span>
+                                        <span className="-mt-5 ">4</span>
                                         <span>
-                      <GiCarDoor />
+                      <GiCarDoor className="-mt-5 text-blue-600" />
                     </span>
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-between text-lg">
                                     <div className="flex items-center gap-2">
                     <span>
-                      <AiFillTool />
+                      <AiFillTool className="text-blue-600" />
                     </span>
-                                        <span>{car.parkingName}</span>
+                                        <span>{car.model}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <span>{car.registration}</span>
                                         <span>
-                      <BsFillFuelPumpFill />
+                      <BsFillFuelPumpFill className="text-blue-600" />
                     </span>
                                     </div>
                                 </div>
@@ -109,7 +137,6 @@ function Modelsconnected() {
                                     <hr className="border border-lighter-grey" />
                                 </div>
                                 <div className="flex space-x-4">
-
                                     <button
                                         onClick={() => handleReservation(car)}
                                         className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full"
@@ -127,6 +154,19 @@ function Modelsconnected() {
                         </div>
                     ))}
                 </div>
+            </div>
+            <div className="flex justify-center mt-4">
+                {paginationRange.map((pageNumber) => (
+                    <button
+                        key={pageNumber}
+                        className={`mx-2 px-2 py-1 rounded ${
+                            currentPage === pageNumber ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
+                        }`}
+                        onClick={() => paginate(pageNumber)}
+                    >
+                        {pageNumber}
+                    </button>
+                ))}
             </div>
             {selectedCar && (
                 <Modal onClose={closeModal} car={selectedCar}>
