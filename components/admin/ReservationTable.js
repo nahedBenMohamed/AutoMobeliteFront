@@ -1,23 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const RentalTable = () => {
+const RentalTable = ({ agencyId }) => {
     const [reservations, setReservations] = useState([]);
 
     useEffect(() => {
-        // Appeler l'API pour récupérer les réservations
-        axios.get('/api/admin/reservations')
-            .then(response => {
+        const fetchReservations = async () => {
+            try {
+                const response = await axios.get(`/api/reservation`);
                 setReservations(response.data);
-            })
-            .catch(error => {
+                console.log(response.data); // Vérifiez les données renvoyées par l'API
+            } catch (error) {
                 console.log(error);
-            });
-    }, []);
+            }
+        };
+
+        fetchReservations();
+    }, [agencyId]);
 
     return (
         <div>
-            <table className="min-w-full bg-white rounded-b-3xl ">
+            <table className="min-w-full bg-white rounded-b-3xl">
                 <thead>
                 <tr>
                     <th className="px-4 py-2">Nom</th>
@@ -31,14 +34,14 @@ const RentalTable = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {reservations.map((reservation, index) => (
-                    <tr key={index}>
-                        <td className="border px-4 py-2">{reservation.client.nom}</td>
-                        <td className="border px-4 py-2">{reservation.client.prenom}</td>
-                        <td className="border px-4 py-2">{reservation.voiture.marque}</td>
-                        <td className="border px-4 py-2">{reservation.voiture.modele}</td>
-                        <td className="border px-4 py-2">{reservation.dateDeDebut}</td>
-                        <td className="border px-4 py-2">{reservation.dateDeFin}</td>
+                {reservations.map((reservation) => (
+                    <tr key={reservation.id}>
+                        <td className="border px-4 py-2">{reservation.client.name}</td>
+                        <td className="border px-4 py-2">{reservation.client.firstname}</td>
+                        <td className="border px-4 py-2">{reservation.car.brand}</td>
+                        <td className="border px-4 py-2">{reservation.car.model}</td>
+                        <td className="border px-4 py-2">{reservation.startDate}</td>
+                        <td className="border px-4 py-2">{reservation.endDate}</td>
                         <td className="border px-4 py-2">{reservation.total}</td>
                         <td className="border px-4 py-2">
                             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

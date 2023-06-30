@@ -1,9 +1,22 @@
 import { parseISO, setHours, setMinutes } from 'date-fns';
 import prisma from "@/lib/prisma";
 
-
 export default async function handler(req, res) {
-    if (req.method === 'POST') {
+    if (req.method === 'GET') {
+        try {
+            const reservations = await prisma.rental.findMany({
+                include: {
+                    car: true,
+                    client: true,
+                },
+            });
+
+            res.status(200).json(reservations);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'An error occurred while fetching the reservations.' });
+        }
+    }else if (req.method === 'POST') {
         try {
             const {
                 carId,
@@ -54,6 +67,6 @@ export default async function handler(req, res) {
             res.status(500).json({ error: 'An error occurred while creating the rental.' });
         }
     } else {
-        res.status(405).json({ error: 'Method not allowed. Use the POST method.' });
+        res.status(405).json({ error: 'Method not allowed. Use GET or POST methods.' });
     }
 }
