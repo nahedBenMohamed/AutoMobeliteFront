@@ -119,7 +119,7 @@ export default async function handle(req, res) {
 
         }  else if (method === 'PUT') {
             // Handle PUT method
-            const {id, name, address, email, telephone, image,responsibleEmail} = req.body;
+            const {id, name, address, email, telephone, image,responsibleEmail,isActive} = req.body;
 
             // Check if the agency exists
             const existingAgency = await prisma.agency.findUnique({
@@ -163,6 +163,7 @@ export default async function handle(req, res) {
                     email: email,
                     telephone: telephone,
                     image,
+                    status: isActive ? 'activate' : 'deactivate', // Update the agency's status
                     AgencyUser: {
                         connect: {
                             id: responsibleUser.id,
@@ -174,46 +175,58 @@ export default async function handle(req, res) {
 
             return res.json(updatedAgency);
 
-        } else if (method === 'DELETE') {
+        }else if (method === 'DELETE') {
             // Handle DELETE method
             if (req.query?.id) {
-
                 const agencyId = req.query.id;
 
-                // Check if the agency exists
-                const agence = await prisma.agency.findUnique({
-                    where: {id: Number(agencyId)},
+                // Vérifier si l'agence existe
+                const agency = await prisma.agency.findUnique({
+                    where: { id: Number(agencyId) },
                 });
 
-                if (!agence) {
-                    return res.status(404).json({message: 'Agency not found.'});
+                if (!agency) {
+                    return res.status(404).json({ message: 'Agency not found.' });
                 }
 
-                // Supprimer les enregistrements de la table `Parking` qui référencent l'agence à supprimer
-                await prisma.parking.deleteMany({
-                    where: {
-                        agencyId: Number(agencyId),
-                    },
-                });
+                try {
+                    // Supprimer les enregistrements de la table `Availability` qui référencent les voitures de l'agence
+                    await prisma.availability.deleteMany({
+                        where: {
+                            car: {
+                                agencyId: Number(agencyId),
+                            },
+                        },
+                    });
 
-                // Supprimer les enregistrements de la table `Car` qui référencent l'agence à supprimer
-                await prisma.car.deleteMany({
-                    where: {
-                        agencyId: Number(agencyId),
-                    },
-                });
+                    // Supprimer les voitures de l'agence
+                    await prisma.car.deleteMany({
+                        where: {
+                            agencyId: Number(agencyId),
+                        },
+                    });
 
-                // Supprimer l'agence et ses données associées
-                const deletedAgency = await prisma.agency.delete({
-                    where: { id: Number(agencyId) },
-                    include: {
-                        AgencyUser: true, // Inclure l'objet AgencyUser
-                    },
-                });
-                return res.json(deletedAgency);
+                    await prisma.parking.deleteMany({
+                        where: {
+                            agencyId: Number(agencyId),
+                        },
+                    });
 
+                    // Supprimer l'agence et ses données associées
+                    const deletedAgency = await prisma.agency.delete({
+                        where: { id: Number(agencyId) },
+                        include: {
+                            AgencyUser: true, // Inclure l'objet AgencyUser
+                        },
+                    });
+
+                    return res.json(deletedAgency);
+                } catch (error) {
+                    console.error(error);
+                    return res.status(500).json({ message: 'An error occurred.' });
+                }
             } else {
-                return res.status(405).json({message: 'Method not allowed.'});
+                return res.status(405).json({ message: 'Method not allowed.' });
             }
         }
     }

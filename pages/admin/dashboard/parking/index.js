@@ -12,12 +12,19 @@ export default function Parking ({session})  {
             <Sidebar />
             <section id="content">
                 <Navbar session={session} />
-                <div style={{ margin: '60px 90px' }}>
+                <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", alignItems: "center", margin: "40px 40px" }}>
+                    <h1 style={{ marginRight: "10px", fontSize: "24px", fontWeight: "bold" }}>
+                        Manage Parking's {'\u{1F17F}'}
+                    </h1>
+                    <div style={{ width: "100%" }}></div>
+                </div>
+                <div style={{ margin: "-40px 10px" }}>
                     <Parkingtable />
                 </div>
-
             </section>
         </main>
+
+
     );
 };
 export const getServerSideProps = (ctx) => {

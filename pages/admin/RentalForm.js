@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
-import {FiPlus, FiTrash2} from "react-icons/fi";
-import {toast, ToastContainer} from "react-toastify";
+import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { isSameDay } from "date-fns";
-
-export default function SuperAdminCarform({ id }) {
+import {differenceInCalendarDays, isSameDay} from "date-fns";
+import Select from "react-select/base";
+export default function RentalForm({ id }) {
 
     const [brand, setBrand] = useState("");
     const [model, setModel] = useState("");
@@ -17,29 +16,26 @@ export default function SuperAdminCarform({ id }) {
     const [price, setPrice] = useState("");
     const [registration, setRegistration] = useState("");
     const [status, setStatus] = useState("");
+    const [email,setEmail] = useState('');
+    const [startTime,setStartTime] =  useState('')
+    const [endTime,setEndTime] = useState('')
     const [images, setImages] = useState([]);
-    const [fuel, setFuel] = useState("");
-    const [door, setDoor] = useState("");
-    const [gearBox, setGearBox] = useState("");
-    const [startDate,setStartDate] =useState('')
-    const [endDate,setEndDate] =useState('')
-    const [description, setDescription] = useState("");
-    const [parkingName, setParkingName] = useState("");
-    const [goToCars, setGoToCars] = useState(false);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
     const [availabilityDates, setAvailabilityDates] = useState([]);
-    const [selectedStatus, setSelectedStatus] = useState('available');
+    const [goToRental, setGoToRental] = useState(false);
+    const [total, setTotal] = useState(0);
+    const [selectedStatus, setSelectedStatus] = useState('reserved');
 
     const handleStatusChange = (event) => {
         setSelectedStatus(event.target.value);
     };
-
-
     const router = useRouter();
 
     useEffect(() => {
         if (id) {
             axios
-                .get("/api/admin/manage-cars/cars?id=" + id, { withCredentials: true })
+                .get(`/api/admin/manage-cars/cars?id=${id}`, { withCredentials: true })
                 .then((response) => {
                     const carData = response.data;
                     setBrand(carData.brand);
@@ -47,15 +43,10 @@ export default function SuperAdminCarform({ id }) {
                     setYear(carData.year.toString());
                     setMileage(carData.mileage.toString());
                     setPrice(carData.price.toString());
-                    setDoor(carData.door.toString());
                     setStatus(carData.status);
-                    setFuel(carData.fuel);
-                    setGearBox(carData.gearBox);
                     setImages(carData.image ? [carData.image] : []);
                     setAvailabilityDates(carData.availability.map((avail) => new Date(avail.date)));
                     setRegistration(carData.registration);
-                    setParkingName(carData.parking.name);
-                    setDescription(carData.description);
                 })
                 .catch((error) => {
                     if (error.response) {
@@ -74,10 +65,18 @@ export default function SuperAdminCarform({ id }) {
                 });
         }
     }, [id]);
-    async function saveCar(ev) {
+
+    useEffect(() => {
+        if (startDate && endDate) {
+            const days = differenceInCalendarDays(endDate, startDate) + 1;
+            setTotal(days * price);
+        }
+    }, [startDate, endDate, price]);
+
+    async function rental(ev) {
         ev.preventDefault();
 
-        if (!brand || !model || !year || !mileage || !price || !registration || !fuel || !door|| !gearBox) {
+        if (!email || !startTime || !endTime || !startDate || !endDate) {
             toast.error('Please complete all fields.',
                 {
                     position: "top-center",
@@ -93,30 +92,23 @@ export default function SuperAdminCarform({ id }) {
         }
 
         const data = {
-            brand,
-            model,
-            year: parseInt(year),
-            mileage: parseInt(mileage),
-            price: parseFloat(price),
-            door: parseInt(door),
-            fuel,
-            gearBox,
-            registration,
-            status: selectedStatus,
-            description,
+            carId:id,
+            email,
+            startTime,
+            endTime,
+            total,
+            status: selectedStatus, // Ajoutez la valeur de selectedStatus à la propriété "status"
             startDate: startDate ? startDate.toISOString() : null,
             endDate: endDate ? endDate.toISOString() : null,
-            image: images.length > 0 ? images[0] : null,
-            parkingName: parkingName !== "" ? parkingName : null,
         };
 
         try {
             if (id) {
-                await axios.put(`/api/admin/manage-cars/cars?id=${id}`, { ...data, id }, { withCredentials: true });
-            } else {
-                await axios.post("/api/admin/manage-cars/cars/" ,data, { withCredentials: true });
-            }
-            toast.success('The car has been successfully registered!', {
+                await axios.post(`/api/admin/reservation/reservation/`, { ...data, id }, { withCredentials: true });
+            } /*else {
+                await axios.post("/api/admin/reservation/reservation" ,data, { withCredentials: true });
+            }*/
+            toast.success('reservation created with success', {
                 position: "top-center",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -128,7 +120,7 @@ export default function SuperAdminCarform({ id }) {
             });
 
             setTimeout(() => {
-                setGoToCars(true);
+                setGoToRental(true);
             }, 2000);
         } catch (error) {
             if (error.response) {
@@ -173,110 +165,23 @@ export default function SuperAdminCarform({ id }) {
         }
     }
 
-    if (goToCars) {
-        router.push("/admin/dashboard/cars");
-    }
-
-    async function uploadImage(ev) {
-        const files = ev.target?.files;
-        if (files?.length > 0) {
-            const data = new FormData();
-            data.append("file", files[0]);
-            data.append("id", id);
-            try {
-                const res = await axios.post("/api/admin/manage-cars/upload", data, {withCredentials: true});
-                const {message, imagePath} = res.data;
-                if (message === "Image uploaded successfully") {
-                    setImages([imagePath]);
-                    toast.info(res.data.message,
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
-                } else {
-                    toast.warning("Upload failed",
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
-                }
-            } catch (error) {
-                if (error.response) {
-                    toast.warning(error.response.data.error,
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
-                }
-            }
+    const handleDateChange = (date) => {
+        if (!startDate) {
+            setStartDate(date);
+        } else if (!endDate && date > startDate) {
+            setEndDate(date);
+        } else {
+            setStartDate(date);
+            setEndDate(null);
         }
-    }
+    };
 
-    async function deleteImage() {
-        if (images.length === 0) {
-            toast.error("No image to delete", {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
-            return;
-        }
-        setImages([]);
-        try {
-            await axios.delete(`/api/admin/manage-cars/delete?id=${id}`, { withCredentials: true });
-            toast.success("Image deleted successfully!", {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
-            setImages([]);
-        } catch (error) {
-            if (error.response) {
-                toast.error("An error occurred while deleting the image.", {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
-            }
-        }
+    if (goToRental) {
+        router.push("/admin/dashboard/reservations");
     }
-
 
     function goBack (){
-        router.push("/admin/dashboard/cars");
+        router.push("/admin/dashboard/reservations/new");
     }
 
     return (
@@ -295,7 +200,7 @@ export default function SuperAdminCarform({ id }) {
             />
             <div className="max-w-screen-lg w-full bg-white p-8 rounded-lg shadow-md">
                 <h2 className="mt-2 mb-8 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                    {id ? "Edit Car" : "Add Car"}
+                    Create Rental
                 </h2>
                 <div className="grid grid-cols-2 gap-8">
                     <div className="flex flex-col items-center">
@@ -304,31 +209,11 @@ export default function SuperAdminCarform({ id }) {
                                 <img src={images[0]} alt="Car" className="w-full h-full object-cover rounded-lg" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
-                                    <span className="text-gray-500 text-lg"><img src="/placeholder.png" alt="img"/></span>
+                  <span className="text-gray-500 text-lg">
+                    <img src="/placeholder.png" alt="Placeholder" />
+                  </span>
                                 </div>
                             )}
-                        </div>
-                        <div className="flex flex-row space-x-2 mt-4">
-                            <input
-                                type="file"
-                                id="image"
-                                name="image"
-                                onChange={uploadImage}
-                                hidden
-                            />
-                            <label
-                                htmlFor="image"
-                                className="text-blue-500 hover:text-blue-700 mx-1 cursor-pointer"
-                            >
-                                <FiPlus size={18} />
-                            </label>
-                            <button
-                                type="button"
-                                className="text-red-500 hover:text-red-700"
-                                onClick={deleteImage}
-                            >
-                                <FiTrash2 size={18} />
-                            </button>
                         </div>
                         <div className="mt-8 mb-8">
                             <label className="mb-4 flex items-center text-sm font-medium text-gray-700">
@@ -349,8 +234,8 @@ export default function SuperAdminCarform({ id }) {
                                         selectable: false,
                                         startDate,
                                         endDate,
-                                        dates: availabilityDates.filter(
-                                            (date) => isSameDay(date, startDate) || isSameDay(date, endDate)
+                                        dates: availabilityDates.filter((date) =>
+                                            isSameDay(date, startDate) || isSameDay(date, endDate)
                                         ),
                                     },
                                     {
@@ -363,22 +248,12 @@ export default function SuperAdminCarform({ id }) {
                                         ? 'available-day'
                                         : ''
                                 }
+                                onChange={handleDateChange}
                             />
                         </div>
                     </div>
-                    <form onSubmit={saveCar} className="flex-1">
+                    <form onSubmit={rental} className="flex-1">
                         <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <input
-                                    id="parking"
-                                    name="parking"
-                                    type="text"
-                                    value={parkingName}
-                                    onChange={(ev) => setParkingName(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Parking"
-                                />
-                            </div>
                             <div>
                                 <input
                                     id="brand"
@@ -446,80 +321,83 @@ export default function SuperAdminCarform({ id }) {
                                 />
                             </div>
                             <div>
-                                <select id="rentalStatus" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" value={selectedStatus} onChange={handleStatusChange}>
-                                    <option value="available">Available</option>
-                                    <option value="rented">Rented</option>
-                                    <option value="maintenance">Maintenance</option>
+                                <input
+                                    id="status"
+                                    name="status"
+                                    type="text"
+                                    value={status}
+                                    onChange={(ev) => setStatus(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="Car Status"
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    value={email}
+                                    onChange={(ev) => setEmail(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="Email"
+                                />
+                            </div>
+                            <div>
+                                <DatePicker
+                                    selected={startDate}
+                                    onChange={(date) => setStartDate(date)}
+                                    placeholderText="Start Date"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                />
+                            </div>
+                            <div>
+                                <DatePicker
+                                    selected={endDate}
+                                    onChange={(date) => setEndDate(date)}
+                                    placeholderText="End Date"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    id="startHour"
+                                    name="startHour"
+                                    type="time"
+                                    value={startTime}
+                                    onChange={(ev) => setStartTime(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="Start Hour"
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    id="endHour"
+                                    name="endHour"
+                                    type="time"
+                                    value={endTime}
+                                    onChange={(ev) => setEndTime(ev.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    placeholder="End Hour"
+                                />
+                            </div>
+                            <div>
+                                <select id="rentalStatus" value={selectedStatus} onChange={handleStatusChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                    <option value="reserved">Reserved</option>
+                                    <option value="ongoing">On going</option>
+                                    <option value="completed">Completed</option>
                                 </select>
                             </div>
-                            { id && (
-                                <>
-                                    <DatePicker
-                                        selected={startDate}
-                                        onChange={(date) => setStartDate(date)}
-                                        placeholderText="Start Date"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    />
-                                    <DatePicker
-                                        selected={endDate}
-                                        onChange={(date) => setEndDate(date)}
-                                        placeholderText="End Date"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    />
-
-                                </>
-                            )}
-                            <div>
-                                <input
-                                    id="fuel"
-                                    name="fuel"
-                                    type="text"
-                                    value={fuel}
-                                    onChange={(ev) => setFuel(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Fuel"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="door"
-                                    name="door"
-                                    type="number"
-                                    value={door}
-                                    onChange={(ev) => setDoor(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Door"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="gearBox"
-                                    name="gearBox"
-                                    type="text"
-                                    value={gearBox}
-                                    onChange={(ev) => setGearBox(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Gear Box"
-                                />
-                            </div>
-                            <div className="col-span-2">
-                                <textarea
-                                    id="description"
-                                    name="description"
-                                    value={description}
-                                    onChange={(ev) => setDescription(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    rows={4}
-                                    placeholder="Enter a description..."
-                                />
-                            </div>
+                        </div>
+                        <div className="mt-8 text-center">
+                            <p className="text-xl font-bold">Total: {total} DT</p>
                         </div>
                         <div className="mt-8 flex justify-end">
+
                             <button
                                 type="submit"
                                 className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
                             >
-                                {id ? "Update" : "Save"}
+                                Rental
                             </button>
                             <button
                                 type="button"

@@ -1,14 +1,15 @@
 import {useRouter} from "next/router";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import Sidebar from "@/components/admin/Sidebar";
+import CarForm from "@/components/admin/CarForm";
+import Navbar from "@/components/admin/Navbar";
 import {protectRoute} from "@/utils/auth";
-import SuperAdminSidebar from "@/components/super-admin/SuperAdminSidebar";
-import SuperAdminNavbar from "@/components/super-admin/SuperAdminNavbar";
-import SuperAdminCarform from "@/components/super-admin/super-admin-carform";
+import RentalForm from "@/components/admin/RentalForm";
 
 
 
-export default function SuperAdminEditCar({session}){
+export default function EditCar({session}){
 
     const [carInfo,setCarInfo] = useState(null)
     const router = useRouter();
@@ -18,7 +19,7 @@ export default function SuperAdminEditCar({session}){
         if(!id){
             return;
         }
-        axios.get('/api/super-admin/car-agence/cars?id='+id,{ withCredentials: true }).then(response =>{
+        axios.get('/api/admin/manage-cars/cars?id='+id,{ withCredentials: true }).then(response =>{
             setCarInfo(response.data);
         })
     }, [id]);
@@ -26,12 +27,14 @@ export default function SuperAdminEditCar({session}){
     return(
 
         <main>
-            <SuperAdminSidebar />
+            <Sidebar />
             <section id="content">
-                <SuperAdminNavbar session={session} />
-                <div style={{ margin: '60px 0px' }}>
+                <Navbar session={session} />
+                <div style={{
+                    margin: '60px 10px',
+                }}>
                     {carInfo && (
-                        <SuperAdminCarform {...carInfo}/>
+                        <RentalForm {...carInfo}/>
                     )}
                 </div>
 
@@ -41,6 +44,6 @@ export default function SuperAdminEditCar({session}){
     )
 }
 export const getServerSideProps = (ctx) => {
-    return protectRoute(ctx, ['superAdmin']);
+    return protectRoute(ctx, ['admin']);
 };
 

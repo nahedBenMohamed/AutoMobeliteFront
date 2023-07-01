@@ -26,6 +26,11 @@ export default async function handle(req, res) {
         return res.status(403).json({ error: 'Your account is deactivated. Please contact the admin.' });
     }
 
+// Verify if the agency is active
+    if (agencyUser.Agency.status !== 'activate') {
+        return res.status(403).json({ error: 'The agency is deactivated. Please contact the admin.' });
+    }
+
     // Verify the password
     const passwordMatch = await bcrypt.compare(password, agencyUser.password);
     if (!passwordMatch) {
@@ -45,6 +50,7 @@ export default async function handle(req, res) {
             firstname: agencyUser.firstname,
             role: agencyUser.role,
             agency: agencyUser.Agency.name,
+            agencyId:agencyUser.Agency.id,
         },
         process.env.JWT_SECRET,
         { expiresIn: '7d' }
@@ -57,7 +63,7 @@ export default async function handle(req, res) {
         maxAge: 7 * 24 * 3600, // Cookie lifetime in seconds (7 days)
     });
 
-
     // Return the response with the user's role
     return res.status(200).json({  message: 'Successful login', role: agencyUser.role });
+
 }

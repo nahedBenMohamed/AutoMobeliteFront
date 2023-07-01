@@ -29,7 +29,13 @@ export default function SuperAdminEditAdmin({session}){
             <SuperAdminSidebar />
             <section id="content">
                 <SuperAdminNavbar session={session} />
-                <div style={{ margin: '60px 90px' }}>
+                <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", alignItems: "center", margin: "30px 30px" }}>
+                    <h1 style={{ marginRight: "10px", fontSize: "24px", fontWeight: "bold" }}>
+                        Manage Admin {'\u{1F464}'}
+                    </h1>
+                    <div style={{ width: "100%" }}></div>
+                </div>
+                <div style={{ margin: '20px 0px' }}>
                     {adminInfo && (
                         <EditAdmin {...adminInfo}/>
                     )}

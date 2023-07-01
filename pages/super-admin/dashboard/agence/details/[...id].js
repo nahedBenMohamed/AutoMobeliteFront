@@ -31,7 +31,7 @@ export default function SuperDetailsCar ({session}){
             <SuperAdminSidebar />
             <section id="content">
                 <SuperAdminNavbar session={session} />
-                <div style={{ margin: '60px 90px' }}>
+                <div style={{ margin: '60px 10px' }}>
                     {agencyInfo && (
                         <SuperAdminDetailsAgence {...agencyInfo}/>
                     )}

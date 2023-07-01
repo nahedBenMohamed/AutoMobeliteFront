@@ -4,6 +4,44 @@
 @tailwind utilities;
 
 
+.container {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+    max-width: 400px;
+    width: 90%;
+    height: 35%;
+    margin: auto;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+
+
+
+
+
+
 * {
     margin: 0;
     padding: 0;
@@ -171,7 +209,7 @@ li {
 }
 
 /* NAVBAR */
-#content nav {
+.navbar {
     height: 56px;
     padding: 0 44px;
     display: flex;
@@ -182,15 +220,61 @@ li {
     top: 0;
     left: 0;
     z-index: 1000;
+    transition: transform 0.3s ease-in-out;
 }
+
+.navbar.hidden {
+    transform: translateY(-100%);
+}
+
 #content nav .profile img {
     width: 10px;
     height: 10px;
     object-fit: cover;
     border-radius: 100%;
-
 }
+
+#content nav form {
+    max-width: 400px;
+    width: 100%;
+    margin-right: auto;
+}
+#content nav form .form-input {
+    display: flex;
+    align-items: center;
+    height: 36px;
+}
+#content nav form .form-input input {
+    flex-grow: 1;
+    padding: 0 16px;
+    height: 100%;
+    border: none;
+    background: var(--grey);
+    border-radius: 36px 0 0 36px;
+    outline: none;
+    width: 100%;
+    color: var(--dark);
+}
+#content nav form .form-input button {
+    width: 36px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--blue);
+    color: var(--light);
+    font-size: 18px;
+    border: none;
+    outline: none;
+    border-radius: 0 36px 36px 0;
+    cursor: pointer;
+}
+
 /* NAVBAR */
+
+
+/* Toggle button manage Admin*/
+
 
 input:checked ~ .toggle__dot {
     transform: translateX(100%);
@@ -206,9 +290,14 @@ input:checked ~ .toggle__line {
     transition: all 0.3s ease-in-out;
 }
 
+
 .toggle__line {
     transition: background 0.3s ease-in-out;
 }
+
+/* Toggle button manage Admin*/
+
+/*Tableau Admin*/
 
 .available-day {
     background-color: lightgreen !important;
@@ -220,6 +309,16 @@ input:checked ~ .toggle__line {
     color: grey !important;
     cursor: not-allowed;
 }
+
+
+.open {
+    background-color: green;
+}
+
+.close {
+    background-color: red;
+}
+/*Tableau Admin*/
 
 
 
@@ -487,9 +586,4 @@ body {
 
 /*
 Calendar*/
-
-/*
-table reservation
-*/
-
 

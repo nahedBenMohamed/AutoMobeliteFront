@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useRouter } from 'next/router';
 import {HiEye, HiEyeOff, HiLockClosed, HiMail} from "react-icons/hi";
 
-const LoginAdmin = () => {
+const SuperAdminLogin = () => {
 
     const router = useRouter();
     const [email, setEmail] = useState('');
@@ -24,16 +24,16 @@ const LoginAdmin = () => {
         }
 
         try {
-            const response = await fetch('/api/admin/login', {
+            const response = await fetch('/api/super-admin/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({email, password}),
             });
 
             if (response.ok) {
-                await router.push('/admin/dashboard/home/');
+                await router.push('/super-admin/dashboard/home');
             } else {
                 const errorData = await response.json();
                 setMessage(errorData.error);
@@ -42,13 +42,14 @@ const LoginAdmin = () => {
                     setErrorMessageVisible(false);
                 }, 5000);
             }
-        } catch (error) {
-            setMessage('An error occurred while logging in.');
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
         }
+        catch (error) {
+                setMessage('An error occurred while logging in.');
+                setErrorMessageVisible(true);
+                setTimeout(() => {
+                    setErrorMessageVisible(false);
+                }, 5000);
+            }
     };
 
     return (
@@ -101,7 +102,7 @@ const LoginAdmin = () => {
                             </div>
                             <div>
                                 <div className="flex items-center justify-end mt-4 mb-2">
-                                    <a href="/admin/auth/forget" className="font-semibold text-blue-600 hover:text-indigo-500">
+                                    <a href="/super-admin/auth/forget" className="font-semibold text-blue-600 hover:text-indigo-500">
                                         Forgot password?
                                     </a>
                                 </div>
@@ -110,16 +111,22 @@ const LoginAdmin = () => {
                                 </div>
                             </div>
                             <div>
-                                <button type="submit" className="mt-4 mb-4 w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-bold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                                <button type="submit" className="mt-4 w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-bold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                                     Login
                                 </button>
                             </div>
                         </div>
                     </form>
+                    <p className="mt-10 text-center text-sm text-gray-500">
+                        Don't have an account?{' '}
+                        <a href="/super-admin/auth/register" className="font-bold leading-6 text-blue-600 hover:text-gray-500">
+                            Register
+                        </a>
+                    </p>
                 </div>
             </div>
         </div>
     );
 };
 
-export default LoginAdmin;
+export default SuperAdminLogin;

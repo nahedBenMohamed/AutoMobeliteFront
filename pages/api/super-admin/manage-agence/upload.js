@@ -41,7 +41,7 @@ export default async function handle(req, res) {
     } catch (error) {
         console.error(error);
         // Send an error response if an error occurs during file processing
-        res.status(500).json({ error: 'Add car before picture please' });
+        res.status(500).json({ error: 'Add Agency before picture please' });
     }
 }
 

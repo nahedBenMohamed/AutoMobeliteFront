@@ -78,10 +78,15 @@ export default async function handle(req, res) {
                         const totalParkings = await prisma.parking.count({
                             where: { agencyId: agency.id },
                         });
+                        const totalReservations = await prisma.rental.count({
+                            where: { car: { agencyId: agency.id } },
+                        });
+
                         return {
                             ...agency,
                             totalCars,
                             totalParkings,
+                            totalReservations,
                         };
                     })
                 );

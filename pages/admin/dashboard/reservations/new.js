@@ -1,23 +1,20 @@
 import Sidebar from "@/components/admin/Sidebar";
-import UserTable from "@/components/admin/UserTable";
+import { protectRoute } from "@/utils/auth";
+import React from "react";
 import Navbar from "@/components/admin/Navbar";
-import {protectRoute} from "@/utils/auth";
+import AddRental from "@/components/admin/add-rental";
 
-
-export default function Users ({session})  {
+export default function Car({ session }) {
     return (
         <main>
             <Sidebar />
             <section id="content">
-                <Navbar session={session}/>
-                <div style={{ margin: '60px 10px' }}>
-                    <UserTable />
-                </div>
-
+                <Navbar session={session} />
+                    <AddRental />
             </section>
         </main>
     );
-};
+}
 
 export const getServerSideProps = (ctx) => {
     return protectRoute(ctx, ['admin']);

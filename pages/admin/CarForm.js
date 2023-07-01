@@ -77,7 +77,7 @@ export default function SuperAdminCarform({ id }) {
     async function saveCar(ev) {
         ev.preventDefault();
 
-        if (!brand || !model || !year || !mileage || !price || !registration || !fuel || !door|| !gearBox) {
+        if (!brand || !model || !year || !mileage || !price || !registration || !fuel || !door|| !gearBox|| !status) {
             toast.error('Please complete all fields.',
                 {
                     position: "top-center",

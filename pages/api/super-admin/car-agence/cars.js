@@ -293,14 +293,14 @@ export default async function handle(req, res) {
                 const carId = req.query.id;
                 const car = await prisma.car.findUnique({
                     where: { id: Number(carId) },
-                    include: { Agency: true, parking: true }, // Include the Agency and parking details
+                    include: { Agency: true, parking: true , availability: true}, // Include the Agency and parking details
                 });
                 res.json(car);
             } else {
                 // Retrieve all cars belonging to the agency
                 const cars = await prisma.car.findMany({
                     where: { Agency: { id: agencyId } },
-                    include: { Agency: true, parking: true }, // Include the Agency and parking details
+                    include: { Agency: true, parking: true, availability: true }, // Include the Agency and parking details
                 });
                 res.json(cars);
             }
@@ -314,6 +314,16 @@ export default async function handle(req, res) {
                     where: { id: Number(carId) },
                     include,
                 });
+
+                // Check if the car is reserved
+                const isCarReserved = await prisma.rental.findFirst({
+                    where: { carId: Number(carId) },
+                });
+
+                // If the car is reserved, send an error response
+                if (isCarReserved) {
+                    return res.status(403).json({ message: "The car is reserved and cannot be deleted." });
+                }
 
                 // Delete the car's availability records
                 await prisma.availability.deleteMany({

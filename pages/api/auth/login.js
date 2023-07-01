@@ -40,6 +40,7 @@ export default async function handle(req, res) {
                 telephone : client.telephone,
                 email : client.email,
                 numPermis: client.numPermis,
+
             },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }

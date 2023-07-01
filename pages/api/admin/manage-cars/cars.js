@@ -164,7 +164,7 @@ export default async function handle(req, res) {
                 // If no ID query parameter exists, get all car data for the agency
                 const cars = await prisma.car.findMany({
                     where: { Agency: { name: agency } },
-                    include: { Agency: true, parking: { select: { name: true } } },
+                    include: { Agency: true, availability: true, parking: { select: { name: true } } },
                 });
 
                 // Modify the response to include the parking name
@@ -260,7 +260,7 @@ export default async function handle(req, res) {
                             disconnect: true,
                         },
                 },
-                include: { Agency: true, parking: true }, // Include the Agency and parking details
+                include: { Agency: true, availability:true, parking: true }, // Include the Agency and parking details
             });
 
             // Delete existing availability records for the car only if new dates are provided
@@ -316,6 +316,16 @@ export default async function handle(req, res) {
                 // If the agency does not have access to the car, send an error
                 if (car.Agency.name !== agency) {
                     return res.status(403).json({ message: "You are not authorized to delete this car." });
+                }
+
+                // Check if the car is reserved
+                const isCarReserved = await prisma.rental.findFirst({
+                    where: { carId: Number(carId) },
+                });
+
+                // If the car is reserved, send an error response
+                if (isCarReserved) {
+                    return res.status(403).json({ message: "The car is reserved and cannot be deleted." });
                 }
 
                 // Delete the car's availability records
