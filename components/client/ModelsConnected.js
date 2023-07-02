@@ -15,7 +15,7 @@ function Modelsconnected() {
 
     useEffect(() => {
         axios.get("/api/auth/AllCars").then((response) => {
-            setCars(response.data);
+            setCars(response.data.reverse());
         });
     }, []);
 
@@ -139,7 +139,7 @@ function Modelsconnected() {
                                 <div className="flex space-x-4">
                                     <button
                                         onClick={() => handleReservation(car)}
-                                        className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full"
+                                        className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full hover:bg-green-500"
                                     >
                                         Book now
                                     </button>
@@ -156,17 +156,24 @@ function Modelsconnected() {
                 </div>
             </div>
             <div className="flex justify-center mt-4">
-                {paginationRange.map((pageNumber) => (
-                    <button
-                        key={pageNumber}
-                        className={`mx-2 px-2 py-1 rounded ${
-                            currentPage === pageNumber ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
-                        }`}
-                        onClick={() => paginate(pageNumber)}
-                    >
-                        {pageNumber}
-                    </button>
-                ))}
+                {cars.length > carsPerPage && (
+                    <ul className="flex items-center">
+                        {Array.from({ length: Math.ceil(cars.length / carsPerPage) }).map((_, index) => (
+                            <li key={index}>
+                                <button
+                                    className={`${
+                                        currentPage === index + 1
+                                            ? 'bg-blue-500 hover:bg-blue-700 text-white'
+                                            : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+                                    } font-bold py-2 px-4 mx-1 rounded`}
+                                    onClick={() => paginate(index + 1)}
+                                >
+                                    {index + 1}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
             {selectedCar && (
                 <Modal onClose={closeModal} car={selectedCar}>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AiFillCar, AiFillStar, AiFillTool } from "react-icons/ai";
+import { AiFillCar, AiFillTool } from "react-icons/ai";
 import { GiCarDoor } from "react-icons/gi";
 import { BsFillFuelPumpFill } from "react-icons/bs";
 import axios from "axios";
@@ -15,7 +15,7 @@ function Models() {
 
     useEffect(() => {
         axios.get("/api/auth/AllCars").then((response) => {
-            setCars(response.data);
+            setCars(response.data.reverse());
         });
     }, []);
 
@@ -93,7 +93,7 @@ function Models() {
                     {currentCars.map((car) => (
                         <div key={car.id} className="border border-lighter-grey bg-white rounded">
                             <div className="image-container">
-                                <img src={car.image} alt="" />
+                                <img src={car.image} alt="" className="w-full transition-all duration-300 transform hover:scale-x-110 "/>
                             </div>
                             <div className="p-6 space-y-6">
                                 <div className="flex items-center justify-between">
@@ -142,7 +142,7 @@ function Models() {
                                 <div className="flex space-x-4">
                                     <button
                                         onClick={() => handleReservation(car)}
-                                        className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full"
+                                        className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full hover:bg-green-500"
                                     >
                                         Book now
                                     </button>
@@ -158,19 +158,27 @@ function Models() {
                     ))}
                 </div>
             </div>
-            <div className="flex justify-center mt-4">
-                {paginationRange.map((pageNumber) => (
-                    <button
-                        key={pageNumber}
-                        className={`mx-2 px-2 py-1 rounded ${
-                            currentPage === pageNumber ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"
-                        }`}
-                        onClick={() => paginate(pageNumber)}
-                    >
-                        {pageNumber}
-                    </button>
-                ))}
-            </div>
+
+                <div className="flex justify-center mt-4">
+                    {cars.length > carsPerPage && (
+                        <ul className="flex items-center">
+                            {Array.from({ length: Math.ceil(cars.length / carsPerPage) }).map((_, index) => (
+                                <li key={index}>
+                                    <button
+                                        className={`${
+                                            currentPage === index + 1
+                                                ? 'bg-blue-500 hover:bg-blue-700 text-white'
+                                                : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+                                        } font-bold py-2 px-4 mx-1 rounded`}
+                                        onClick={() => paginate(index + 1)}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
             {selectedCar && (
                 <Modal onClose={closeModal} car={selectedCar}>
                     <h1 className="font-bold text-xl mb-4">{selectedCar.brand}</h1>

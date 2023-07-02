@@ -164,7 +164,7 @@ const VehicleTable = () => {
                                 <div className="flex items-center justify-between">
                                     <div className="space-y-1">
                                         <div>
-                                            <h1 className="-mt-6  font-bold text-xl lg:text-2xl">{car.brand} {car.model}</h1>
+                                            <h1 className="-mt-6  font-bold text-xl lg:text-2xl">{car.brand} </h1>
                                         </div>
                                     </div>
                                     <div className="text-right">

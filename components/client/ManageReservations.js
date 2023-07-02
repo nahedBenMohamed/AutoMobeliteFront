@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from "next/link";
 import {FiEdit, FiInfo, FiTrash2} from "react-icons/fi";
 import {ToastContainer} from "react-toastify";
 import Modal from "react-modal";
+import {FaMoneyBill} from "react-icons/fa";
 
 
 const RentalDetails = () => {
@@ -36,8 +37,17 @@ const RentalDetails = () => {
     // Render rental details here
 
     return (
+        <div className=" flex flex-col items-center justify-center min-h-screen">
+
         <div className="flex justify-center">
-            <main className="w-full mt-40 flex-grow">
+
+            <main className="w-full -mt-40 flex-grow">
+                <div className="flex flex-col items-center justify-center">
+                    <div className="flex items-center  ">
+                        <div className="bold-text text-xl text-black   -mt-20">MANAGE YOUR RESERVATIONS</div>
+                        <FaMoneyBill className="ml-2 text-blue-600 -mt-20" size={24} />
+                    </div>
+                </div>
                 <div className="table-container">
                     <div className="mx-auto bg-white rounded-lg overflow-hidden">
                         <div className="inline-block min-w-3xl overflow-x-auto">
@@ -78,13 +88,13 @@ const RentalDetails = () => {
                                         scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                     >
-                                        Status
+                                        Mileage
                                     </th>
                                     <th
                                         scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                     >
-                                        Mileage
+                                        Status
                                     </th>
                                     <th
                                         scope="col"
@@ -126,7 +136,7 @@ const RentalDetails = () => {
                         </div>
                     </div>
                     <div className="mt-8">
-                        <Link href="/admin/dashboard/rentals/new" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        <Link href="/client/Modelsconnected" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             Add Rental
                         </Link>
                     </div>
@@ -174,7 +184,7 @@ const RentalDetails = () => {
                         <div>
                             <p className="text-center mt-4 mb-4 text-black">
                                 Êtes-vous sûr de vouloir supprimer la réservation de la voiture&nbsp;
-                                <span className="text-blue-500">
+                                <span className="text-black">
                 {rentalToDelete.car.brand} {rentalToDelete.car.model}
               </span> ?
                             </p>
@@ -196,6 +206,7 @@ const RentalDetails = () => {
                     )}
                 </Modal>
             </main>
+        </div>
         </div>
     );
 

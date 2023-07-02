@@ -3,6 +3,10 @@ import { useRouter } from 'next/router';
 import {HiEye, HiEyeOff, HiHome, HiLocationMarker, HiLockClosed, HiMail, HiPhone, HiUser} from "react-icons/hi";
 import { parsePhoneNumberFromString, getCountryCallingCode } from 'libphonenumber-js';
 import {BiIdCard} from "react-icons/bi";
+import {FaHandHolding, FaHandPeace, FaHands, FaHandWave} from 'react-icons/fa';
+import {GiWaveCrest} from "react-icons/gi";
+
+
 
 const RegisterPage = () => {
 
@@ -117,7 +121,12 @@ const RegisterPage = () => {
     return (
         <div className="flex flex-col  items-center justify-center min-h-screen">
             <div className="w-full mt-16 max-w-xl px-6 py-4 bg-white rounded-md shadow-md">
-                <h2 className="mb-8 text-2xl font-bold text-center text-gray-900">Welcome</h2>
+                <h2 className="mb-8 text-2xl font-bold text-center text-gray-900">
+                      <span className="inline-flex items-center">
+                        Welcome
+                        <FaHandPeace className="ml-2 text-blue-600" size={26} />
+                      </span>
+                </h2>
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="mb-4">
@@ -272,14 +281,14 @@ const RegisterPage = () => {
                             type="submit"
                             className="w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
-                            Suivant
+                            Create an account
                         </button>
                     </div>
                 </form>
                 <p className="mt-8 text-sm text-center text-gray-500">
                     Already have an account?{' '}
                     <a href="/authentification/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                        Login
+                        Sign in
                     </a>
                 </p>
             </div>

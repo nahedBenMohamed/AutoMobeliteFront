@@ -33,8 +33,8 @@ const ForgetPage = () => {
         <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden">
             <div className="w-full p-4 bg-white rounded-md shadow-md lg:max-w-4xl">
                 <p className="mt-1 text-justify text-xl font-normal leading-9 tracking-tight text-gray-900">
-                    Indiquez ci-dessous l'adresse e-mail que vous utilisez pour vous connecter à votre compte https://www.automobelite.tn.
-                    Vous recevrez un email vous indiquant la marche à suivre afin de réinitialiser votre mot de passe.
+                    Please enter below the e-mail address you use to log in to your https://www.automobelite.tn account.
+                    You will receive an email with instructions on how to reset your password.
                 </p>
                 <div className=" mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     {!success ? (
@@ -72,7 +72,7 @@ const ForgetPage = () => {
                     <p className="mt-10 text-center text-sm text-gray-500">
                         Already have an account?{' '}
                         <a href="/authentification/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                            Log in
+                            Sign in
                         </a>
                     </p>
                 </div>

@@ -6,7 +6,9 @@ import MobileNavbar from "@/components/client/MobilNavbar";
 function page() {
     return (
         <main>
-            <HeaderConnected />
+
+                <HeaderConnected />
+
             <Editprofile />
             <MobileNavbar />
 

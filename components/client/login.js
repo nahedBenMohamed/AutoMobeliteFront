@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from 'next/router';
 import { HiEye, HiEyeOff, HiLockClosed, HiMail } from "react-icons/hi";
+import {AiOutlineUser} from "react-icons/ai";
 
 const LoginPage = () => {
     const router = useRouter();
@@ -54,7 +55,10 @@ const LoginPage = () => {
         <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden rounded-lg shadow-lg ">
             <div className="w-full p-4 bg-white rounded-lg shadow-lg lg:max-w-xl">
                 <h1 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                    Welcome Back
+                     <span className="inline-flex items-center">
+                        Welcome Back
+                        <AiOutlineUser className="ml-2 text-blue-600" size={28} />
+                      </span>
                 </h1>
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <form onSubmit={handleSubmit}>

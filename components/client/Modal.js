@@ -55,7 +55,7 @@ const Modal = ({ onClose, car }) => {
                             <p><span className="font-bold">Agency:</span>&nbsp;{car.Agency?.name}</p>
                             <button
                                 onClick={() => handleReservation(car)}
-                                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-green-500"
                             >
                                 Book now
                             </button>

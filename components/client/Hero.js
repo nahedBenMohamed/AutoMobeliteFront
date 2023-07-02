@@ -14,19 +14,19 @@ const Hero = () => {
 
     // Définir les variants pour les animations
     const container = {
-        hidden: { opacity: 0, y: '-20vh' },
+        hidden: { opacity: 0, y: '-10vh' },
         show: {
             opacity: 1,
             y: 2,
             transition: {
-                staggerChildren: 1.5,
+                staggerChildren: 1.2,
             }
         }
     }
 
     const item = {
-        hidden: { opacity: 0, y: '-30vh' },
-        show: { opacity: 3, y: 0 },
+        hidden: { opacity: 0, y: '-10vh' },
+        show: { opacity: 2, y: 0 },
     }
 
     const image = {
@@ -41,14 +41,14 @@ const Hero = () => {
                         initial="hidden"
                         animate="show"
             >
-                <motion.h1 className="hero__title" variants={item}>
+                <motion.h1 className="hero__title " variants={item}>
                     RENTAL OF <span className="text-blue-600 ">CARS</span> DELIVER TO YOUR HOME
                 </motion.h1>
                 <motion.p className="hero__subtitle" variants={item}>
                     We deliver and pick up your rental car at the address of your choice.
                 </motion.p>
 
-                <motion.div className="-mt-2" variants={item}>
+                <motion.div className="-mt-2 " variants={item}>
                     <Link href="/Models">
                         <CustomButton
                             title="Explore Cars"
@@ -59,7 +59,7 @@ const Hero = () => {
                 </motion.div>
             </motion.div>
 
-            <motion.div className="hero__image-container" variants={image}>
+            <motion.div className="hero__image-container " variants={image}>
                 <div className="hero__image">
                     <Image
                         src="/images/hero.png"

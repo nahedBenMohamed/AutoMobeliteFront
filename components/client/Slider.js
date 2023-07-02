@@ -32,7 +32,7 @@ const ImageBox = () => {
 
     return (
         <section id="models-main">
-            <h1 className="text-5xl leading-tight text-center font-bold">WHERE CAN WE DELIVER?</h1>
+            <h1 className="text-5xl leading-tight text-center font-bold">A VEHICLE FOR EVERY NEED</h1>
             <div className="py-8 px-8 lg:px-48 lg:py-16 my-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {images.map((image, index) => (
