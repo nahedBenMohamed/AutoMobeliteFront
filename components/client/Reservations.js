@@ -163,7 +163,7 @@ return(
 
                         <div className="-mt-4 md:w-1/2">
                             {images.length > 0 ? (
-                                <img src={images[0]} alt="Car" className="w-full h-full mb-6" />
+                                <img src={images[0]} alt="Car" className="w-full h-auto mb-6" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
                                     <span className="text-gray-500 text-lg"><img src="/placeholder.png" alt="img"/></span>
@@ -173,14 +173,14 @@ return(
                                 <div className="flex items-center  p-2 rounded-lg  mb-8 w-full md:w-auto md:flex-3">
                                     <FaCar size={20} className="text-blue-500" />
                                     <div className="ml-4">
-                                        <p className="text-xl text-blue-700 font-bold">{setBrand}</p>
+                                        <p className="text-xl text-blue-700 font-bold">{brand}</p>
                                     </div>
                                 </div>
 
                                 <div className="flex items-center  p-2 rounded-lg  mb-6 w-full md:w-auto md:flex-2">
                                     <FaMoneyBillWave size={20} className="text-blue-500" />
                                     <div className="ml-4">
-                                        <p className="text-xl text-blue-700 font-bold">{setPrice} DT</p>
+                                        <p className="text-xl text-blue-700 font-bold">{price} DT</p>
                                     </div>
                                 </div>
 
@@ -199,6 +199,7 @@ return(
 
                         </div>
                         <div className="mt-12 md:w-1/2 md:pl-12">
+
                             <animated.div style={fade} className="-mt-8 mb-12 bg-blue-100 p-6 rounded-lg shadow">
                                 <DateRangePicker
                                     startDate={selectedDates.startDate}
@@ -278,6 +279,9 @@ return(
                             </animated.div>
                         </div>
                     </div>
+
+
+
                     <button
                         type="button"
                         className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
@@ -293,6 +297,7 @@ return(
             <div>
                 {clientInfo && (
                     <>
+
                         <div className="mt-10 max-w-3xl mx-auto  p-6 rounded shadow-xl">
                             <h3 className=" text-center mb-4">Informations personnelles</h3>
 
@@ -416,21 +421,16 @@ return(
 
         {step === 3 && (
             <>
+
                 <h3 className="mt-12 text-center mb-6 text-lg font-bold">Recapitulatif</h3>
                 <div className="mt-4  flex justify-between items-center  p-2 rounded-lg shadow">
                     <h3 className="  text-2xl text-black font-semibold">Agence</h3>
-                    <p className="text-2xl text-black font-bold">{setAgencyName} </p>
+                    <p className="text-2xl text-black font-bold">{agencyName} </p>
                 </div>
                 <div className="mt-12 max-w-4xl mx-auto p-6 rounded ">
                     <div className="flex flex-col max-w-4xl md:flex-row">
                         <div className="-mt-2 md:w-1/3">
-                            {images.length > 0 ? (
-                                <img src={images[0]} alt="Car" className="w-full h-auto mb-4 rounded" />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
-                                    <span className="text-gray-500 text-lg"><img src="/placeholder.png" alt="img"/></span>
-                                </div>
-                            )}
+                            <img src={images} alt="" className="w-full h-auto mb-4 rounded" />
                         </div>
                         <div className="-mt-3 md:w-2/3 md:pl-4">
 
