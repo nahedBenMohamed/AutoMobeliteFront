@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import { AiFillCar, AiFillStar, AiFillTool } from "react-icons/ai";
+import { AiFillCar, AiFillTool } from "react-icons/ai";
 import { GiCarDoor } from "react-icons/gi";
 import { BsFillFuelPumpFill } from "react-icons/bs";
 import axios from "axios";
 import Modal from "./Modal";
-import {router} from "next/router";
+import Link from "next/link";
 
 function Modelsconnected() {
     const [cars, setCars] = useState([]);
@@ -27,19 +27,6 @@ function Modelsconnected() {
         setSelectedCar(null);
     };
 
-    const handleReservation = (car) => {
-        router.push({
-            pathname: "/client/Reservations",
-            query: {
-                id: car.id,
-                image: car.image,
-                price: car.price,
-                brand: car.brand,
-                Agency: car.Agency?.name,
-            },
-
-        });
-    };
     // Pagination logic
     const indexOfLastCar = currentPage * carsPerPage;
     const indexOfFirstCar = indexOfLastCar - carsPerPage;
@@ -112,8 +99,7 @@ function Modelsconnected() {
                                         <span>{car.brand}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span>{car.name}</span>
-                                        <span className="-mt-5 ">4</span>
+                                        <span className="-mt-5 ">{car.door}</span>
                                         <span>
                       <GiCarDoor className="-mt-5 text-blue-600" />
                     </span>
@@ -124,10 +110,10 @@ function Modelsconnected() {
                     <span>
                       <AiFillTool className="text-blue-600" />
                     </span>
-                                        <span>{car.model}</span>
+                                        <span>{car.gearBox}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span>{car.registration}</span>
+                                        <span>{car.fuel}</span>
                                         <span>
                       <BsFillFuelPumpFill className="text-blue-600" />
                     </span>
@@ -137,12 +123,9 @@ function Modelsconnected() {
                                     <hr className="border border-lighter-grey" />
                                 </div>
                                 <div className="flex space-x-4">
-                                    <button
-                                        onClick={() => handleReservation(car)}
-                                        className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full hover:bg-green-500"
-                                    >
+                                    <Link href={`/client/Reservations/new/${car.id}`} className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full">
                                         Book now
-                                    </button>
+                                    </Link>
                                     <button
                                         onClick={() => openModal(car)}
                                         className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full"

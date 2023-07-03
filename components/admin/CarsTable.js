@@ -21,7 +21,7 @@ const VehicleTable = () => {
     useEffect(() => {
         axios.get('/api/admin/manage-cars/cars', { withCredentials: true })
             .then((response) => {
-                setCars(response.data);
+                setCars(response.data.reverse());
             })
             .catch((error) => {
                 if (error.response) {

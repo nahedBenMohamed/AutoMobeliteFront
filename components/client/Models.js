@@ -4,7 +4,7 @@ import { GiCarDoor } from "react-icons/gi";
 import { BsFillFuelPumpFill } from "react-icons/bs";
 import axios from "axios";
 import Modal from "@/components/client/Modal";
-import { useRouter } from "next/router";
+import Link from "next/link";
 
 function Models() {
     const [cars, setCars] = useState([]);
@@ -19,8 +19,6 @@ function Models() {
         });
     }, []);
 
-    const router = useRouter();
-
     const openModal = (car) => {
         setSelectedCar(car);
     };
@@ -29,19 +27,6 @@ function Models() {
         setSelectedCar(null);
     };
 
-    const handleReservation = (car) => {
-        router.push({
-            pathname: "/client/Reservations",
-            query: {
-                id: car.id,
-                image: car.image,
-                price: car.price,
-                brand: car.brand,
-                Agency: car.Agency?.name,
-            },
-
-        });
-    };
 
     // Pagination logic
     const indexOfLastCar = currentPage * carsPerPage;
@@ -109,28 +94,25 @@ function Models() {
                                 </div>
                                 <div className="flex items-center justify-between text-lg">
                                     <div className="-mt-8 flex items-center gap-2">
-                    <span>
-                      <AiFillCar className="text-blue-600" />
-                    </span>
+                                        <span>
+                                          <AiFillCar className="text-blue-600" />
+                                        </span>
                                         <span>{car.brand}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span>{car.name}</span>
-                                        <span className="-mt-5 ">4</span>
-                                        <span>
-                      <GiCarDoor className="-mt-5 text-blue-600" />
-                    </span>
+                                        <span className="-mt-5 ">{car.door}</span>
+                                        <span><GiCarDoor className="-mt-5 text-blue-600" /></span>
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-between text-lg">
                                     <div className="flex items-center gap-2">
-                    <span>
-                      <AiFillTool className="text-blue-600" />
-                    </span>
-                                        <span>{car.model}</span>
+                                        <span>
+                                          <AiFillTool className="text-blue-600" />
+                                        </span>
+                                        <span>{car.gearBox}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span>{car.registration}</span>
+                                        <span>{car.fuel}</span>
                                         <span>
                       <BsFillFuelPumpFill className="text-blue-600" />
                     </span>
@@ -140,12 +122,9 @@ function Models() {
                                     <hr className="border border-lighter-grey" />
                                 </div>
                                 <div className="flex space-x-4">
-                                    <button
-                                        onClick={() => handleReservation(car)}
-                                        className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full hover:bg-green-500"
-                                    >
-                                        Book now
-                                    </button>
+                                        <Link href={`/client/Reservations/new/${car.id}`} className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full">
+                                            Book now
+                                        </Link>
                                     <button
                                         onClick={() => openModal(car)}
                                         className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full"
@@ -158,8 +137,7 @@ function Models() {
                     ))}
                 </div>
             </div>
-
-                <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-4">
                     {cars.length > carsPerPage && (
                         <ul className="flex items-center">
                             {Array.from({ length: Math.ceil(cars.length / carsPerPage) }).map((_, index) => (
@@ -178,7 +156,7 @@ function Models() {
                             ))}
                         </ul>
                     )}
-                </div>
+            </div>
             {selectedCar && (
                 <Modal onClose={closeModal} car={selectedCar}>
                     <h1 className="font-bold text-xl mb-4">{selectedCar.brand}</h1>
