@@ -226,7 +226,7 @@ const Parkingtable = () => {
                                         <div className="rounded-lg p-4 space-y-4">
                                             <h2 className="text-xl sm:text-2xl font-bold">{selectedParck.name}</h2>
                                             <p><span className="font-bold">Address:</span>&nbsp;{selectedParck.address}</p>
-                                            <p><span className="font-bold">City:</span>&nbsp;{selectedParck.city} km</p>
+                                            <p><span className="font-bold">City:</span>&nbsp;{selectedParck.city}</p>
                                             <p><span className="font-bold">Agency Name:</span>&nbsp;{selectedParck.Agency?.name}</p>
                                         </div>
                                     </div>

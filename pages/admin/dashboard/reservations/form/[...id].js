@@ -2,7 +2,6 @@ import {useRouter} from "next/router";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import Sidebar from "@/components/admin/Sidebar";
-import CarForm from "@/components/admin/CarForm";
 import Navbar from "@/components/admin/Navbar";
 import {protectRoute} from "@/utils/auth";
 import RentalForm from "@/components/admin/RentalForm";

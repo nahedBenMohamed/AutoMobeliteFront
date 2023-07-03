@@ -117,7 +117,7 @@ export default async function handle(req, res) {
             // Generate availability dates for the next 365 days
             const currentDate = new Date();
             const availabilityDates = [];
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 365; i++) {
                 const date = new Date();
                 date.setDate(currentDate.getDate() + i);
                 availabilityDates.push(date);
@@ -143,36 +143,58 @@ export default async function handle(req, res) {
             // If an ID query parameter exists, get car data for that ID
             if (req.query?.id) {
                 const carId = req.query.id;
-                const car = await prisma.car.findUnique({
+                let car = await prisma.car.findUnique({
                     where: { id: Number(carId) },
                     include: {
                         Agency: true,
                         parking: true,
-                        availability: true,
                     },
                 });
 
-                // If car does not exist or the agency does not have access to the car, send an error
                 if (!car || car.Agency.name !== agency) {
                     return res.status(403).json({ message: "You are not authorized to view this car." });
                 }
 
-                // Send the car data as a response
-                res.json(car);
-            } else {
+                const availability = await prisma.availability.findMany({
+                    where: { carId: Number(carId) },
+                });
 
-                // If no ID query parameter exists, get all car data for the agency
+                const rentals = await prisma.rental.findMany({
+                    where: { carId: Number(carId) },
+                });
+
+                // Merge car data, availability data and rental data
+                car = { ...car, availability, rentals };
+
+                res.json(car);
+                console.log(car)
+            } else {
+                // Get all car data for the agency
                 const cars = await prisma.car.findMany({
                     where: { Agency: { name: agency } },
-                    include: { Agency: true, availability: true, parking: { select: { name: true } } },
+                    include: { Agency: true, parking: { select: { name: true } } },
                 });
+
+                // Fetch availability and rental data for each car
+                for (let car of cars) {
+                    const availability = await prisma.availability.findMany({
+                        where: { carId: car.id },
+                    });
+
+                    const rentals = await prisma.rental.findMany({
+                        where: { carId: car.id },
+                    });
+
+                    // Merge car data, availability data and rental data
+                    car = { ...car, availability, rentals };
+                }
 
                 // Modify the response to include the parking name
                 const carsWithParkingName = cars.map((car) => ({
                     ...car,
-                    parkingName: car.parking?.name || "", // Utilisez le nom du parking ou une chaîne vide si aucun parking n'est associé
+                    parkingName: car.parking?.name || "",
                 }));
-                // Send the car data with parking names as a response
+
                 res.json(carsWithParkingName);
             }
         }

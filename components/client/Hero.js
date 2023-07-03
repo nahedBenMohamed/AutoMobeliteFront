@@ -3,8 +3,7 @@ import Image from 'next/image';
 import CustomButton from "@/components/client/CustomButton";
 import Link from "next/link";
 import { motion } from 'framer-motion';
-import SearchBarr from "@/components/client/SearchBarr";
-import styles from '../../styles/SearchBarr.module.css';
+
 
 
 const Hero = () => {

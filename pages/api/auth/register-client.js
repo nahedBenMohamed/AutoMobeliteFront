@@ -1,91 +1,101 @@
-import * as bcrypt from 'bcrypt';
-import nodemailer from "nodemailer";
-import prisma from "@/lib/prisma";
-import jwt from "jsonwebtoken";
+import multer from 'multer';
+import prisma from '@/lib/prisma';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import path from 'path';
+import fs from 'fs';
 
-export default async function handle(req, res) {
-    const { name, firstname, email, password, telephone, numPermis , address , city } = req.body;
+// Configure multer
+const upload = multer({ dest: path.join(process.cwd(), 'tmp') });
 
-    // Convert telephone to a string
-    const telephoneString = String(telephone);
+export const config = {
+    api: {
+        bodyParser: false,
+    },
+};
 
-    try {
-        // Check if the email already exists
-        const existingClient = await prisma.client.findUnique({
-            where: {
-                email: email,
-            },
-        });
-
-
-        if (existingClient) {
-            throw new Error('Email already exists.');
+export default async (req, res) => {
+    upload.single('image')(req, {}, async (err) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
         }
 
-        // Validate the phone number using the country code for Tunisia (TN)
-        const phoneNumber = parsePhoneNumberFromString(telephoneString, 'TN');
-        if (!phoneNumber || !phoneNumber.isValid()) {
-            throw new Error('Please enter a valid Tunisian phone number.');
-        }
-
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 12);
-
-        // Create a new client in the database
-        const client = await prisma.client.create({
-            data: {
-                name: name,
-                firstname: firstname,
-                email: email,
-                password: hashedPassword,
-                telephone: telephoneString,
-                numPermis: numPermis,
-                address : address,
-                city : city,
-
-            },
-        });
-
-        // Generate a token for the client
-        const token = jwt.sign(
-            { clientId: client.id },
-            process.env.JWT_SECRET,
-            { expiresIn: '3h' }
-        );
-
-        // Create a nodemailer transporter
-        let transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL,
-                pass: process.env.PASSWORD,
-            },
-        });
-
-        // Prepare the email content
-        let mailOptions = {
-            from: process.env.EMAIL,
-            to: client.email,
-            subject: 'Automobelite valider votre compte',
-            text: `Veuillez cliquer sur le lien suivant pour valider votre compte: ${process.env.BASE_URL}/validate-email?token=${token}`,
-        };
+        const { name, firstname, email, password, telephone, numPermis, address, city } = req.body;
+        const telephoneString = String(telephone);
 
         try {
-            // Send the email using the transporter
-            await transporter.sendMail(mailOptions);
+            const existingClient = await prisma.client.findFirst({
+                where: {
+                    email: email,
+                },
+            });
 
-            // Return a success response if the email is sent successfully
-            return res.status(200).json({ message: 'Email envoyé avec succès.' });
+            if (existingClient) {
+                throw new Error('Email already exists.');
+            }
+
+            const phoneNumber = parsePhoneNumberFromString(telephoneString, 'TN');
+            if (!phoneNumber || !phoneNumber.isValid()) {
+                throw new Error('Please enter a valid Tunisian phone number.');
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 12);
+
+            let imagePath = '';
+
+            if (req.file) {
+                const uploadedImage = req.file;
+                const uniqueFileName = `${Date.now()}_${uploadedImage.originalname}`;
+                imagePath = path.join('/client', uniqueFileName).replace(/\\/g, "/");
+                await fs.promises.rename(uploadedImage.path, path.join(process.cwd(), '/public/', imagePath));
+            }
+
+            if (name && firstname && email && password && telephone && numPermis && address && city && imagePath) {
+                const client = await prisma.client.create({
+                    data: {
+                        name: name,
+                        firstname: firstname,
+                        email: email,
+                        password: hashedPassword,
+                        telephone: telephoneString,
+                        numPermis: numPermis,
+                        address: address,
+                        city: city,
+                        image: imagePath
+                    },
+                });
+
+                const token = jwt.sign({ clientId: client.id }, process.env.JWT_SECRET, { expiresIn: '3h' });
+
+                let transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.EMAIL,
+                        pass: process.env.PASSWORD,
+                    },
+                });
+
+                let mailOptions = {
+                    from: process.env.EMAIL,
+                    to: client.email,
+                    subject: 'Automobelite valider votre compte',
+                    text: `Veuillez cliquer sur le lien suivant pour valider votre compte: ${process.env.BASE_URL}/validate-email?token=${token}`,
+                };
+
+                await transporter.sendMail(mailOptions);
+
+                return res.status(200).json({ message: 'Email envoyé avec succès.' });
+            } else {
+                throw new Error('Toutes les informations requises ne sont pas fournies.');
+            }
         } catch (error) {
-            throw new Error('Erreur lors de l\'envoi de l\'email.');
+            if (error.message === 'Email already exists.') {
+                return res.status(400).json({ message: error.message });
+            } else {
+                return res.status(500).json({ message: error.message });
+            }
         }
-    } catch (error) {
-        // Return an error response for the specific error scenarios
-        if (error.message === 'Email already exists.') {
-            return res.status(400).json({ message: error.message });
-        } else {
-            return res.status(500).json({ message: error.message });
-        }
-    }
+    });
 }

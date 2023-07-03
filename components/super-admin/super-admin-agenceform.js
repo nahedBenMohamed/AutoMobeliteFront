@@ -335,7 +335,7 @@ const SuperAdminAgenceForm = ({ id }) => {
                                 <input
                                     id="responsable"
                                     name="responsable"
-                                    type="text"
+                                    type="email"
                                     autoComplete="responsable-name"
                                     placeholder="Enter responsible email"
                                     value={responsibleEmail}
