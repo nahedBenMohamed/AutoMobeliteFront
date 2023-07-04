@@ -1,52 +1,61 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
-import {toast, ToastContainer} from 'react-toastify';
+import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {differenceInCalendarDays, isSameDay} from "date-fns";
+import { isSameDay } from "date-fns";
 
-
-export default function RentalForm({ id }) {
+export default function Maintenaceform({ id }) {
 
     const [brand, setBrand] = useState("");
     const [model, setModel] = useState("");
-    const [year, setYear] = useState("");
     const [mileage, setMileage] = useState("");
     const [price, setPrice] = useState("");
     const [registration, setRegistration] = useState("");
-    const [status, setStatus] = useState("");
-    const [email,setEmail] = useState('');
-    const [startTime,setStartTime] =  useState('')
-    const [endTime,setEndTime] = useState('')
     const [images, setImages] = useState([]);
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    const [startDate,setStartDate] =useState('')
+    const [endDate,setEndDate] =useState('')
+    const [description, setDescription] = useState("");
+    const [goToMaintenance, setGoToMaintenance] = useState(false);
     const [availabilityDates, setAvailabilityDates] = useState([]);
-    const [goToRental, setGoToRental] = useState(false);
-    const [total, setTotal] = useState(0);
-    const [selectedStatus, setSelectedStatus] = useState('reserved');
-
-    const handleStatusChange = (event) => {
-        setSelectedStatus(event.target.value);
-    };
+    const [reservedDates, setReservedDates] = useState([]);
+    const [maintenanceDates, setMaintenanceDates] = useState([]);
+    const [selectedStatus, setSelectedStatus] = useState('available');
     const router = useRouter();
 
     useEffect(() => {
         if (id) {
             axios
-                .get(`/api/admin/manage-cars/cars?id=${id}`, { withCredentials: true })
+                .get("/api/admin/manage-cars/cars?id=" + id, { withCredentials: true })
                 .then((response) => {
                     const carData = response.data;
                     setBrand(carData.brand);
                     setModel(carData.model);
-                    setYear(carData.year.toString());
                     setMileage(carData.mileage.toString());
-                    setPrice(carData.price.toString());
-                    setStatus(carData.status);
                     setImages(carData.image ? [carData.image] : []);
                     setAvailabilityDates(carData.availability.map((avail) => new Date(avail.date)));
+                    const reservedDates = [];
+                    for (const rental of carData.rentals) {
+                        let date = new Date(rental.startDate);
+                        let endDate = new Date(rental.endDate);
+                        while (date <= endDate) {
+                            reservedDates.push(new Date(date));
+                            date.setDate(date.getDate() + 1);
+                        }
+                    }
+                    const maintenanceDates = [];
+                    for (const maintenance of carData.maintenances) {
+                        let date = new Date(maintenance.startDate);
+                        let endDate = new Date(maintenance.endDate);
+                        while (date <= endDate) {
+                            maintenanceDates.push(new Date(date));
+                            date.setDate(date.getDate() + 1);
+                        }
+                    }
+                    setMaintenanceDates(maintenanceDates);
+                    setReservedDates(reservedDates);
                     setRegistration(carData.registration);
                 })
                 .catch((error) => {
@@ -67,17 +76,14 @@ export default function RentalForm({ id }) {
         }
     }, [id]);
 
-    useEffect(() => {
-        if (startDate && endDate) {
-            const days = differenceInCalendarDays(endDate, startDate) + 1;
-            setTotal(days * price);
-        }
-    }, [startDate, endDate, price]);
+    const handleStatusChange = (event) => {
+        setSelectedStatus(event.target.value);
+    };
 
-    async function rental(ev) {
+    async function saveCar(ev) {
         ev.preventDefault();
 
-        if (!email || !startTime || !endTime || !startDate || !endDate) {
+        if (!description || !price || !startDate || !endDate) {
             toast.error('Please complete all fields.',
                 {
                     position: "top-center",
@@ -94,22 +100,19 @@ export default function RentalForm({ id }) {
 
         const data = {
             carId:id,
-            email,
-            startTime,
-            endTime,
-            total,
-            status: selectedStatus,
+            price,
+            description,
             startDate: startDate ? startDate.toISOString() : null,
             endDate: endDate ? endDate.toISOString() : null,
         };
 
         try {
             if (id) {
-                await axios.post(`/api/admin/reservation/reservation/`, { ...data, id }, { withCredentials: true });
+                await axios.post(`/api/admin/manage-cars/maintenance/`, { ...data, id }, { withCredentials: true });
             } /*else {
-                await axios.post("/api/admin/reservation/reservation" ,data, { withCredentials: true });
+                await axios.post("/api/admin/manage-cars/cars/" ,data, { withCredentials: true });
             }*/
-            toast.success('reservation created with success', {
+            toast.success('The car has been registered for maintenance successfully!', {
                 position: "top-center",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -121,7 +124,7 @@ export default function RentalForm({ id }) {
             });
 
             setTimeout(() => {
-                setGoToRental(true);
+                setGoToMaintenance(true);
             }, 2000);
         } catch (error) {
             if (error.response) {
@@ -166,23 +169,12 @@ export default function RentalForm({ id }) {
         }
     }
 
-    const handleDateChange = (date) => {
-        if (!startDate) {
-            setStartDate(date);
-        } else if (!endDate && date > startDate) {
-            setEndDate(date);
-        } else {
-            setStartDate(date);
-            setEndDate(null);
-        }
-    };
-
-    if (goToRental) {
-        router.push("/admin/dashboard/reservations");
+    if (goToMaintenance) {
+        router.push("/admin/dashboard/maintenance");
     }
 
     function goBack (){
-        router.push("/admin/dashboard/reservations/new");
+        router.push("/admin/dashboard/cars");
     }
 
     return (
@@ -201,18 +193,16 @@ export default function RentalForm({ id }) {
             />
             <div className="max-w-screen-lg w-full bg-white p-8 rounded-lg shadow-md">
                 <h2 className="mt-2 mb-8 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                    Create Rental
+                    Edit Maintenance Car
                 </h2>
                 <div className="grid grid-cols-2 gap-8">
                     <div className="flex flex-col items-center">
-                        <div className="w-full h-48 mb-4 relative">
+                        <div className="w-auto h-auto mb-4 relative">
                             {images.length > 0 ? (
                                 <img src={images[0]} alt="Car" className="w-full h-full object-cover rounded-lg" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
-                  <span className="text-gray-500 text-lg">
-                    <img src="/placeholder.png" alt="Placeholder" />
-                  </span>
+                                    <span className="text-gray-500 text-lg"><img src="/placeholder.png" alt="img"/></span>
                                 </div>
                             )}
                         </div>
@@ -227,33 +217,36 @@ export default function RentalForm({ id }) {
                                 </div>
                             </label>
                             <DatePicker
-                                selected={null}
                                 inline
-                                minDate={new Date()}
                                 highlightDates={[
-                                    {
-                                        selectable: false,
-                                        startDate,
-                                        endDate,
-                                        dates: availabilityDates.filter((date) =>
-                                            isSameDay(date, startDate) || isSameDay(date, endDate)
-                                        ),
-                                    },
-                                    {
-                                        selectable: true,
-                                        dates: availabilityDates,
-                                    },
+                                    { "reserved-day": reservedDates },
+                                    { "maintenance-day": maintenanceDates },
                                 ]}
-                                dayClassName={(date) =>
-                                    availabilityDates.some((availableDate) => isSameDay(date, availableDate))
-                                        ? 'available-day'
-                                        : ''
-                                }
-                                onChange={handleDateChange}
+                                dayClassName={(date) => {
+                                    const currentDate = new Date();
+                                    currentDate.setHours(0, 0, 0, 0); // Réinitialise les heures, minutes, secondes et millisecondes à 0 pour la comparaison
+
+                                    if (isSameDay(date, currentDate)) {
+                                        return "current-day";
+                                    }
+                                    if (date < currentDate) {
+                                        return "past-day";
+                                    }
+                                    if (reservedDates.some((reservedDate) => isSameDay(date, reservedDate))) {
+                                        return "reserved-day";
+                                    }
+                                    if (availabilityDates.some((availableDate) => isSameDay(date, availableDate))) {
+                                        return "available-day";
+                                    }
+                                    if (maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))) {
+                                        return "maintenance-day";
+                                    }
+                                    return "";
+                                }}
                             />
                         </div>
                     </div>
-                    <form onSubmit={rental} className="flex-1">
+                    <form onSubmit={saveCar} className="flex-1">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <input
@@ -261,6 +254,7 @@ export default function RentalForm({ id }) {
                                     name="brand"
                                     type="text"
                                     value={brand}
+                                    disabled={true}
                                     onChange={(ev) => setBrand(ev.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                     placeholder="Brand"
@@ -272,20 +266,10 @@ export default function RentalForm({ id }) {
                                     name="model"
                                     type="text"
                                     value={model}
+                                    disabled={true}
                                     onChange={(ev) => setModel(ev.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                     placeholder="Model"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="year"
-                                    name="year"
-                                    type="text"
-                                    value={year}
-                                    onChange={(ev) => setYear(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Year"
                                 />
                             </div>
                             <div>
@@ -294,20 +278,10 @@ export default function RentalForm({ id }) {
                                     name="mileage"
                                     type="text"
                                     value={mileage}
+                                    disabled={true}
                                     onChange={(ev) => setMileage(ev.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                     placeholder="Mileage"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="price"
-                                    name="price"
-                                    type="text"
-                                    value={price}
-                                    onChange={(ev) => setPrice(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Price"
                                 />
                             </div>
                             <div>
@@ -316,89 +290,93 @@ export default function RentalForm({ id }) {
                                     name="registration"
                                     type="text"
                                     value={registration}
+                                    disabled={true}
                                     onChange={(ev) => setRegistration(ev.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                     placeholder="Registration"
                                 />
                             </div>
+                            { id && (
+                                <>
+                                    <DatePicker
+                                        selected={startDate ? new Date(startDate) : null}
+                                        onChange={(date) => setStartDate(date)}
+                                        placeholderText="Start Date"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        highlightDates={[
+                                            { "reserved-day": reservedDates },
+                                            { "maintenance-day": maintenanceDates },
+                                            { "available-day": availabilityDates }
+                                        ]}
+                                        dayClassName={(date) =>
+                                            reservedDates.some((reservedDate) => isSameDay(date, reservedDate))
+                                                ? "reserved-day"
+                                                : maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
+                                                    ? "maintenance-day"
+                                                    : availabilityDates.some((availabilityDate) => isSameDay(date, availabilityDate))
+                                                        ? "available-day"
+                                                        : ""
+                                        }
+                                        filterDate={(date) =>
+                                            !reservedDates.some((reservedDate) => isSameDay(date, reservedDate)) &&
+                                            !maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
+                                        }
+                                    />
+                                    <DatePicker
+                                        selected={endDate ? new Date(endDate) : null}
+                                        onChange={(date) => setEndDate(date)}
+                                        placeholderText="End Date"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        highlightDates={[
+                                            { "reserved-day": reservedDates },
+                                            { "maintenance-day": maintenanceDates },
+                                            { "available-day": availabilityDates }
+                                        ]}
+                                        dayClassName={(date) =>
+                                            reservedDates.some((reservedDate) => isSameDay(date, reservedDate))
+                                                ? "reserved-day"
+                                                : maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
+                                                    ? "maintenance-day"
+                                                    : availabilityDates.some((availabilityDate) => isSameDay(date, availabilityDate))
+                                                        ? "available-day"
+                                                        : ""
+                                        }
+                                        filterDate={(date) =>
+                                            !reservedDates.some((reservedDate) => isSameDay(date, reservedDate)) &&
+                                            !maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
+                                        }
+                                    />
+                                </>
+                            )}
                             <div>
                                 <input
-                                    id="status"
-                                    name="status"
+                                    id="price"
+                                    name="price"
                                     type="text"
-                                    value={status}
-                                    onChange={(ev) => setStatus(ev.target.value)}
+                                    value={price}
+                                    onChange={(ev) => setPrice(ev.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Car Status"
+                                    placeholder="Maintenance Price"
                                 />
                             </div>
-                            <div>
-                                <input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    value={email}
-                                    onChange={(ev) => setEmail(ev.target.value)}
+                            <div className="col-span-2">
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    value={description}
+                                    onChange={(ev) => setDescription(ev.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Email"
+                                    rows={4}
+                                    placeholder="Enter a description..."
                                 />
                             </div>
-                            <div>
-                                <DatePicker
-                                    selected={startDate}
-                                    onChange={(date) => setStartDate(date)}
-                                    placeholderText="Start Date"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                />
-                            </div>
-                            <div>
-                                <DatePicker
-                                    selected={endDate}
-                                    onChange={(date) => setEndDate(date)}
-                                    placeholderText="End Date"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="startHour"
-                                    name="startHour"
-                                    type="time"
-                                    value={startTime}
-                                    onChange={(ev) => setStartTime(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Start Hour"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="endHour"
-                                    name="endHour"
-                                    type="time"
-                                    value={endTime}
-                                    onChange={(ev) => setEndTime(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="End Hour"
-                                />
-                            </div>
-                            <div>
-                                <select id="rentalStatus" value={selectedStatus} onChange={handleStatusChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                    <option value="reserved">Reserved</option>
-                                    <option value="ongoing">On going</option>
-                                    <option value="completed">Completed</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="mt-8 text-center">
-                            <p className="text-xl font-bold">Total: {total} DT</p>
                         </div>
                         <div className="mt-8 flex justify-end">
-
                             <button
                                 type="submit"
                                 className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
                             >
-                                Rental
+                                Add to Maintenance List
                             </button>
                             <button
                                 type="button"

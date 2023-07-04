@@ -1,9 +1,23 @@
 import { parseISO, setHours, setMinutes, startOfDay } from 'date-fns';
 import prisma from "@/lib/prisma";
+import {parseCookies} from "nookies";
+import jwt from "jsonwebtoken";
 
 export default async function handler(req, res) {
-    if (req.method === 'POST') {
-        try {
+
+    const { token } = parseCookies({ req });
+
+    let payload;
+    try {
+        // Verify the token
+        payload = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+        return res.status(401).json({ error: 'Invalid token' });
+    }
+
+    try {
+        if (req.method === 'POST') {
+
             const {
                 id,
                 email,
@@ -76,11 +90,35 @@ export default async function handler(req, res) {
             });
 
             res.status(201).json(rental);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: 'An error occurred while creating the rental.' });
         }
-    } else {
+
+        if (req.method === 'GET') {
+            // Extraire le clientId du token
+            const { clientId } = payload;
+
+            // Valider l'ID
+            if (!clientId) {
+                return res.status(400).json({ error: 'L\'ID du client est requis' });
+            }
+
+            // Récupérer les réservations pour le client spécifié
+            const rentals = await prisma.rental.findMany({
+                where: {
+                    clientId: clientId,
+                },
+                include: { car: true }
+            });
+
+            // Si aucune réservation n'a été trouvée, retourner une erreur
+            if (!rentals.length) {
+                return res.status(404).json({ error: 'Aucune réservation trouvée pour ce client' });
+            }
+
+            // Sinon, retourner les réservations
+            return res.status(200).json(rentals);
+        }
+
+    } catch (error) {
         res.status(405).json({ error: 'Method not allowed. Use GET or POST methods.' });
     }
 }

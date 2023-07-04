@@ -66,7 +66,7 @@ const SuperAdminAgencetable = () => {
             <main className="flex-grow">
                 <div className="bg-none rounded-lg p-4">
                     <div className="flex justify-between items-center">
-                        <Link  href="/super-admin/dashboard/manage-admin/new" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        <Link  href="/super-admin/dashboard/agence/new" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             Add Agency
                         </Link>
                         <input

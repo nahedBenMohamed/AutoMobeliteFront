@@ -42,12 +42,6 @@ export default function Sidebar() {
                         <span className="text">My Cars</span>
                     </Link>
                 </li>
-                {/*<li className={pathname === '/admin/dashboard/users' ? 'active' : ''}>
-                    <Link href="/admin/dashboard/users">
-                        <i className="bx bxs-group"></i>
-                        <span className="text">Users</span>
-                    </Link>
-                </li>*/}
                 <li
                     className="relative"
                     onMouseEnter={() => setIsHovered(true)}
@@ -72,6 +66,12 @@ export default function Sidebar() {
                                 </li>
                             </ul>
                         )}
+                </li>
+                <li className={pathname === '/admin/dashboard/users' ? 'active' : ''}>
+                    <Link href="/admin/dashboard/maintenance">
+                        <i className="bx bxs-cog"></i>
+                        <span className="text">Maintenance</span>
+                    </Link>
                 </li>
                 <li className={pathname === '/admin/dashboard/parking' ? 'active' : ''}>
                     <Link href="/admin/dashboard/parking">

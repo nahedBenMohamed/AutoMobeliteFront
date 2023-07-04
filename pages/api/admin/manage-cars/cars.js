@@ -163,11 +163,14 @@ export default async function handle(req, res) {
                     where: { carId: Number(carId) },
                 });
 
+                const maintenances = await prisma.maintenance.findMany({
+                    where: { carId: Number(carId) },
+                });
+
                 // Merge car data, availability data and rental data
-                car = { ...car, availability, rentals };
+                car = { ...car, availability, maintenances ,rentals };
 
                 res.json(car);
-                console.log(car)
             } else {
                 // Get all car data for the agency
                 const cars = await prisma.car.findMany({

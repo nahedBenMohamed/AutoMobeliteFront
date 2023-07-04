@@ -43,12 +43,12 @@ export default async function handle(req, res) {
 
             },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '7d' }
         );
 
         // Set the authentication cookie
-        setCookie({ res }, 'authToken', token, {
-            maxAge: 60 * 60 * 24, // Cookie validity duration in seconds (e.g., 24 hours)
+        setCookie({ res }, 'token', token, {
+            maxAge: 7 * 24 * 3600, // Cookie lifetime in seconds (7 days)
             path: '/', // Cookie path (e.g., '/' for the root domain)
             secure: process.env.NODE_ENV === 'production', // Enable secure mode in production
             sameSite: 'strict', // Same-site constraints for the cookie

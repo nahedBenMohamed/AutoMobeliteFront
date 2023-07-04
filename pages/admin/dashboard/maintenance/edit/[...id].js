@@ -5,6 +5,7 @@ import Sidebar from "@/components/admin/Sidebar";
 import Navbar from "@/components/admin/Navbar";
 import {protectRoute} from "@/utils/auth";
 import EditRental from "@/components/admin/EditRental";
+import MaintenanceEdit from "@/components/admin/maintenance-edit";
 
 
 
@@ -18,7 +19,7 @@ export default function EditCar({session}){
         if(!id){
             return;
         }
-        axios.get('/api/admin/manage-reservation/reservation?id='+id,{ withCredentials: true }).then(response =>{
+        axios.get('/api/admin/manage-maintenance/maintenance?id='+id,{ withCredentials: true }).then(response =>{
             setRentalInfo(response.data);
         })
     }, [id]);
@@ -33,7 +34,7 @@ export default function EditCar({session}){
                     margin: '60px 10px',
                 }}>
                     {rentalInfo && (
-                        <EditRental {...rentalInfo}/>
+                        <MaintenanceEdit {...rentalInfo}/>
                     )}
                 </div>
 

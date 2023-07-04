@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import Link from 'next/link';
 import axios from 'axios';
-import { FiEdit, FiInfo, FiTrash2 } from 'react-icons/fi';
+import {FiCrop, FiEdit, FiInfo, FiTrash2} from 'react-icons/fi';
 import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import {CogIcon} from "@heroicons/react/20/solid";
+import {FaCog} from "react-icons/fa";
 
 
 const VehicleTable = () => {
@@ -188,6 +190,9 @@ const VehicleTable = () => {
                                     <button onClick={() => openModal(car)}>
                                         <FiInfo size={18} />
                                     </button>
+                                    <Link href={`/admin/dashboard/maintenance/new/${car.id}`} className="text-blue-500 hover:text-blue-700 mx-1">
+                                        <FaCog size={18} />
+                                    </Link>
                                 </div>
                             </div>
                         </div>

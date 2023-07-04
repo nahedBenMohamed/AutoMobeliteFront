@@ -9,7 +9,6 @@ import fs from 'fs';
 
 // Configure multer
 const upload = multer({ dest: path.join(process.cwd(), 'tmp') });
-
 export const config = {
     api: {
         bodyParser: false,

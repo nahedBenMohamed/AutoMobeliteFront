@@ -161,7 +161,7 @@ function Profile() {
             const data = new FormData();
             data.append("file", files[0]);
             try {
-                const res = await axios.post("/api/manage-profile/upload", data, {withCredentials: true});
+                const res = await axios.post("/api/client/upload", data, {withCredentials: true});
                 const {message, imagePath} = res.data;
                 if (message === "Image uploaded successfully") {
                     setImages([imagePath]);

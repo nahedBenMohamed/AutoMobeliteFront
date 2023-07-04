@@ -3,7 +3,6 @@ import axios from 'axios';
 import Link from "next/link";
 import {FiEdit, FiInfo, FiTrash2} from "react-icons/fi";
 import {ToastContainer} from "react-toastify";
-//import Modal from "react-modal";
 
 const RentalTable = () => {
 
@@ -16,7 +15,7 @@ const RentalTable = () => {
         // Appeler l'API pour récupérer les réservations
         axios.get('/api/admin/manage-reservation/reservation')
             .then(response => {
-                setRental(response.data);
+                setRental(response.data.reverse());
             })
             .catch(error => {
                 console.log(error);

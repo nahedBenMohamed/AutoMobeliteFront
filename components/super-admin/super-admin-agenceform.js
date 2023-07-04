@@ -336,7 +336,7 @@ const SuperAdminAgenceForm = ({ id }) => {
                                     id="responsable"
                                     name="responsable"
                                     type="email"
-                                    autoComplete="responsable-name"
+                                    autoComplete="email"
                                     placeholder="Enter responsible email"
                                     value={responsibleEmail}
                                     onChange={(ev) => setResponsibleEmail(ev.target.value)}

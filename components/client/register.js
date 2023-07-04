@@ -3,16 +3,14 @@ import { useRouter } from 'next/router';
 import {HiEye, HiEyeOff, HiHome, HiLocationMarker, HiLockClosed, HiMail, HiPhone, HiUser} from "react-icons/hi";
 import { parsePhoneNumberFromString, getCountryCallingCode } from 'libphonenumber-js';
 import {BiIdCard} from "react-icons/bi";
-import {FaHandHolding, FaHandPeace, FaHands, FaHandWave} from 'react-icons/fa';
-import {GiWaveCrest} from "react-icons/gi";
+import {FaHandPeace} from "react-icons/fa";
 
-
-
-const RegisterPage = () => {
-
+const RegisterClient = () => {
     const router = useRouter();
+
     const [errorMessage, setErrorMessage] = useState('');
     const [name, setName] = useState('');
+    const [image, setImage] = useState('');
     const [firstname, setFirstName] = useState('');
     const [email, setEmail] = useState('');
     const [telephone, setTelephone] = useState('');
@@ -24,18 +22,22 @@ const RegisterPage = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [errorMessageVisible, setErrorMessageVisible] = useState(true);
 
+
     // Function to set the default telephone value with country code
     const getDefaultTelephone = () => {
         const defaultCountryCode = getCountryCallingCode('TN');
         return `+${defaultCountryCode}`;
     };
-
+    const handleImageChange = (event) => {
+        const file = event.target.files[0];
+        setImage(file);
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         // Vérification des données côté client (facultatif)
-        if (!name || !firstname || !email || !telephone || !numPermis || !password || !confirmPassword || !address || !city  ) {
+        if (!name || !firstname || !email || !telephone || !numPermis || !password || !confirmPassword || !address || !city || !image) {
             setErrorMessage('Please fill in all fields and upload the license image');
             setErrorMessageVisible(true);
             setTimeout(() => {
@@ -62,6 +64,7 @@ const RegisterPage = () => {
             }, 5000);
             return;
         }
+
         if (password !== confirmPassword) {
             setErrorMessage('Passwords do not match.');
             setErrorMessageVisible(true);
@@ -72,7 +75,7 @@ const RegisterPage = () => {
         }
 
         if (password.length < 8) {
-            setErrorMessage("Password must be at least 8 characters");
+            setErrorMessage('Password must be at least 8 characters');
             setErrorMessageVisible(true);
             setTimeout(() => {
                 setErrorMessageVisible(false);
@@ -82,7 +85,9 @@ const RegisterPage = () => {
 
         const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*]).{8,}$/;
         if (!passwordRegex.test(password)) {
-            setErrorMessage("The password must contain at least one uppercase letter, one lowercase letter, one number and one special character");
+            setErrorMessage(
+                'The password must contain at least one uppercase letter, one lowercase letter, one number and one special character'
+            );
             setErrorMessageVisible(true);
             setTimeout(() => {
                 setErrorMessageVisible(false);
@@ -90,13 +95,23 @@ const RegisterPage = () => {
             return;
         }
 
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('firstname', firstname);
+        formData.append('email', email);
+        formData.append('telephone', telephone);
+        formData.append('numPermis', numPermis);
+        formData.append('password', password);
+        formData.append('address', address);
+        formData.append('city', city);
+        if (image instanceof File) { // Vérifiez que image est bien un objet File
+            formData.append('image', image);
+        }
+
         try {
             const response = await fetch('/api/auth/register-client', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name, firstname, email, password, numPermis, telephone,address,city }),
+                body: formData,
             });
 
             if (response.ok) {
@@ -109,8 +124,8 @@ const RegisterPage = () => {
                     setErrorMessageVisible(false);
                 }, 5000);
             }
-        } catch (errorData) {
-            setErrorMessage(errorData.error);
+        } catch (error) {
+            setErrorMessage(error.message);
             setErrorMessageVisible(true);
             setTimeout(() => {
                 setErrorMessageVisible(false);
@@ -127,7 +142,7 @@ const RegisterPage = () => {
                         <FaHandPeace className="ml-2 text-blue-600" size={26} />
                       </span>
                 </h2>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} encType="multipart/form-data">
                     <div className="grid grid-cols-2 gap-4">
                         <div className="mb-4">
                             <div className="relative">
@@ -273,6 +288,14 @@ const RegisterPage = () => {
                             />
                         </div>
                     </div>
+                    <input
+                        id="image"
+                        name="image"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="block w-full"
+                    />
                     <div className="mt-2">
                         {errorMessageVisible && errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                     </div>
@@ -281,14 +304,14 @@ const RegisterPage = () => {
                             type="submit"
                             className="w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
-                            Create an account
+                            Suivant
                         </button>
                     </div>
                 </form>
                 <p className="mt-8 text-sm text-center text-gray-500">
                     Already have an account?{' '}
                     <a href="/authentification/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                        Sign in
+                        Login
                     </a>
                 </p>
             </div>
@@ -297,4 +320,4 @@ const RegisterPage = () => {
     );
 };
 
-export default RegisterPage;
+export default RegisterClient;

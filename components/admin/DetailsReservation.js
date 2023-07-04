@@ -100,7 +100,7 @@ const ReservationDetails = ({id}) => {
                     </div>
                     <div className="w-full md:w-1/2">
                         <div className="rounded-lg p-4 space-y-2">
-                            <div className="w-full h-48 mb-4 relative">
+                            <div className="w-auto h-auto mb-4 relative">
                                 {rentalData.car.image ? (
                                     <img src={rentalData.car.image} alt="Car" className="w-full h-full object-cover rounded-lg" />
                                 ) : (

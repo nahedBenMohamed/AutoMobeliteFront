@@ -6,9 +6,10 @@ import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { isSameDay } from "date-fns";
+import { isSameDay } from 'date-fns';
 
-export default function SuperAdminCarform({ id }) {
+
+export default function Carform({ id }) {
 
     const [brand, setBrand] = useState("");
     const [model, setModel] = useState("");
@@ -16,7 +17,6 @@ export default function SuperAdminCarform({ id }) {
     const [mileage, setMileage] = useState("");
     const [price, setPrice] = useState("");
     const [registration, setRegistration] = useState("");
-    const [status, setStatus] = useState("");
     const [images, setImages] = useState([]);
     const [fuel, setFuel] = useState("");
     const [door, setDoor] = useState("");
@@ -28,14 +28,10 @@ export default function SuperAdminCarform({ id }) {
     const [goToCars, setGoToCars] = useState(false);
     const [availabilityDates, setAvailabilityDates] = useState([]);
     const [reservedDates, setReservedDates] = useState([]);
+    const [maintenanceDates, setMaintenanceDates] = useState([]);
     const [selectedStatus, setSelectedStatus] = useState('available');
-
-    const handleStatusChange = (event) => {
-        setSelectedStatus(event.target.value);
-    };
-
-
     const router = useRouter();
+
     useEffect(() => {
         if (id) {
             axios
@@ -51,40 +47,54 @@ export default function SuperAdminCarform({ id }) {
                     setSelectedStatus(carData.status);
                     setFuel(carData.fuel);
                     setGearBox(carData.gearBox);
+                    setDescription(carData.description);
                     setImages(carData.image ? [carData.image] : []);
+                    setAvailabilityDates(carData.availability.map((avail) => new Date(avail.date)));
                     const reservedDates = [];
                     for (const rental of carData.rentals) {
                         let date = new Date(rental.startDate);
-                        while (date <= new Date(rental.endDate)) {
+                        let endDate = new Date(rental.endDate);
+                        while (date <= endDate) {
                             reservedDates.push(new Date(date));
                             date.setDate(date.getDate() + 1);
                         }
                     }
+                    const maintenanceDates = [];
+                    for (const maintenance of carData.maintenances) {
+                        let date = new Date(maintenance.startDate);
+                        let endDate = new Date(maintenance.endDate);
+                        while (date <= endDate) {
+                            maintenanceDates.push(new Date(date));
+                            date.setDate(date.getDate() + 1);
+                        }
+                    }
+
+                    setMaintenanceDates(maintenanceDates);
                     setReservedDates(reservedDates);
-                    setAvailabilityDates(carData.availability.map((avail) => new Date(avail.date)));
                     setRegistration(carData.registration);
                     setParkingName(carData.parking.name);
-                    setDescription(carData.description);
-
-
                 })
                 .catch((error) => {
                     if (error.response) {
-                        toast.warning('An error occurred while loading data',
-                            {
-                                position: "top-center",
-                                autoClose: 3000,
-                                hideProgressBar: false,
-                                closeOnClick: true,
-                                pauseOnHover: false,
-                                draggable: false,
-                                progress: undefined,
-                                theme: "colored",
-                            });
+                        toast.warning("An error occurred while loading data", {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: false,
+                            progress: undefined,
+                            theme: "colored",
+                        });
                     }
                 });
         }
     }, [id]);
+
+
+    const handleStatusChange = (event) => {
+        setSelectedStatus(event.target.value);
+    };
 
     async function saveCar(ev) {
         ev.preventDefault();
@@ -311,7 +321,7 @@ export default function SuperAdminCarform({ id }) {
                 </h2>
                 <div className="grid grid-cols-2 gap-8">
                     <div className="flex flex-col items-center">
-                        <div className="w-full h-48 mb-4 relative">
+                        <div className="w-auto h-auto mb-4 relative">
                             {images.length > 0 ? (
                                 <img src={images[0]} alt="Car" className="w-full h-full object-cover rounded-lg" />
                             ) : (
@@ -350,27 +360,37 @@ export default function SuperAdminCarform({ id }) {
                                     <p className="text-sm font-medium">Open</p>
                                     <div className="w-4 h-4 bg-red-500 rounded-full ml-2"></div>
                                     <p className="text-sm font-medium">Close</p>
+                                    <div className="w-4 h-4 bg-yellow-500 rounded-full ml-2"></div>
+                                    <p className="text-sm font-medium">Maintenance</p>
                                 </div>
                             </label>
                             <DatePicker
-                                selected={null}
                                 inline
-                                minDate={new Date()}
                                 highlightDates={[
-                                    {
-                                        "reserved-day": reservedDates,
-                                    },
-                                    {
-                                        "available-day": availabilityDates,
-                                    },
+                                    { "reserved-day": reservedDates },
+                                    { "maintenance-day": maintenanceDates },
                                 ]}
-                                dayClassName={(date) =>
-                                    reservedDates.some((reservedDate) => isSameDay(date, reservedDate))
-                                        ? 'reserved-day'
-                                        : availabilityDates.some((availableDate) => isSameDay(date, availableDate))
-                                            ? 'available-day'
-                                            : ''
-                                }
+                                dayClassName={(date) => {
+                                    const currentDate = new Date();
+                                    currentDate.setHours(0, 0, 0, 0); // Réinitialise les heures, minutes, secondes et millisecondes à 0 pour la comparaison
+
+                                    if (isSameDay(date, currentDate)) {
+                                        return "current-day";
+                                    }
+                                    if (date < currentDate) {
+                                        return "past-day";
+                                    }
+                                    if (reservedDates.some((reservedDate) => isSameDay(date, reservedDate))) {
+                                        return "reserved-day";
+                                    }
+                                    if (availabilityDates.some((availableDate) => isSameDay(date, availableDate))) {
+                                        return "available-day";
+                                    }
+                                    if (maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))) {
+                                        return "maintenance-day";
+                                    }
+                                    return "";
+                                }}
                             />
                         </div>
                     </div>

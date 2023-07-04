@@ -7,28 +7,41 @@ import {FaMoneyBill} from "react-icons/fa";
 
 
 const RentalDetails = () => {
-    const [rental, setRental] = useState(null);
+    const [rental, setRental] = useState([]);
     const [loading, setLoading] = useState(true);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [rentalToDelete, setRentalToDelete] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rentalPerPage] = useState(5);
+    const [search, setSearch] = useState("");
 
 
     useEffect(() => {
         const fetchRental = async () => {
             try {
-                const response = await fetch('/api/rental'); // Change the API endpoint URL accordingly
+                const response = await fetch('/api/client/reservation', {withCredentials:true});
                 const data = await response.json();
 
+                if (!response.ok) {
+                    throw new Error(data.error || 'Une erreur s\'est produite lors de la récupération des réservations');
+                }
+
                 setRental(data);
-                setLoading(false);
             } catch (error) {
                 console.error('Error fetching rental:', error);
+            } finally {
                 setLoading(false);
             }
         };
 
         fetchRental();
     }, []);
+
+    // Pagination logic
+    const indexOfLastCar = currentPage * rentalPerPage;
+    const indexOfFirstCar = indexOfLastCar - rentalPerPage;
+    const currentRental = rental.slice(indexOfFirstCar, indexOfLastCar);
+
 
     const handleDeleteRental = () => {
 
@@ -38,14 +51,26 @@ const RentalDetails = () => {
 
     return (
         <div className=" flex flex-col items-center justify-center min-h-screen">
-
         <div className="flex justify-center">
-
             <main className="w-full -mt-40 flex-grow">
                 <div className="flex flex-col items-center justify-center">
                     <div className="flex items-center  ">
                         <div className="bold-text text-xl text-black   -mt-20">MANAGE YOUR RESERVATIONS</div>
                         <FaMoneyBill className="ml-2 text-blue-600 -mt-20" size={24} />
+                    </div>
+                </div>
+                <div className="bg-none rounded-lg p-4">
+                    <div className="flex justify-between items-center">
+                        <Link href="/client/Modelsconnected/" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Add Rental
+                        </Link>
+                        <input
+                            type="text"
+                            placeholder="Search rentals..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="ml-4 py-2 px-4 border border-gray-300 rounded-3xl"
+                        />
                     </div>
                 </div>
                 <div className="table-container">
@@ -70,25 +95,13 @@ const RentalDetails = () => {
                                         scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                     >
-                                        Registration
+                                        Start Date
                                     </th>
                                     <th
                                         scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                     >
-                                        Year
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                    >
-                                        Price
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                    >
-                                        Mileage
+                                        End Date
                                     </th>
                                     <th
                                         scope="col"
@@ -100,45 +113,45 @@ const RentalDetails = () => {
                                         scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                     >
+                                        Total
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                    >
                                         Actions
                                     </th>
                                 </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
-                                <tr className="hover:bg-gray-100">
-                                    <td className="px-6 py-4 whitespace-nowrap"></td>
-                                    <td className="px-6 py-4 whitespace-nowrap"></td>
-                                    <td className="px-6 py-4 whitespace-nowrap"></td>
-                                    <td className="px-6 py-4 whitespace-nowrap"></td>
-                                    <td className="px-6 py-4 whitespace-nowrap"></td>
-                                    <td className="px-6 py-4 whitespace-nowrap"></td>
-                                    <td className="px-6 py-4 whitespace-nowrap"></td>
-                                    <td className="px-6 py-4 flex justify-center">
-                                        <Link href={`/admin/dashboard/rentals/edit/`} className="text-blue-500 hover:text-blue-700 mx-1">
-                                            <FiEdit size={18} />
-                                        </Link>
-                                        <button
-                                            className="text-red-500 hover:text-red-700 mx-1"
-                                            onClick={() => {
-                                                setModalIsOpen(true);
-                                                setRentalToDelete(rental);
-                                            }}
-                                        >
-                                            <FiTrash2 size={18} />
-                                        </button>
-                                        <Link href={`/admin/dashboard/rentals/details/$`} className="text-gray-500 hover:text-gray-700 mx-1">
-                                            <FiInfo size={18} />
-                                        </Link>
-                                    </td>
-                                </tr>
+                                {currentRental
+                                    .filter(rental =>
+                                        rental.car.brand.toLowerCase().includes(search.toLowerCase()) ||
+                                        rental.car.model.toLowerCase().includes(search.toLowerCase()) ||
+                                        rental.status.toLowerCase().includes(search) ||
+                                        rental.total.toString().includes(search)
+                                    )
+                                    .map((rental) => (
+                                        <tr key={rental.id} className="hover:bg-gray-100">
+                                            <td className="px-6 py-4 whitespace-nowrap">{rental.car.brand}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{rental.car.model}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{new Date(rental.startDate).toLocaleDateString()}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{new Date(rental.endDate).toLocaleDateString()}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{rental.status}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap">{rental.total} DT</td>
+                                            <td className="px-6 py-4 flex justify-center">
+                                                <Link href={""} className="text-blue-500 hover:text-blue-700 mx-1">
+                                                    <FiEdit size={18} />
+                                                </Link>
+                                                <Link href={""} className="text-gray-500 hover:text-gray-700 mx-1">
+                                                    <FiInfo size={18} />
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                    <div className="mt-8">
-                        <Link href="/client/Modelsconnected" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                            Add Rental
-                        </Link>
                     </div>
                 </div>
                 <ToastContainer
