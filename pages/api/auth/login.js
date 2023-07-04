@@ -47,7 +47,7 @@ export default async function handle(req, res) {
         );
 
         // Set the authentication cookie
-        setCookie({ res }, 'authToken', token, {
+        setCookie({ res }, 'Token', token, {
             maxAge: 60 * 60 * 24, // Cookie validity duration in seconds (e.g., 24 hours)
             path: '/', // Cookie path (e.g., '/' for the root domain)
             secure: process.env.NODE_ENV === 'production', // Enable secure mode in production

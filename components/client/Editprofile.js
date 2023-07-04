@@ -93,7 +93,7 @@ const EditProfile = () => {
 
     return (
         <div className=" flex flex-col items-center justify-center min-h-screen">
-            <div className="mt-52 flex flex-col items-center justify-center max-w-6xl">
+            <div className="mt-10 flex flex-col items-center justify-center max-w-6xl">
                 <div className="flex items-center">
                     <div className="bold-text text-xl text-black">MANAGE YOUR PROFILE</div>
                     <IoMdSettings className="ml-2 text-blue-500" size={24} />
