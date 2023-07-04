@@ -6,7 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {differenceInCalendarDays, isSameDay} from "date-fns";
-import Select from "react-select/base";
+
+
 export default function RentalForm({ id }) {
 
     const [brand, setBrand] = useState("");

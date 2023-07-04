@@ -16,7 +16,7 @@ const SuperAdminAgencetable = () => {
 
     useEffect(() => {
         axios.get('/api/super-admin/manage-agence/agence').then((response) => {
-            setAgences(response.data);
+            setAgences(response.data.reverse());
         });
     }, []);
 

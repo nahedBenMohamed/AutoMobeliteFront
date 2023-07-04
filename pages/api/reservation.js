@@ -1,37 +1,23 @@
-import { parseISO, setHours, setMinutes } from 'date-fns';
+import { parseISO, setHours, setMinutes, startOfDay } from 'date-fns';
 import prisma from "@/lib/prisma";
 
 export default async function handler(req, res) {
-    if (req.method === 'GET') {
-        try {
-            const reservations = await prisma.rental.findMany({
-                include: {
-                    car: true,
-                    client: true,
-                },
-            });
-
-            res.status(200).json(reservations);
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: 'An error occurred while fetching the reservations.' });
-        }
-    }else if (req.method === 'POST') {
+    if (req.method === 'POST') {
         try {
             const {
-                carId,
+                id,
+                email,
                 startDate,
                 endDate,
                 startTime,
                 endTime,
                 total,
                 status,
-                clientId,
             } = req.body;
 
+            const carId = parseInt(id);
             const parsedStartDate = parseISO(startDate);
             const parsedEndDate = parseISO(endDate);
-
             const startHour = parseInt(startTime.split(':')[0]);
             const startMinute = parseInt(startTime.split(':')[1]);
             const endHour = parseInt(endTime.split(':')[0]);
@@ -39,26 +25,54 @@ export default async function handler(req, res) {
             const parsedStartTime = setHours(setMinutes(parsedStartDate, startMinute), startHour);
             const parsedEndTime = setHours(setMinutes(parsedEndDate, endMinute), endHour);
 
+            // Normalize start and end dates to beginning of day
+            const startDateNormalized = startOfDay(parsedStartDate);
+            const endDateNormalized = startOfDay(parsedEndDate);
+
+            // Recherche du client à partir de l'email
+            const client = await prisma.client.findFirst({
+                where: {
+                    email: email,
+                },
+            });
+
+            if (!client) {
+                return res.status(404).json({ error: 'Client non trouvé.' });
+            }
+            const clientId = client.id;
+
             // Create a new rental in the database
             const rental = await prisma.rental.create({
                 data: {
-                    car: {
-                        connect: {
-                            id: parseInt(carId),
-                        },
-                    },
+                    carId,
+                    clientId,
                     startDate: parsedStartDate,
                     endDate: parsedEndDate,
                     startTime: parsedStartTime,
                     endTime: parsedEndTime,
                     total: parseFloat(total),
                     status: status,
-                    client: {
-                        connect: {
-                            id: clientId, // Assuming clientId is correct
-                        },
+                },
+            });
+
+            // Find all availability records for the car within the rental period
+            const availabilities = await prisma.availability.findMany({
+                where: {
+                    carId: carId,
+                    date: {
+                        gte: startDateNormalized,
+                        lte: endDateNormalized,
                     },
                 },
+            });
+
+            // Delete all found availability records
+            await prisma.availability.deleteMany({
+                where: {
+                    id: {
+                        in: availabilities.map(a => a.id)
+                    }
+                }
             });
 
             res.status(201).json(rental);

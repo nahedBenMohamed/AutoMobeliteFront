@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import axios from "axios";
 import Spinner from "@/components/admin/Spinner";
+import {FiEdit} from "react-icons/fi";
+import Link from "next/link";
 
 const ReservationDetails = ({id}) => {
 
@@ -55,6 +57,14 @@ const ReservationDetails = ({id}) => {
                                 <p className="w-2/3 text-sm">{rentalData.client.numPermis}</p>
                             </div>
                             <div className="flex">
+                                <p className="w-1/3 text-sm font-bold">Address:</p>
+                                <p className="w-2/3 text-sm">{rentalData.client.address}</p>
+                            </div>
+                            <div className="flex">
+                                <p className="w-1/3 text-sm font-bold">City:</p>
+                                <p className="w-2/3 text-sm">{rentalData.client.city}</p>
+                            </div>
+                            <div className="flex">
                                 <p className="w-1/3 text-sm font-bold">Brand:</p>
                                 <p className="w-2/3 text-sm">{rentalData.car.brand}</p>
                             </div>
@@ -73,8 +83,18 @@ const ReservationDetails = ({id}) => {
                                 {new Date(rentalData.endTime).toLocaleTimeString()}
                             </div>
                             <div className="flex">
+                                <p className="w-1/3 text-sm font-bold">Car Status:</p>
+                                {rentalData.car.status}
+                            </div>
+                            <div className="flex">
                                 <p className="w-1/3 text-sm font-bold">Rental Status:</p>
                                 {rentalData.status}
+                            </div>
+                            <div className="flex">
+                                <p className="w-1/3 text-sm font-bold">.</p>
+                            </div>
+                            <div className="mt-8 text-center">
+                                <p className=" text-xl font-bold">Total: {rentalData.total} DT</p>
                             </div>
                         </div>
                     </div>
@@ -93,7 +113,7 @@ const ReservationDetails = ({id}) => {
                         <div className="rounded-lg p-4 space-y-2">
                             <div className="w-full h-48 mb-4 relative">
                                 {rentalData.client.image ? (
-                                    <img src={rentalData.car.image} alt="Car" className="w-full h-full object-cover rounded-lg" />
+                                    <img src={rentalData.client.image} alt="" className="w-full h-full object-cover rounded-lg" />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
                                         <span className="text-gray-500 text-lg"><img src="/placeholder.png" alt="img"/></span>
@@ -104,6 +124,12 @@ const ReservationDetails = ({id}) => {
                     </div>
                 </div>
                 <div className="mt-8 flex justify-end">
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-1">
+                        <Link href={`/admin/dashboard/reservations/edit/${rentalData.id}`}>
+                            Update Rental
+                        </Link>
+
+                    </button>
                     <button
                         onClick={handleGoBack}
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"

@@ -1,13 +1,8 @@
 import React from "react";
-import {router} from "next/router";
+import Link from "next/link";
 
 const Modal = ({ onClose, car }) => {
-    const handleReservation = (car) => {
-        router.push({
-            pathname: '/client/Reservations',
-            query: { id: car.id, image: car.image, price: car.price , brand: car.brand ,Agency:car.Agency?.name},
-        });
-    };
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-auto">
             <div className=" inset-0 bg-black opacity-50" onClick={onClose}></div>
@@ -21,7 +16,9 @@ const Modal = ({ onClose, car }) => {
                             {car.image ? (
                                 <img src={car.image} alt="Car" className="w-full" />
                             ) : (
-                                <p className="text-center text-xl font-bold">NO PICTURE</p>
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
+                                    <span className="text-gray-500 text-lg"><img src="/placeholder.png" alt="img" /></span>
+                                </div>
                             )}
                         </div>
                         <div className="mt-4">
@@ -53,21 +50,13 @@ const Modal = ({ onClose, car }) => {
                             <p><span className="font-bold">Status:</span>&nbsp;{car.status}</p>
                             <p><span className="font-bold">Parking:</span>&nbsp;{car.parkingName}</p>
                             <p><span className="font-bold">Agency:</span>&nbsp;{car.Agency?.name}</p>
-                            <button
-                                onClick={() => handleReservation(car)}
-                                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-green-500"
-                            >
+                            <Link href={`/client/Reservations/new/${car.id}`} className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full">
                                 Book now
-                            </button>
+                            </Link>
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
-
         </div>
     );
 };

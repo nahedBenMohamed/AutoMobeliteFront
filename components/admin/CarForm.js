@@ -27,6 +27,7 @@ export default function SuperAdminCarform({ id }) {
     const [parkingName, setParkingName] = useState("");
     const [goToCars, setGoToCars] = useState(false);
     const [availabilityDates, setAvailabilityDates] = useState([]);
+    const [reservedDates, setReservedDates] = useState([]);
     const [selectedStatus, setSelectedStatus] = useState('available');
 
     const handleStatusChange = (event) => {
@@ -35,7 +36,6 @@ export default function SuperAdminCarform({ id }) {
 
 
     const router = useRouter();
-
     useEffect(() => {
         if (id) {
             axios
@@ -48,14 +48,25 @@ export default function SuperAdminCarform({ id }) {
                     setMileage(carData.mileage.toString());
                     setPrice(carData.price.toString());
                     setDoor(carData.door.toString());
-                    setStatus(carData.status);
+                    setSelectedStatus(carData.status);
                     setFuel(carData.fuel);
                     setGearBox(carData.gearBox);
                     setImages(carData.image ? [carData.image] : []);
+                    const reservedDates = [];
+                    for (const rental of carData.rentals) {
+                        let date = new Date(rental.startDate);
+                        while (date <= new Date(rental.endDate)) {
+                            reservedDates.push(new Date(date));
+                            date.setDate(date.getDate() + 1);
+                        }
+                    }
+                    setReservedDates(reservedDates);
                     setAvailabilityDates(carData.availability.map((avail) => new Date(avail.date)));
                     setRegistration(carData.registration);
                     setParkingName(carData.parking.name);
                     setDescription(carData.description);
+
+
                 })
                 .catch((error) => {
                     if (error.response) {
@@ -74,6 +85,7 @@ export default function SuperAdminCarform({ id }) {
                 });
         }
     }, [id]);
+
     async function saveCar(ev) {
         ev.preventDefault();
 
@@ -346,22 +358,18 @@ export default function SuperAdminCarform({ id }) {
                                 minDate={new Date()}
                                 highlightDates={[
                                     {
-                                        selectable: false,
-                                        startDate,
-                                        endDate,
-                                        dates: availabilityDates.filter(
-                                            (date) => isSameDay(date, startDate) || isSameDay(date, endDate)
-                                        ),
+                                        "reserved-day": reservedDates,
                                     },
                                     {
-                                        selectable: true,
-                                        dates: availabilityDates,
+                                        "available-day": availabilityDates,
                                     },
                                 ]}
                                 dayClassName={(date) =>
-                                    availabilityDates.some((availableDate) => isSameDay(date, availableDate))
-                                        ? 'available-day'
-                                        : ''
+                                    reservedDates.some((reservedDate) => isSameDay(date, reservedDate))
+                                        ? 'reserved-day'
+                                        : availabilityDates.some((availableDate) => isSameDay(date, availableDate))
+                                            ? 'available-day'
+                                            : ''
                                 }
                             />
                         </div>
@@ -446,7 +454,12 @@ export default function SuperAdminCarform({ id }) {
                                 />
                             </div>
                             <div>
-                                <select id="rentalStatus" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" value={selectedStatus} onChange={handleStatusChange}>
+                                <select
+                                    id="rentalStatus"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    value={selectedStatus}
+                                    onChange={handleStatusChange}
+                                >
                                     <option value="available">Available</option>
                                     <option value="rented">Rented</option>
                                     <option value="maintenance">Maintenance</option>

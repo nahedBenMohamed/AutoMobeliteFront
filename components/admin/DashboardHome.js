@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import 'boxicons/css/boxicons.min.css';
-import {FiEdit, FiInfo} from "react-icons/fi";
+import { FiEdit, FiInfo } from "react-icons/fi";
 import Link from "next/link";
 
 const AdminHome = () => {
-
     const [statistics, setStatistics] = useState({
         totalCar: 0,
         parc: 0,
@@ -14,7 +13,6 @@ const AdminHome = () => {
     });
 
     const [reservations, setReservations] = useState([]);
-
 
     useEffect(() => {
         const fetchStatistics = async () => {
@@ -28,7 +26,7 @@ const AdminHome = () => {
                     totalCar: agence.totalCars,
                     parc: agence.totalParkings,
                     totalSales: agence.totalSales,
-                    totalReservations : agence.totalReservations
+                    totalReservations: agence.totalReservations
                 });
             } catch (error) {
                 console.log(error);
@@ -40,7 +38,7 @@ const AdminHome = () => {
                 const response = await axios.get('/api/admin/manage-reservation/reservation', {
                     withCredentials: true,
                 });
-                setReservations(response.data);
+                setReservations(response.data.reverse());
             } catch (error) {
                 console.log(error);
             }
@@ -56,23 +54,23 @@ const AdminHome = () => {
                 <li>
                     <i class='bx bxs-car'></i>
                     <span className="text">
-                        <h3>{statistics.totalCar}</h3>
-                        <p>Total Cars</p>
-                    </span>
+            <h3>{statistics.totalCar}</h3>
+            <p>Total Cars</p>
+          </span>
                 </li>
                 <li>
                     <i class='bx bxs-parking'></i>
                     <span className="text">
-                        <h3>{statistics.parc}</h3>
-                        <p>Total Parc</p>
-                    </span>
+            <h3>{statistics.parc}</h3>
+            <p>Total Parc</p>
+          </span>
                 </li>
                 <li>
                     <i className="bx bxs-calendar-check"></i>
                     <span className="text">
-                        <h3>{statistics.totalReservations}</h3>
-                        <p>Total Rentals</p>
-                    </span>
+            <h3>{statistics.totalReservations}</h3>
+            <p>Total Rentals</p>
+          </span>
                 </li>
             </ul>
             <div className="table-data">
@@ -86,7 +84,7 @@ const AdminHome = () => {
                             <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Client</th>
                             <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Brand</th>
                             <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
-                            <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Details</th>
+                            <th scope="col" className="px-2 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -96,9 +94,12 @@ const AdminHome = () => {
                                 <td className="px-2 py-2 whitespace-nowrap">{rental.car?.brand ?? '-'}</td>
                                 <td className="px-2 py-2 whitespace-nowrap">{rental.status}</td>
                                 <td>
-                                    <Link href={`/admin/dashboard/reservations/details/${rental.id}`} className="text-blue-500 hover:text-blue-700 mx-1">
-                                        <FiInfo size={18} />
-                                    </Link>
+                                    <div className="flex items-center">
+                                        <Link href={`/admin/dashboard/reservations/details/${rental.id}`} className="text-blue-500 hover:text-blue-700 mx-1 flex items-center">
+                                            <FiInfo size={18} className="mr-2" />
+                                            <span>Details</span>
+                                        </Link>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
