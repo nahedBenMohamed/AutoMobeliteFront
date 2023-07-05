@@ -369,6 +369,7 @@ export default function Carform({ id }) {
                                 highlightDates={[
                                     { "reserved-day": reservedDates },
                                     { "maintenance-day": maintenanceDates },
+                                    { "available-day": availabilityDates },
                                 ]}
                                 dayClassName={(date) => {
                                     const currentDate = new Date();
@@ -488,18 +489,53 @@ export default function Carform({ id }) {
                             { id && (
                                 <>
                                     <DatePicker
-                                        selected={startDate}
+                                        selected={startDate ? new Date(startDate) : null}
                                         onChange={(date) => setStartDate(date)}
                                         placeholderText="Start Date"
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        highlightDates={[
+                                            { "reserved-day": reservedDates },
+                                            { "maintenance-day": maintenanceDates },
+                                            { "available-day": availabilityDates }
+                                        ]}
+                                        dayClassName={(date) =>
+                                            reservedDates.some((reservedDate) => isSameDay(date, reservedDate))
+                                                ? "reserved-day"
+                                                : maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
+                                                    ? "maintenance-day"
+                                                    : availabilityDates.some((availabilityDate) => isSameDay(date, availabilityDate))
+                                                        ? "available-day"
+                                                        : ""
+                                        }
+                                        filterDate={(date) =>
+                                            !reservedDates.some((reservedDate) => isSameDay(date, reservedDate)) &&
+                                            !maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
+                                        }
                                     />
                                     <DatePicker
-                                        selected={endDate}
+                                        selected={endDate ? new Date(endDate) : null}
                                         onChange={(date) => setEndDate(date)}
                                         placeholderText="End Date"
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        highlightDates={[
+                                            { "reserved-day": reservedDates },
+                                            { "maintenance-day": maintenanceDates },
+                                            { "available-day": availabilityDates }
+                                        ]}
+                                        dayClassName={(date) =>
+                                            reservedDates.some((reservedDate) => isSameDay(date, reservedDate))
+                                                ? "reserved-day"
+                                                : maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
+                                                    ? "maintenance-day"
+                                                    : availabilityDates.some((availabilityDate) => isSameDay(date, availabilityDate))
+                                                        ? "available-day"
+                                                        : ""
+                                        }
+                                        filterDate={(date) =>
+                                            !reservedDates.some((reservedDate) => isSameDay(date, reservedDate)) &&
+                                            !maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
+                                        }
                                     />
-
                                 </>
                             )}
                             <div>

@@ -47,7 +47,6 @@ export default function MaintenanceEdit({ id }) {
                     setPrice(maintenanceData.cost);
                     setSelectedCarStatus(maintenanceData.car.status);
                     setImages(maintenanceData.car.image ? [maintenanceData.car.image] : []);
-
                     // Récupérer les dates de réservation
                     const reservedDates = maintenanceData.car.rentals.reduce((dates, rental) => {
                         const startDate = new Date(rental.startDate);
@@ -162,11 +161,11 @@ export default function MaintenanceEdit({ id }) {
     }
 
     if (goToRental) {
-        router.push("/admin/dashboard/reservations");
+        router.push("/admin/dashboard/maintenance");
     }
 
     function goBack (){
-        router.push("/admin/dashboard/reservations");
+        router.push("/admin/dashboard/maintenance");
     }
 
     return (

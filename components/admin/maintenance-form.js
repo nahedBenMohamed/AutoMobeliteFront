@@ -193,7 +193,7 @@ export default function Maintenaceform({ id }) {
             />
             <div className="max-w-screen-lg w-full bg-white p-8 rounded-lg shadow-md">
                 <h2 className="mt-2 mb-8 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                    Edit Maintenance Car
+                    Add Maintenance Car
                 </h2>
                 <div className="grid grid-cols-2 gap-8">
                     <div className="flex flex-col items-center">
@@ -221,6 +221,7 @@ export default function Maintenaceform({ id }) {
                                 highlightDates={[
                                     { "reserved-day": reservedDates },
                                     { "maintenance-day": maintenanceDates },
+                                    { "available-day": availabilityDates },
                                 ]}
                                 dayClassName={(date) => {
                                     const currentDate = new Date();

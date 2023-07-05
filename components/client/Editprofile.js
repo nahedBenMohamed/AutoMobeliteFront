@@ -14,7 +14,6 @@ import {IoMdSettings} from "react-icons/io";
 import axios from "axios";
 import {toast, ToastContainer} from "react-toastify";
 import {getCountryCallingCode, parsePhoneNumberFromString} from "libphonenumber-js";
-import {FiPlus, FiTrash2} from "react-icons/fi";
 import 'react-toastify/dist/ReactToastify.css';
 
 

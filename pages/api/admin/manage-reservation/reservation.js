@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import * as cookie from "cookie";
 import jwt from "jsonwebtoken";
-import { parseISO, setHours, setMinutes } from "date-fns";
 
 const getAgencyNameFromToken = (req) => {
     // Extract the JWT token from the request's cookie
@@ -101,7 +100,9 @@ export default async function handler(req, res) {
                     client: true,
                     car: {
                         include: {
-                            Agency: true,
+                            Agency:true,
+                            availability: true,
+                            maintenances: true
                         },
                     },
                 },

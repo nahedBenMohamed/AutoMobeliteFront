@@ -5,6 +5,7 @@ import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import {eachDayOfInterval, isSameDay} from "date-fns";
 
 
 
@@ -20,6 +21,9 @@ export default function EditRental({ id }) {
     const [startTime,setStartTime] =  useState('')
     const [endTime,setEndTime] = useState('')
     const [images, setImages] = useState([]);
+    const [reservedDates, setReservedDates] = useState([]);
+    const [maintenanceDates, setMaintenanceDates] = useState([]);
+    const [availabilityDates, setAvailabilityDates] = useState([]);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [goToRental, setGoToRental] = useState(false);
@@ -61,6 +65,26 @@ export default function EditRental({ id }) {
                     setEndDate(rentalData.endDate ? new Date(rentalData.endDate) : null);
                     setStartTime(rentalData.startTime ? new Date(rentalData.startTime).toLocaleTimeString() : null);
                     setEndTime(rentalData.endTime ? new Date(rentalData.endTime).toLocaleTimeString() : null);
+                    const reservedDates = [];
+                    let currentDate = new Date(rentalData.startDate);
+                    const endDate = new Date(rentalData.endDate);
+                    while (currentDate <= endDate) {
+                        reservedDates.push(new Date(currentDate));
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
+                    // Récupérer les dates de maintenance
+                    const maintenanceDates = rentalData.car.maintenances.reduce((dates, maintenance) => {
+                        const startDate = new Date(maintenance.startDate);
+                        const endDate = new Date(maintenance.endDate);
+                        const maintenanceDates = eachDayOfInterval({ start: startDate, end: endDate });
+                        return [...dates, ...maintenanceDates];
+                    }, []);
+
+                    // Récupérer les dates de disponibilité
+                    const availabilityDates = rentalData.car.availability.map((availability) => new Date(availability.date));
+                    setReservedDates(reservedDates);
+                    setAvailabilityDates(availabilityDates);
+                    setMaintenanceDates(maintenanceDates);
                     setTotal(rentalData.total);
                 })
                 .catch((error) => {
@@ -184,7 +208,7 @@ export default function EditRental({ id }) {
                 </h2>
                 <div className="grid grid-cols-2 gap-8">
                     <div className="flex flex-col items-center">
-                        <div className="w-full h-48 mb-4 relative">
+                        <div className="w-auto h-auto mb-4 relative">
                             {images.length > 0 ? (
                                 <img src={images[0]} alt="Car" className="w-full h-full object-cover rounded-lg" />
                             ) : (
@@ -205,6 +229,35 @@ export default function EditRental({ id }) {
                                     <p className="text-sm font-medium">Close</p>
                                 </div>
                             </label>
+                            <DatePicker
+                                inline
+                                highlightDates={[
+                                    { "reserved-day": reservedDates },
+                                    { "maintenance-day": maintenanceDates },
+                                    { "available-day": availabilityDates },
+                                ]}
+                                dayClassName={(date) => {
+                                    const currentDate = new Date();
+                                    currentDate.setHours(0, 0, 0, 0); // Réinitialise les heures, minutes, secondes et millisecondes à 0 pour la comparaison
+
+                                    if (isSameDay(date, currentDate)) {
+                                        return "current-day";
+                                    }
+                                    if (date < currentDate) {
+                                        return "past-day";
+                                    }
+                                    if (reservedDates.some((reservedDate) => isSameDay(date, reservedDate))) {
+                                        return "reserved-day";
+                                    }
+                                    if (availabilityDates.some((availableDate) => isSameDay(date, availableDate))) {
+                                        return "available-day";
+                                    }
+                                    if (maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))) {
+                                        return "maintenance-day";
+                                    }
+                                    return "";
+                                }}
+                            />
                         </div>
                     </div>
                     <form onSubmit={rental} className="flex-1">

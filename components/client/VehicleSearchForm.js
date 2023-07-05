@@ -6,8 +6,8 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
 const VehicleSearchForm = () => {
+
     const [marque, setMarque] = useState('');
-    const [prix, setPrix] = useState('');
     const [returnDate, setReturnDate] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [departDate, setDepartDate] = useState('');
@@ -20,21 +20,20 @@ const VehicleSearchForm = () => {
 
         // Effectuer une requête à l'API de filtrage
         axios
-            .get('/api/cars/filter', {
+            .get('/api/auth/filter', {
                 params: {
-                    marque,
-                    prix,
-                    returnDate,
+                    departDate: departDate,
+                    returnDate: returnDate,
                 },
             })
             .then((response) => {
                 // Stocker les résultats de la recherche dans l'état local
-                setSearchResults(response.data);
+                setSearchResults(response.data.cars);
 
                 // Rediriger le client vers la page de résultats de recherche
                 router.push({
                     pathname: '/search',
-                    query: { results: JSON.stringify(response.data) },
+                    query: { cars: JSON.stringify(response.data.cars) },
                 });
             })
             .catch((error) => {
@@ -57,7 +56,7 @@ const VehicleSearchForm = () => {
             <form onSubmit={handleSubmit} className="flex flex-col md:flex-row items-center">
                 <input
                     type="text"
-                    placeholder="Brand"
+                    placeholder="Pick up"
                     value={marque}
                     onChange={(e) => setMarque(e.target.value)}
                     className="w-full md:w-72 px-2 py-2 rounded-l-full border border-transparent focus:border-blue-500 text-sm mb-2 md:mb-0 md:mr-2"
