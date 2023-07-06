@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useRouter } from 'next/router';
 import {AiOutlineCalendar, AiOutlineClockCircle, AiOutlineEnvironment, AiOutlineHome, AiOutlineIdcard, AiOutlineMail, AiOutlinePhone, AiOutlineUser} from "react-icons/ai";
 import {FaCar, FaEquals, FaMoneyBillWave} from "react-icons/fa";
@@ -12,6 +12,9 @@ import axios from "axios";
 import {toast} from "react-toastify";
 import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
+import {io} from 'socket.io-client'
+
+const socket = io('http://localhost:8000',{transports:['websocket']})
 
 function ReservationForm({ id }) {
 
@@ -35,6 +38,7 @@ function ReservationForm({ id }) {
     const [city, setCity] = useState('');
     const [step, setStep] = useState(1);
     const [clientInfo, setClientInfo] = useState(null);
+    const [newReservations, setNewReservations] = useState([]);
     const router = useRouter();
 
     useEffect(() => {
@@ -98,8 +102,7 @@ function ReservationForm({ id }) {
         const isReserved = reservedDates.some(date =>
             date.getFullYear() === day.year() &&
             date.getMonth() === day.month() &&
-            date.getDate() === day.date() &&
-            date.getHours() >= 18
+            date.getDate() === day.date()
         );
         const isAvailable = availabilityDates.some(date =>
             date.getFullYear() === day.year() &&
@@ -150,23 +153,26 @@ function ReservationForm({ id }) {
         setStep(step - 1);
     };
 
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         const data = {
-            carId:id,
+
+            carId: id,
             email,
             startDate: selectedDates.startDate.format(),
             endDate: selectedDates.endDate.format(),
             startTime: selectedStartTime,
             endTime: selectedReturnTime,
-            total: parseFloat(calculatePrice()), // Ensure 'calculatePrice()' is defined and returns a number
+            total: parseFloat(calculatePrice()),
             status: 'reserved',
         };
         try {
             const response = await axios.post(`/api/client/reservation/`, { ...data, id }, { withCredentials: true });
             if (response.status === 201) {
-                console.log("Rental created successfully finally le Zeus!")
-                await router.push("/client/ManageReservations");
+                const reservationId = response.data.id; // Récupérez l'ID de la réservation depuis la réponse
+                socket.emit('newReservation', { id: reservationId, ...data });
+                await router.push('/client/ManageReservations');
             } else {
                 console.error('Error creating rental:', response);
             }
@@ -174,6 +180,11 @@ function ReservationForm({ id }) {
             console.error('Error creating rental:', error);
         }
     };
+
+    socket.on("newReservation",(data) =>{
+        console.log(data)
+    })
+
 
     const ProgressBar = ({ step }) => {
         const totalSteps = 3;

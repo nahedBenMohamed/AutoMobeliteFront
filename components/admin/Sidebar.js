@@ -79,6 +79,12 @@ export default function Sidebar() {
                         <span className="text">Parking</span>
                     </Link>
                 </li>
+                <li className={pathname === '/admin/dashboard/parking' ? 'active' : ''}>
+                    <Link href="/admin/dashboard/rapport">
+                        <i className="bx bxs-book"></i>
+                        <span className="text">Rapport</span>
+                    </Link>
+                </li>
 
             </ul>
             <ul className="side-menu">

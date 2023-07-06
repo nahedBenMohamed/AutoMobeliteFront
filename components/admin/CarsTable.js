@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import Link from 'next/link';
 import axios from 'axios';
-import {FiCrop, FiEdit, FiInfo, FiTrash2} from 'react-icons/fi';
+import { FiEdit, FiInfo, FiTrash2} from 'react-icons/fi';
 import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import {CogIcon} from "@heroicons/react/20/solid";
 import {FaCog} from "react-icons/fa";
 
 

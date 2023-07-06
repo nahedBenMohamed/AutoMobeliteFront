@@ -55,6 +55,11 @@ export default async function handler(req, res) {
             }
             const clientId = client.id;
 
+            const car = await prisma.car.findUnique({
+                where: { id: carId },
+                include: { Agency: true } });
+            const agencyId = car.agencyId;
+
             // Create a new rental in the database
             const rental = await prisma.rental.create({
                 data: {
@@ -89,7 +94,9 @@ export default async function handler(req, res) {
                 }
             });
 
-            res.status(201).json(rental);
+            // Ajoutez l'ID de la réservation à l'objet JSON
+            const rentalWithId = { ...rental,agencyId, id: rental.id };
+            res.status(201).json(rentalWithId);
         }
 
         if (req.method === 'GET') {

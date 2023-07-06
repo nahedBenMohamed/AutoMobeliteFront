@@ -16,47 +16,32 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'La date de début doit être antérieure à la date de fin.' });
         }
 
-        // Utilisez Prisma pour rechercher les voitures appartenant à cette agence qui sont disponibles pendant la période demandée
+        // Générer toutes les dates dans la plage
+        // Cette boucle crée un tableau de toutes les dates entre la date de départ et la date de retour.
+        const dates = [];
+        for(let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
+            dates.push(new Date(date));
+        }
+
+        // Utilisez Prisma pour rechercher les voitures qui sont disponibles pendant la période demandée
+        // La clause 'where' recherche les voitures dont toutes les dates dans la table 'Availability' correspondent aux dates dans le tableau 'dates'.
+        // En d'autres termes, elle recherche les voitures qui sont disponibles pour chaque jour entre la date de départ et la date de retour.
         const cars = await prisma.car.findMany({
             where: {
-                // Rechercher des voitures qui n'ont pas de locations ou de maintenances pendant la période demandée
-                rentals: {
-                    none: {
-                        OR: [
-                            {
-                                startDate: { lt: start },
-                                endDate: { lt: start }
-                            },
-                            {
-                                startDate: { gt: end },
-                                endDate: { gt: end }
-                            }
-                        ]
-                    }
-                },
-                maintenances: {
-                    none: {
-                        OR: [
-                            {
-                                startDate: { lt: start },
-                                endDate: { lt: start }
-                            },
-                            {
-                                startDate: { gt: end },
-                                endDate: { gt: end }
-                            }
-                        ]
+                availability: {
+                    every: {
+                        date: {
+                            in: dates,
+                        }
                     }
                 }
             },
             include: {
-                rentals: true,
-                maintenances: true,
                 availability: true
             }
         });
 
-        // Renvoyer les voitures et les parkings en réponse
+        // Renvoyer les voitures en réponse
         res.status(200).json({ cars });
     } catch (error) {
         console.log(error);

@@ -64,6 +64,6 @@ export default async function handle(req, res) {
     });
 
     // Return the response with the user's role
-    return res.status(200).json({  message: 'Successful login', role: agencyUser.role });
+    return res.status(200).json({  message: 'Successful login', role: agencyUser.role,  agencyId:agencyUser.Agency.id });
 
 }

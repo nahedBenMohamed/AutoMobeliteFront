@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import axios from "axios";
 import Spinner from "@/components/admin/Spinner";
-import {FiEdit} from "react-icons/fi";
 import Link from "next/link";
 
 const ReservationDetails = ({id}) => {
