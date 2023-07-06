@@ -80,7 +80,7 @@ const Models = () => {
                     ))}
                 </div>
                 <div className=" flex justify-center transition-all duration-300 transform hover:scale-x-110">
-                    <Link href="/client/Modelsconnected">
+                    <Link href="/client/modelsconnected">
                         <CustomButton
                             title="Explore more  Cars"
                             containerStyles="bg-primary-blue text-white rounded-full mt-10"

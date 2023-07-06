@@ -48,7 +48,7 @@ const Hero = () => {
                 </motion.p>
 
                 <motion.div className="-mt-2 " variants={item}>
-                    <Link href="/Models">
+                    <Link href="/models">
                         <CustomButton
                             title="Explore Cars"
                             containerStyles="bg-primary-blue text-white rounded-full mt-10"

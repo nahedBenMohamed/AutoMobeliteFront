@@ -1,37 +1,30 @@
-import {TogglersProvider} from "@/components/context/togglers";
-import HeaderConnected from "@/components/client/Connected";
-import MobileNavConnected from "@/components/client/MobileNavConnected";
+import HeaderConnected from "@/components/client/HeaderConnected";
 import QuickEasy from "@/components/client/QuickEasy";
-import Footer from "@/components/client/Footer";
 import VehicleSearchForm from "@/components/client/VehicleSearchForm";
 import React from "react";
 import QuickEasy2 from "@/components/client/QuickEasy2";
-import Slider from "@/components/client/Slider";
 import CitiesSlider from "@/components/client/CitiesSlider";
-import HeroConn from "@/components/client/HeroConn";
-import ModelFront from "@/components/client/ModelFront";
 import ReservationsGuide from "@/components/client/ReservationsGuide";
 import SaveBig from "@/components/client/BigSave";
 import Footer2 from "@/components/client/Footeur2";
-import ModelFrontConn from "@/components/client/ModelFrontConn";
+import HeroConnected from "@/components/client/HeroConnected";
+import ModelFrontConnected from "@/components/client/ModelFrontConnected";
 
 
 
 
 function page() {
     return (
-        <TogglersProvider>
         <main className='overflow-hidden'>
 
                         <HeaderConnected/>
-                        <MobileNavConnected/>
-                        <HeroConn/>
+                        <HeroConnected/>
             <div className="-mt-20 flex justify-center ">
                 <VehicleSearchForm />
             </div>
             <QuickEasy />
             <div className="mt-8 flex justify-center ">
-                <ModelFrontConn />
+                <ModelFrontConnected />
             </div>
             <QuickEasy2 />
             <ReservationsGuide />
@@ -40,7 +33,6 @@ function page() {
             <Footer2 />
 
         </main>
-         </TogglersProvider>
 
 
     );
