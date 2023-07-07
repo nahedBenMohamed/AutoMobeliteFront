@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useTogglersContext } from "@/components/context/togglers";
 import jwt_decode from "jwt-decode";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -7,7 +6,6 @@ import { AiOutlineUser } from "react-icons/ai";
 
 function HeaderConnected() {
     const router = useRouter();
-    const { setMobileNavbar } = useTogglersContext();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -55,7 +53,7 @@ function HeaderConnected() {
     return (
         <header className="-mt-3 w-full absolute z-10">
             <nav className=" max-w-[1740px] mx-auto flex justify-between items-center sm:px-16 px-6 py-4 bg-transparent">
-                <Link href="/client/HomeConnected" className="text-2xl mt-3 justify-center items-center">
+                <Link href="/client/homeconnected" className="text-2xl mt-3 justify-center items-center">
                     AUTO<span className="text-blue-600">MOBELITE</span>
                 </Link>
 
@@ -71,10 +69,10 @@ function HeaderConnected() {
                             ref={dropdownRef}
                             className="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-md"
                         >
-                            <Link href="/client/Editprofile">
+                            <Link href="/client/editprofile">
                                 <p className="block px-4 py-2 hover:bg-gray-200">Edit Profile</p>
                             </Link>
-                            <Link href="/client/ManageReservations">
+                            <Link href="/client/managereservations">
                                 <p className="block px-4 py-2 hover:bg-gray-200">Manage Reservations</p>
                             </Link>
                             <button

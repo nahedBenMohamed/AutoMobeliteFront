@@ -1,14 +1,12 @@
 import React from "react";
-import HeaderConnected from "@/components/client/Connected";
+import HeaderConnected from "@/components/client/HeaderConnected";
 import ManageReservations from "@/components/client/ManageReservations";
-import MobileNavConnected from "@/components/client/MobileNavConnected";
 
 function page() {
     return (
         <main>
             <HeaderConnected />
             <ManageReservations />
-            <MobileNavConnected />
 
         </main>
 

@@ -33,7 +33,7 @@ const LoginPage = () => {
             });
 
             if (response.ok) {
-                await router.push('/client/HomeConnected/');
+                await router.push('/client/homeconnected/');
             } else {
                 const errorData = await response.json();
                 setMessage(errorData.error);

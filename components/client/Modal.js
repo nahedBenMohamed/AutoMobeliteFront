@@ -50,7 +50,7 @@ const Modal = ({ onClose, car }) => {
                             <p><span className="font-bold">Status:</span>&nbsp;{car.status}</p>
                             <p><span className="font-bold">Parking:</span>&nbsp;{car.parkingName}</p>
                             <p><span className="font-bold">Agency:</span>&nbsp;{car.Agency?.name}</p>
-                            <Link href={`/client/Reservations/new/${car.id}`} className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full">
+                            <Link href={`/client/Reservations/new/${car.id}`} className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full hover:bg-green-500">
                                 Book now
                             </Link>
                         </div>

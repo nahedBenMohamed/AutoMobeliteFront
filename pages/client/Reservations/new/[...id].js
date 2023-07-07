@@ -1,11 +1,8 @@
 import {useRouter} from "next/router";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {protectRoute} from "@/utils/auth";
 import ReservationForm from "@/components/client/Reservations";
-import {TogglersProvider} from "@/components/context/togglers";
-import HeaderConnected from "@/components/client/Connected";
-import MobileNavConnected from "@/components/client/MobileNavConnected";
+import HeaderConnected from "@/components/client/HeaderConnected";
 import Footer from "@/components/client/Footer";
 
 
@@ -27,9 +24,7 @@ export default function EditCar(){
 
     return(
         <main className='overflow-hidden'>
-            <TogglersProvider>
                 <HeaderConnected/>
-                <MobileNavConnected/>
                 <div className="mt-30">
                     {carInfo && (
                         <ReservationForm {...carInfo}/>
@@ -37,7 +32,7 @@ export default function EditCar(){
                 </div>
 
                 <Footer/>
-            </TogglersProvider>
+
         </main>
     )
 }

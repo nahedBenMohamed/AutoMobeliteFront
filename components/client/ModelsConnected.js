@@ -123,7 +123,7 @@ function Modelsconnected() {
                                     <hr className="border border-lighter-grey" />
                                 </div>
                                 <div className="flex space-x-4">
-                                    <Link href={`/client/Reservations/new/${car.id}`} className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full">
+                                    <Link href={`/client/Reservations/new/${car.id}`} className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full hover:bg-green-500">
                                         Book now
                                     </Link>
                                     <button

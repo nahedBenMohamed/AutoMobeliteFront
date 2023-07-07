@@ -1,11 +1,29 @@
 import Link from "next/link";
 
 import {AiOutlineMenu} from "react-icons/ai";
-import {useTogglersContext} from "@/components/context/togglers";
+import React, {useEffect, useRef, useState} from "react";
 
 
 function Header () {
-    const { setMobileNavbar } = useTogglersContext();
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+
+    const toggleDropdown = () => {
+        setIsDropdownOpen((prevState) => !prevState);
+    };
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
     return(
         <header className='w-full  absolute z-10'>
             <nav className='max-w-[1740px] mx-auto flex justify-between items-center sm:px-16 px-6 py-4 bg-transparent'>
@@ -13,34 +31,32 @@ function Header () {
                     AUTO<span className="text-blue-600">MOBELITE</span>
                 </Link>
 
-                <div className="hidden lg:flex items-center text-black gap-4 font-medium">
-                    <button className="hover:text-blue-600 transition-all duration-300 ease-linear">
-                        <Link href="/authentification/login">
-                            Sign In
-                        </Link>
-                    </button>
-                    <button className="hover:text-blue-600 bg-white py-3 px-7 text-black rounded-full">
-                        <Link href="/authentification/register">Register</Link>
-                    </button>
 
-                </div>
-
-                <div className="lg:hidden">
+                <div className="relative ml-auto lg:block">
                     <button
-                        className="text-3xl transition-all duration-300 ease-linear hover:text-custom-blue"
-                        onClick={() => setMobileNavbar(true)}
+                        className="hover:text-blue-600 transition-all duration-600 ease-linear"
+                        onClick={toggleDropdown}
                     >
-                        <AiOutlineMenu />
+                        <AiOutlineMenu size={30} className="mt-4"/>
                     </button>
+                    {isDropdownOpen && (
+                        <div
+                            ref={dropdownRef}
+                            className="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-md"
+                        >
+                            <Link href="/authentification/login">
+                                <p className="block px-4 py-2 hover:bg-gray-200">Sign in</p>
+                            </Link>
+                            <Link href="/authentification/register">
+                                <p className="block px-4 py-2 hover:bg-gray-200">Register</p>
+                            </Link>
+                        </div>
+                    )}
                 </div>
 
             </nav>
         </header>
-    )
-
-        ;
+    );
 }
-
-
 
 export default Header;

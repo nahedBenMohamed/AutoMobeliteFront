@@ -3,7 +3,7 @@ import Script from "next/script";
 
 export default function Document() {
     return (
-        <Html lang="en" className="">
+        <Html lang="en" >
             <Head>
                 <Script src="/components/script"></Script>
             </Head>
