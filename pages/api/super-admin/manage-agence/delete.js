@@ -16,21 +16,23 @@ export default async function handle(req, res) {
                 if (!agency) {
                     return res.status(404).json({ message: "Agency not found." });
                 }
+                if (agency.image) {
+                    const imagePath = path.join(process.cwd(), '/public', agency.image);
+                    fs.unlinkSync(imagePath);
+                }
 
                 if (agency.image) {
                     const imagePath = path.join(process.cwd(), "public", "agences", agency.image);
-                    if (fs.existsSync(imagePath)) {
-                        fs.unlinkSync(imagePath);
-                        await prisma.agency.update({
-                            where: { id: Number(agencyId) },
-                            data: { image: null },
-                        });
-                    } else {
-                        return res.status(404).json({ message: `Image not found at path: ${imagePath}` });
-                    }
+                    fs.existsSync(imagePath)
                 }
+                // Delete the car and send the deleted car data as a response
+                return res.json(
+                    await prisma.agency.update({
+                        where: {id: Number(agencyId)},
+                        data: {image: null},
+                    })
+                );
 
-                return res.status(200).json({ message: "Image deleted successfully." });
             }
         } catch (error) {
             console.error(error);

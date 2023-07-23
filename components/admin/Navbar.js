@@ -5,17 +5,16 @@ import initializeSidebar from '/components/script';
 import axios from "axios";
 import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
-import {BellIcon, ChevronDownIcon} from '@heroicons/react/20/solid'
+import {BellIcon} from '@heroicons/react/20/solid'
 import { io } from "socket.io-client";
 import {useRouter} from "next/router";
-
+import moment from "moment";
 
 let socket;
 
 export default function Navbar({ session }) {
     const [image, setImage] = useState(null);
-    const [newReservations, setNewReservations] = useState([]);
-    const [showMessages, setShowMessages] = useState(false);
+    const [notifications, setNotifications] = useState([]);
     const router = useRouter();
 
     useEffect(() => {
@@ -49,100 +48,151 @@ export default function Navbar({ session }) {
         };
     }, []);
 
+// Client code
     useEffect(() => {
-        // Créer une connexion Socket.IO
-        socket = io('http://localhost:8000', { transports: ['websocket'] });
+        const agencyId = session.agencyId;
 
-        // Écouter les événements 'newReservation'
-        socket.on('newReservation', (data) => {
-            // Ajouter l'ID de la réservation à l'objet de notification
-            const reservation = { id: data.id, ...data };
-            // Ajouter la nouvelle réservation à l'état
-            setNewReservations((prevReservations) => [...prevReservations, reservation]);
+        socket = io('http://localhost:8000', {
+            transports: ['websocket'],
+            query: { agencyId: agencyId },
         });
 
-        // Assurez-vous de nettoyer en déconnectant la socket lorsque le composant est démonté
+        socket.on('unreadNotifications', (notifications) => {
+            console.log('Unread notifications:', notifications);
+            setNotifications(notifications);
+        });
+
+        socket.on('newNotification', (notification) => {
+            console.log('New notification:', notification);
+            setNotifications((prevNotifications) => [...prevNotifications, notification]);
+            const audio = new Audio('/COMCell_Message 1 (ID 1111)_LS.mp3');
+            audio.play();
+        });
+
+        // Add a new listener for 'editReservation' notifications
+        socket.on('editNotification', (notification) => {
+            console.log('Edited reservation notification:', notification);
+            setNotifications((prevNotifications) => [...prevNotifications, notification]);
+            const audio = new Audio('/COMCell_Message 1 (ID 1111)_LS.mp3');
+            audio.play();
+        });
+
         return () => {
             socket.disconnect();
         };
     }, []);
 
-    const handleBellClick = () => {
-        setShowMessages(!showMessages);
+
+    const markNotificationAsRead = async (notification) => {
+        const response = await axios.post(`http://localhost:8000/notification/${notification.id}/read`);
+        const updatedNotification = response.data;
+        console.log('Updated notification:', updatedNotification);
+
+        setNotifications((prevNotifications) => prevNotifications.map(notif => {
+            if (notif.id === updatedNotification.id) {
+                return updatedNotification;
+            }
+            return notif;
+        }));
+
+        // Redirection to the reservation page
+        if(updatedNotification.reservationId) {
+            await router.push(`/admin/dashboard/reservations/details/${updatedNotification.reservationId}`);
+        }
     };
 
-    const handleNotificationClick = (reservation) => {
-        // Supprimez la réservation de la liste de notifications
-        setNewReservations(prevReservations => prevReservations.filter(res => res.carId !== reservation.carId));
 
-        // Redirigez vers la page des détails de la réservation en utilisant l'ID de la réservation
-        router.push(`/admin/dashboard/reservations/details/${reservation.id}`);
-    };
-
-    function classNames(...classes) {
-        return classes.filter(Boolean).join(' ')
-    }
 
     return (
-        <nav className="navbar" style={{ justifyContent: 'space-between' }}>
-            <i className="bx bx-menu"></i>
-            <Menu as="div" className="relative inline-block text-left">
-                <div>
-                    <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-inset ring-gray-300 hover:bg-gray-50">
-                        <BellIcon className="h-8 w-8" aria-hidden="true" />
-                    </Menu.Button>
-                </div>
-                <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                >
-                    <Menu.Items className="absolute right-0 z-10 mt-2 w-64 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="py-1 overflow-y-auto max-h-40">
-                            <Menu.Item>
-                                {({ active }) => (
-                                    <>
-                                        <li
-                                            className={classNames(
-                                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                'block px-4 py-2 text-sm'
-                                            )}
+        <nav className="navbar flex justify-between">
+            <div className="flex items-center">
+                <i className="bx bx-menu"></i>
+                <span className="text-xl font-bold ml-4">
+                    Hi, {session.name} {session.firstname}
+                </span>
+            </div>
+            <div className="flex items-center">
+                <Menu as="div" className="relative inline-block text-left">
+                    <div>
+                        <Menu.Button className="relative inline-flex justify-center gap-x-1.5 rounded-md  px-3 py-2 text-sm font-semibold text-gray-900 ring-inset ring-gray-300 hover:bg-gray-50">
+                            <BellIcon className="h-10 w-10" aria-hidden="true" />
+                            {notifications.length > 0 && (
+                                <span className="absolute top-[8px] right-[8px] inline-block w-5 h-5 text-amber-100  text-xs rounded-full bg-red-500 transform transition-all duration-200 hover:scale-125 hover:opacity-75">
+                                  {notifications.length}
+                                </span>
+                            )}
+                        </Menu.Button>
+                    </div>
+                    <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-100 transform"
+                        enterFrom="opacity-0 scale-95 -translate-y-2"
+                        enterTo="opacity-100 scale-100 translate-y-0"
+                        leave="transition ease-in duration-75 transform"
+                        leaveFrom="opacity-100 scale-100 translate-y-0"
+                        leaveTo="opacity-0 scale-95 -translate-y-2"
+                    >
+                        <Menu.Items
+                            className="absolute right-0 w-80 mt-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none"
+                        >
+                            <div className="py-1 overflow-y-auto max-h-60">
+                                <Menu.Item>
+                                    {({ active }) => (
+                                        <div
+                                            className={`${
+                                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                                            } block px-4 py-2 text-sm`}
                                         >
-                                            You have {newReservations.length} new notifications
-                                        </li>
-                                        {newReservations.map((reservation, index) => (
-                                            <li
-                                                className="bg-gray-100 text-gray-900"
-                                                key={index}
-                                                onClick={() => handleNotificationClick(reservation)}
-                                            >
-                                                <div className="text-gray-700 block px-4 py-2 text-sm">
-                                                    <h4 className="cursor-pointer">{reservation.email}</h4>
+                                            You have {notifications.length} new notifications
+                                        </div>
+                                    )}
+                                </Menu.Item>
+                                {notifications.map((notification, index) => (
+                                    <Menu.Item key={index}>
+                                        {({ active }) => {
+                                            const createdAt = moment(notification.createdAt);
+                                            const now = moment();
+                                            const diffMinutes = now.diff(createdAt, 'minutes');
+                                            const diffHours = now.diff(createdAt, 'hours');
+                                            const diffDays = now.diff(createdAt, 'days');
+
+                                            let timeElapsed;
+                                            if (diffMinutes < 1) {
+                                                timeElapsed = 'just now';
+                                            } else if (diffMinutes < 60) {
+                                                timeElapsed = `${diffMinutes} minutes ago`;
+                                            } else if (diffHours < 24) {
+                                                timeElapsed = `${diffHours} hours ago`;
+                                            } else {
+                                                timeElapsed = `${diffDays} days ago`;
+                                            }
+                                            return (
+                                                <div
+                                                    className={`${
+                                                        active ? 'bg-gray-100 text-black' : 'text-black'
+                                                    } block px-4 py-2 text-sm cursor-pointer`}
+                                                    onClick={() => markNotificationAsRead(notification)}
+                                                >
+                                                    <div className="flex justify-between">
+                                                        <h4 className="text-black">{notification.message}</h4>
+                                                        <p className="text-gray-500 text-xs ml-2">{timeElapsed}</p>
+                                                    </div>
                                                 </div>
-                                            </li>
-                                        ))}
-                                        <li>
-                                            <hr className="dropdown-divider" />
-                                        </li>
-                                    </>
-                                )}
-                            </Menu.Item>
-                        </div>
-                    </Menu.Items>
-                </Transition>
-            </Menu>
-            <span className="text-xl font-bold">
-                Hi, {session.name} {session.firstname}
-            </span>
-            {image && <img src={image} alt="Profile Picture" className="ml-4 rounded-full h-12 w-12" />}
+                                            );
+                                        }}
+                                    </Menu.Item>
+                                ))}
+                            </div>
+                        </Menu.Items>
+                    </Transition>
+                </Menu>
+                {image && <img src={image} alt="Profile Picture" className="ml-4 rounded-full h-12 w-12" />}
+            </div>
         </nav>
     );
 }
 
-export const getServerSideProps = (ctx) => {
-    return protectRoute(ctx, ['admin']);
+Navbar.getInitialProps = async (context) => {
+    const session = await protectRoute(context);
+    return { session: session };
 };

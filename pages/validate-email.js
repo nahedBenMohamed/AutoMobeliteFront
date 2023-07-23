@@ -7,17 +7,17 @@ export default function ValidatePage({ isValidated, message }) {
             <div className="bg-white rounded-lg p-8 shadow-md">
                 {isValidated ? (
                     <>
-                        <h1 className="text-2xl font-bold mb-4">Email validé</h1>
-                        <p>Votre email a été validé avec succès.</p>
+                        <h1 className="text-2xl font-bold mb-4">Email validated</h1>
+                        <p>Your email has been successfully validated.</p>
                         <button  className="bg-blue-500 text-white px-4 py-2 rounded mt-8">
-                            <a href="/authentification/login">
-                                Se connecter
+                            <a href="/authentification/login" className="uppercase">
+                              login
                             </a>
                         </button>
                     </>
                 ) : (
                     <>
-                        <h1 className="text-2xl font-bold mb-4">Validation d'email échouée</h1>
+                        <h1 className="text-2xl font-bold mb-4">Email validation failed</h1>
                         <p>{message}</p>
                     </>
                 )}
@@ -44,7 +44,7 @@ export async function getServerSideProps(context) {
             return {
                 props: {
                     isValidated: false,
-                    message: "Ce lien a deja ete utilise pour activer un compte"
+                    message: "This link has already been used to activate an account"
                 },
             };
         }
@@ -53,7 +53,7 @@ export async function getServerSideProps(context) {
             return {
                 props: {
                     isValidated: false,
-                    message: "Le compte a déjà été validé."
+                    message: "The account has already been validated."
                 },
             };
         }
@@ -78,7 +78,7 @@ export async function getServerSideProps(context) {
         return {
             props: {
                 isValidated: false,
-                message: "Ce lien a expire."
+                message: "This link has expired"
             },
         };
     }

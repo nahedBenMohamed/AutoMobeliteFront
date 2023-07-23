@@ -60,7 +60,6 @@ export default async function handle(req, res) {
                 mileage,
                 price,
                 registration,
-                status,
                 image,
                 description,
                 door,
@@ -107,7 +106,6 @@ export default async function handle(req, res) {
                 data: {
                     brand,
                     model,
-                    status,
                     registration,
                     description,
                     image,
@@ -171,7 +169,6 @@ export default async function handle(req, res) {
                 mileage,
                 price,
                 registration,
-                status,
                 image,
                 description,
                 door,
@@ -220,7 +217,6 @@ export default async function handle(req, res) {
                 data: {
                     brand,
                     model,
-                    status,
                     registration,
                     description,
                     image,
@@ -291,12 +287,28 @@ export default async function handle(req, res) {
             if (req.query?.id) {
                 // Retrieve car by ID
                 const carId = req.query.id;
-                const car = await prisma.car.findUnique({
+                let car = await prisma.car.findUnique({
                     where: { id: Number(carId) },
                     include: { Agency: true, parking: true , availability: true}, // Include the Agency and parking details
                 });
+                const availability = await prisma.availability.findMany({
+                    where: { carId: Number(carId) },
+                });
+
+                const rentals = await prisma.rental.findMany({
+                    where: { carId: Number(carId) },
+                });
+
+                const maintenances = await prisma.maintenance.findMany({
+                    where: { carId: Number(carId) },
+                });
+
+                // Merge car data, availability data and rental data
+                car = { ...car, availability, maintenances ,rentals };
+
                 res.json(car);
-            } else {
+            }
+            else {
                 // Retrieve all cars belonging to the agency
                 const cars = await prisma.car.findMany({
                     where: { Agency: { id: agencyId } },

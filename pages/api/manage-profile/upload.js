@@ -20,7 +20,7 @@ export default async function handle(req, res) {
     }
 
     // Use the id from the token
-    const clientId = payload.clientId;
+    const agencyUserId = payload.agencyUserId;
 
     try {
         // Parse the incoming form data
@@ -35,20 +35,20 @@ export default async function handle(req, res) {
         const { path: tempPath, originalFilename: fileName } = files.file[0];
 
         // Define the target path where the file will be saved
-        const targetPath = path.join(process.cwd(), '/public/client/', fileName);
+        const targetPath = path.join(process.cwd(), '/public/admin/', fileName);
 
 
         // Move the file to the target path
         fs.renameSync(tempPath, targetPath);
 
         // Update the car record in the database with the filename of the uploaded image
-        await prisma.client.update({
-            where: { id: clientId },
+        await prisma.agencyUser.update({
+            where: { id: agencyUserId },
             data: { image: fileName },
         });
 
         // Define the image path to be sent in the response
-        const imagePath = `/client/${fileName}`;
+        const imagePath = `/admin/${fileName}`;
 
         // Send a success response with the image path
         res.status(200).json({ message: 'Image uploaded successfully', imagePath });

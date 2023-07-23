@@ -11,8 +11,7 @@ import {
 } from "chart.js";
 import axios from "axios";
 import {toast} from "react-toastify";
-import Link from "next/link";
-import {FiEdit, FiInfo, FiTrash2} from "react-icons/fi";
+import { FiInfo} from "react-icons/fi";
 import {useRouter} from "next/router";
 
 ChartJS.register(
@@ -101,27 +100,39 @@ function FinanceChartRevenusDepense({ data }) {
     }
     const options = {
         scales: {
-            x : {
-                grid:{
+            x: {
+                grid: {
                     display: false,
-                }
+                },
             },
-            y : {
+            y: {
                 beginAtZero: true,
-            }
+            },
+        },
+        plugins: {
+            legend: {
+                display: true,
+                labels: {
+                    font: {
+                        size: 12,
+                    },
+                },
+            },
         },
     };
 
-    return <Bar data={chartData} options={options} />
+    return <Bar data={chartData} options={options} />;
+
 }
+
 function RevenusDepenses() {
+
     const [data, setData] = useState([]);
     const [cars, setCars] = useState([]);
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [carsPerPage] = useState(5);
     const [selectedCarId, setSelectedCarId] = useState(null);
-
     const router = useRouter();
     const { carId } = router.query;
 
@@ -131,6 +142,13 @@ function RevenusDepenses() {
         expense: data.reduce((acc, cur) => acc + cur.expense, 0),
         net: data.reduce((acc, cur) => acc + cur.net, 0)
     }
+
+    const handleSaveChartImage = () => {
+        const chart = chartRef.current.chartInstance;
+        const imageURL = chart.toBase64Image();
+        setChartImageURL(imageURL);
+    };
+
 
     useEffect(() => {
         axios.get('/api/admin/manage-cars/cars', { withCredentials: true })
@@ -178,7 +196,7 @@ function RevenusDepenses() {
     const headerStyle = {
         marginBottom: '15px',
         fontWeight: 'bold',
-        textAlign: 'center',
+        display: 'flex',
     }
 
     const indexOfLastCar = currentPage * carsPerPage;
@@ -196,6 +214,11 @@ function RevenusDepenses() {
                 >
                     Rapport pour toutes les voitures
                 </button>
+               {/* <button
+                    onClick={handleSaveChartImage}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                    Sauvegarder le graphique</button>*/}
                 <div>
                     <input
                         type="text"
@@ -206,8 +229,23 @@ function RevenusDepenses() {
                     />
                 </div>
             </div>
+
             <div style={{...cardStyle, marginTop: '20px', width: '100%'}}>
                 <p style={headerStyle}>Revenus VS Depenses</p>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginRight: '20px' }}>
+                        <div style={{ width: '15px', height: '15px', backgroundColor: 'rgba(75, 192, 192, 1)', borderRadius: '50%', marginRight: '5px' }}></div>
+                        <span>Revenus</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', marginRight: '20px' }}>
+                        <div style={{ width: '15px', height: '15px', backgroundColor: 'rgba(255, 99, 132, 1)', borderRadius: '50%', marginRight: '5px' }}></div>
+                        <span>Dépenses</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{ width: '15px', height: '15px', backgroundColor: 'rgba(153, 102, 255, 1)', borderRadius: '50%', marginRight: '5px' }}></div>
+                        <span>Gains</span>
+                    </div>
+                </div>
                 <div style={{width: '100%', height: '500px'}}>
                     <FinanceChartRevenusDepense data={data} />
                 </div>

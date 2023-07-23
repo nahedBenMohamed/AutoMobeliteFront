@@ -1,4 +1,4 @@
-import { parseISO, setHours, setMinutes, startOfDay, isAfter, addDays } from 'date-fns';
+import { parseISO, setHours, setMinutes, startOfDay, addDays } from 'date-fns';
 import prisma from "@/lib/prisma";
 import {parseCookies} from "nookies";
 import jwt from "jsonwebtoken";
@@ -37,17 +37,8 @@ export default async function handler(req, res) {
             const endHour = parseInt(endTime.split(':')[0]);
             const endMinute = parseInt(endTime.split(':')[1]);
             const parsedStartTime = setHours(setMinutes(parsedStartDate, startMinute), startHour);
-            let parsedEndTime = setHours(setMinutes(parsedEndDate, endMinute), endHour);
+            const parsedEndTime = setHours(setMinutes(parsedEndDate, endMinute), endHour);
 
-            // Normalize start and end dates to beginning of day and 18:00 respectively
-            const startDateNormalized = setHours(setMinutes(parsedStartDate, 0), 0);
-            let endDateNormalized = setHours(setMinutes(parsedEndDate, 0), 18);
-
-            // If end time is after 18:00, extend the rental to the next day and set the end time to 18:00
-            if (isAfter(parsedEndTime, endDateNormalized)) {
-                parsedEndTime = endDateNormalized;
-                endDateNormalized = addDays(endDateNormalized, 1);
-            }
 
             // Recherche du client à partir de l'email
             const client = await prisma.client.findFirst({
@@ -80,8 +71,8 @@ export default async function handler(req, res) {
                 where: {
                     carId: carId,
                     date: {
-                        gte: startDateNormalized,
-                        lte: endDateNormalized,
+                        gte: startOfDay(parsedStartDate),
+                        lt: startOfDay(addDays(parsedEndDate, 1)), // End date now includes the day of end date
                     },
                 },
             });
@@ -90,9 +81,9 @@ export default async function handler(req, res) {
             await prisma.availability.deleteMany({
                 where: {
                     id: {
-                        in: availabilities.map(a => a.id)
-                    }
-                }
+                        in: availabilities.map((a) => a.id),
+                    },
+                },
             });
 
             res.status(201).json(rental);

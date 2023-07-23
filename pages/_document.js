@@ -7,7 +7,7 @@ export default function Document() {
             <Head>
                 <Script src="/components/script"></Script>
             </Head>
-            <body>
+            <body className="bg-gray-50">
             <Main />
             <NextScript />
             </body>

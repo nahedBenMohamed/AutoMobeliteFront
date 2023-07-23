@@ -1,17 +1,24 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import axios from "axios";
 
-export default function Sidebar() {
+export default function Sidebar({ session }) {
+
     const inactiveLink = 'flex gap-1 p-1';
     const activeLink = inactiveLink + ' bg-white text-blue-900 rounded-l-lg';
     const router = useRouter();
     const { pathname } = router;
     const [isHovered, setIsHovered] = useState(false);
     const [isLinkClicked, setIsLinkClicked] = useState(false);
+    const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+    const [agencyData, setAgencyData] = useState(null);
+
+    const agencyId = session.agencyId
+
 
     const handleLogout = async () => {
-        const res = await fetch('/api/auth/logout', {
+        const res = await fetch('/api/admin/logout', {
             method: 'POST',
         });
 
@@ -22,24 +29,72 @@ export default function Sidebar() {
         }
     };
 
+    useEffect(() => {
+        const fetchUnreadNotificationsCount = async () => {
+            try {
+                const response = await axios.get('/api/admin/messages/messages', {
+                    withCredentials: true,
+                });
+                const unreadNotifications = response.data.filter(notification => !notification.readStatus);
+                setUnreadMessagesCount(unreadNotifications.length);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchUnreadNotificationsCount();
+    }, []);
+
+    useEffect(() => {
+        if (agencyId) {
+            axios
+                .get(`/api/super-admin/manage-agence/agence?id=${agencyId}`, { withCredentials: true })
+                .then((response) => {
+                    setAgencyData(response.data);
+                    console.log(response)
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }, [agencyId]);
+
     return (
         <section id="sidebar">
             <Link href="/admin/dashboard/home" className={`brand ${pathname === '/' ? activeLink : inactiveLink}`}>
-                <img src="/mobelite.png" alt="logo" />
-                <span className="text">Automobelite</span>
+                {agencyData?.image ? (
+                    <img src={agencyData.image} alt="" className=" ml-4 w-10 h-10 object-cover rounded-full"/>
+                ) : (
+                    <div className="w-10 h-10 object-cover rounded-full flex items-center justify-center bg-gray-200">
+                        <span className="text-gray-500 text-lg"><img src="/placeholder.png" alt="img"/></span>
+                    </div>
+                )}
+                <span className="text ml-4">{session.agency}</span>
             </Link>
 
             <ul className="side-menu top">
                 <li className={pathname === '/admin/dashboard/home' ? 'active' : ''}>
                     <Link href="/admin/dashboard/home">
-                        <i class="bx bxs-home-smile"></i>
+                        <i className="bx bxs-home-smile"></i>
                         <span className="text">Dashboard</span>
                     </Link>
                 </li>
                 <li className={pathname === '/admin/dashboard/cars' ? 'active' : ''}>
                     <Link href="/admin/dashboard/cars">
-                        <i class="bx bxs-car"></i>
+                        <i className="bx bxs-car"></i>
                         <span className="text">My Cars</span>
+                    </Link>
+                </li>
+                <li className={pathname === '/admin/dashboard/messages' ? 'active' : ''}>
+                    <Link href="/admin/dashboard/messages">
+                        <i className="bx bxs-message"></i>
+                        <div className="flex items-center">
+                            <span className="text">Messages</span>
+                            {unreadMessagesCount > 0 &&
+                                <span className="w-5 h-5 text-xs rounded-full bg-red-500 text-white flex items-center justify-center ml-1">
+                                    {unreadMessagesCount}
+                                </span>
+                            }
+                        </div>
                     </Link>
                 </li>
                 <li
@@ -67,7 +122,7 @@ export default function Sidebar() {
                             </ul>
                         )}
                 </li>
-                <li className={pathname === '/admin/dashboard/users' ? 'active' : ''}>
+                <li className={pathname === '/admin/dashboard/maintenance' ? 'active' : ''}>
                     <Link href="/admin/dashboard/maintenance">
                         <i className="bx bxs-cog"></i>
                         <span className="text">Maintenance</span>
@@ -79,7 +134,7 @@ export default function Sidebar() {
                         <span className="text">Parking</span>
                     </Link>
                 </li>
-                <li className={pathname === '/admin/dashboard/parking' ? 'active' : ''}>
+                <li className={pathname === '/admin/dashboard/rapport' ? 'active' : ''}>
                     <Link href="/admin/dashboard/rapport">
                         <i className="bx bxs-book"></i>
                         <span className="text">Rapport</span>
@@ -90,7 +145,7 @@ export default function Sidebar() {
             <ul className="side-menu">
                 <li className={pathname === '/admin/dashboard/profile' ? 'active' : ''}>
                     <Link href="/admin/dashboard/profile">
-                        <i class="bx bxs-user-pin"></i>
+                        <i className="bx bxs-user-pin"></i>
                         <span className="text">Profile</span>
                     </Link>
                 </li>

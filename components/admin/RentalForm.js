@@ -6,6 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {differenceInCalendarDays, isSameDay} from "date-fns";
+import {FaCar} from "react-icons/fa";
+import {BeatLoader} from "react-spinners";
 
 
 export default function RentalForm({ id }) {
@@ -24,9 +26,12 @@ export default function RentalForm({ id }) {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [availabilityDates, setAvailabilityDates] = useState([]);
+    const [reservedDates, setReservedDates] = useState([]);
+    const [maintenanceDates, setMaintenanceDates] = useState([]);
     const [goToRental, setGoToRental] = useState(false);
     const [total, setTotal] = useState(0);
     const [selectedStatus, setSelectedStatus] = useState('reserved');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleStatusChange = (event) => {
         setSelectedStatus(event.target.value);
@@ -44,24 +49,34 @@ export default function RentalForm({ id }) {
                     setYear(carData.year.toString());
                     setMileage(carData.mileage.toString());
                     setPrice(carData.price.toString());
-                    setStatus(carData.status);
                     setImages(carData.image ? [carData.image] : []);
                     setAvailabilityDates(carData.availability.map((avail) => new Date(avail.date)));
+                    const reservedDates = [];
+                    for (const rental of carData.rentals) {
+                        let date = new Date(rental.startDate);
+                        let endDate = new Date(rental.endDate);
+                        while (date <= endDate) {
+                            reservedDates.push(new Date(date));
+                            date.setDate(date.getDate() + 1);
+                        }
+                    }
+                    const maintenanceDates = [];
+                    for (const maintenance of carData.maintenances) {
+                        let date = new Date(maintenance.startDate);
+                        let endDate = new Date(maintenance.endDate);
+                        while (date <= endDate) {
+                            maintenanceDates.push(new Date(date));
+                            date.setDate(date.getDate() + 1);
+                        }
+                    }
+
+                    setMaintenanceDates(maintenanceDates);
+                    setReservedDates(reservedDates);
                     setRegistration(carData.registration);
                 })
                 .catch((error) => {
                     if (error.response) {
-                        toast.warning('An error occurred while loading data',
-                            {
-                                position: "top-center",
-                                autoClose: 3000,
-                                hideProgressBar: false,
-                                closeOnClick: true,
-                                pauseOnHover: false,
-                                draggable: false,
-                                progress: undefined,
-                                theme: "colored",
-                            });
+                        toast.warning('An error occurred while loading data');
                     }
                 });
         }
@@ -76,19 +91,11 @@ export default function RentalForm({ id }) {
 
     async function rental(ev) {
         ev.preventDefault();
+        setIsLoading(true);
 
         if (!email || !startTime || !endTime || !startDate || !endDate) {
-            toast.error('Please complete all fields.',
-                {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+            toast.error('Please complete all fields.');
+            setIsLoading(false);
             return;
         }
 
@@ -106,76 +113,26 @@ export default function RentalForm({ id }) {
         try {
             if (id) {
                 await axios.post(`/api/admin/reservation/reservation/`, { ...data, id }, { withCredentials: true });
-            } /*else {
-                await axios.post("/api/admin/reservation/reservation" ,data, { withCredentials: true });
-            }*/
-            toast.success('reservation created with success', {
-                position: "top-center",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
-
+            }
+            toast.success('reservation created with success');
+            setIsLoading(false);
             setTimeout(() => {
                 setGoToRental(true);
-            }, 2000);
+            }, 1000);
         } catch (error) {
             if (error.response) {
                 if (error.response.data.error) {
-                    if (error.response.data.error === "Parking not found") {
-                        toast.warning("Parking not found", {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
-                        return;
-                    } else if (error.response.data.error === "Invalid Parking name") {
-                        toast.warning("Invalid Parking name", {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    if (error.response.data.error === "Client not found") {
+                        toast.warning("Client not found");
+                        setIsLoading(false);
                         return;
                     }
                 }
-                toast.error("Verify your informations", {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+                toast.error("Verify your informations");
+                setIsLoading(false);
             }
         }
     }
-
-    const handleDateChange = (date) => {
-        if (!startDate) {
-            setStartDate(date);
-        } else if (!endDate && date > startDate) {
-            setEndDate(date);
-        } else {
-            setStartDate(date);
-            setEndDate(null);
-        }
-    };
 
     if (goToRental) {
         router.push("/admin/dashboard/reservations");
@@ -185,11 +142,43 @@ export default function RentalForm({ id }) {
         router.push("/admin/dashboard/reservations/new");
     }
 
+    const handleDateChange = (date) => {
+        if (!startDate) {
+            setStartDate(date);
+        } else if (!endDate && date > startDate) {
+            let currentDate = new Date(startDate);
+            let nextDate = new Date(startDate);
+            nextDate.setDate(nextDate.getDate() + 1);
+
+            while (currentDate < date) {
+                const isReserved = reservedDates.some((reservedDate) =>
+                    isSameDay(nextDate, reservedDate)
+                );
+                const isMaintenance = maintenanceDates.some((maintenanceDate) =>
+                    isSameDay(nextDate, maintenanceDate)
+                );
+
+                if (isReserved || isMaintenance) {
+                    setEndDate(null);
+                    return;
+                }
+
+                currentDate.setDate(currentDate.getDate() + 1);
+                nextDate.setDate(nextDate.getDate() + 1);
+            }
+
+            setEndDate(currentDate);
+        } else {
+            setStartDate(date);
+            setEndDate(null);
+        }
+    };
+
     return (
-        <div className="flex flex-col items-center justify-center max-w-6xl">
+        <div className="flex">
             <ToastContainer
                 position="top-center"
-                autoClose={3000}
+                autoClose={2000}
                 hideProgressBar={false}
                 newestOnTop
                 closeOnClick={true}
@@ -199,33 +188,207 @@ export default function RentalForm({ id }) {
                 pauseOnHover={false}
                 theme="colored"
             />
-            <div className="max-w-screen-lg w-full bg-white p-8 rounded-lg shadow-md">
-                <h2 className="mt-2 mb-8 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                    Create Rental
-                </h2>
-                <div className="grid grid-cols-2 gap-8">
-                    <div className="flex flex-col items-center">
-                        <div className="w-full h-48 mb-4 relative">
+            <div className="flex-grow flex flex-col space-y-5 mr-4">
+                <div className="uppercase ml-7 mt-4 mb-4 text-black text-xl font-extrabold">
+                    {id ? "create a new rental" : "put your car information"}
+                </div>
+                <div className="bg-white p-5 rounded-lg shadow-lg">
+                    <div className="flex flex-row justify-center items-center mt-4 mb-4 rounded-lg">
+                        <form onSubmit={rental} className="flex-1">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="mb-4">
+                                    <label htmlFor="year" className="block text-xs mb-1">Year:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="year"
+                                            name="year"
+                                            type="text"
+                                            value={year}
+                                            disabled={true}
+                                            onChange={(ev) => setYear(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Year"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="kilometer" className="block text-xs mb-1">Mileage:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="mileage"
+                                            name="mileage"
+                                            type="text"
+                                            value={mileage}
+                                            disabled={true}
+                                            onChange={(ev) => setMileage(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Mileage"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="price" className="block text-xs mb-1">Price:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="price"
+                                            name="price"
+                                            type="text"
+                                            value={price}
+                                            disabled={true}
+                                            onChange={(ev) => setPrice(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Price"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="matricule" className="block text-xs mb-1">Registration:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="registration"
+                                            name="registration"
+                                            type="text"
+                                            value={registration}
+                                            disabled={true}
+                                            onChange={(ev) => setRegistration(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Registration"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="carStatus" className="block text-xs mb-1">Car Status:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="status"
+                                            name="status"
+                                            type="text"
+                                            value={status}
+                                            disabled={true}
+                                            onChange={(ev) => setStatus(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Car Status"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="gearBox" className="block text-xs mb-1">Email Client:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="email"
+                                            name="email"
+                                            type="email"
+                                            value={email}
+                                            onChange={(ev) => setEmail(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Email"
+                                        />
+                                    </div>
+                                </div>
+                                    <div className="mb-4">
+                                        <label htmlFor="startDate" className="block text-xs mb-1">Start Date</label>
+                                        <input
+                                            type="text"
+                                            value={startDate ? startDate.toLocaleDateString('fr-FR') : ''}
+                                            onChange={(event) => setStartDate(new Date(event.target.value))}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Start Date"
+                                        />
+                                    </div>
+                                    <div className="mb-4">
+                                        <label htmlFor="endDate" className="block text-xs mb-1">End Date</label>
+                                        <input
+                                            type="text"
+                                            value={endDate ? endDate.toLocaleDateString('fr-FR') : ''}
+                                            onChange={(event) => setEndDate(new Date(event.target.value))}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="End Date"
+                                        />
+                                    </div>
+                                <div className="mb-4">
+                                    <label htmlFor="endDate" className="block text-xs mb-1">Start Time</label>
+                                    <input
+                                        type="time"
+                                        value={startTime}
+                                        onChange={(event) => setStartTime(event.target.value)}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        placeholder="Start Time"
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="endDate" className="block text-xs mb-1">End Time</label>
+                                    <input
+                                        type="time"
+                                        value={endTime}
+                                        onChange={(event) => setEndTime(event.target.value)}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        placeholder="End Time"
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="door" className="block text-xs mb-1">Rental Status:</label>
+                                    <div className="relative">
+                                        <select id="rentalStatus" value={selectedStatus} onChange={handleStatusChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                            <option value="reserved">Reserved</option>
+                                            <option value="ongoing">On going</option>
+                                            <option value="completed">Completed</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex justify-end">
+                                <button
+                                    type="submit"
+                                    className="uppercase ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                >
+                                    {isLoading ? "Ongoing" : id ? "Update" : "Save"}
+                                    {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="uppercase ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                    onClick={goBack}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div className="flex-grow-0">
+                <div className="bg-white p-8 rounded-lg shadow-lg">
+                    <div className=" justify-items-center mt-4 w-full h-full">
+                        <div className=" justify-items-center mt-4 w-full h-full">
                             {images.length > 0 ? (
-                                <img src={images[0]} alt="Car" className="w-full h-full object-cover rounded-lg" />
+                                <img src={images[0]} alt="Car" className="max-w-56 max-h-56 mb-4 rounded-lg" />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
-                  <span className="text-gray-500 text-lg">
-                    <img src="/placeholder.png" alt="Placeholder" />
-                  </span>
+                                <div className="max-w-56 max-h-56 flex items-center justify-center bg-gray-200 rounded-lg">
+                                    <img src="/placeholder.png" alt="img" className="w-1/2" />
                                 </div>
                             )}
+                            <div className="mt-4 flex items-center">
+                                <FaCar size={20} className="text-blue-500" />
+                                <p className="ml-2 text-xl text-blue-700 font-bold">{brand}</p>
+                            </div>
+                            <div className="flex flex-col mb-4">
+                                <p className="ml-2 text-sm">{model}</p>
+                            </div>
                         </div>
-                        <div className="mt-8 mb-8">
-                            <label className="mb-4 flex items-center text-sm font-medium text-gray-700">
-                                Availability:
-                                <div className="flex flex-row space-x-2 ml-2">
-                                    <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-                                    <p className="text-sm font-medium">Open</p>
-                                    <div className="w-4 h-4 bg-red-500 rounded-full ml-2"></div>
-                                    <p className="text-sm font-medium">Close</p>
-                                </div>
-                            </label>
+                    </div>
+                    <div className="mt-16 mb-16">
+                        <label className="mt-4 mb-4 flex items-center text-sm font-medium text-gray-700">
+                            Availability:
+                            <div className="flex flex-row space-x-2 ml-2">
+                                <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                                <p className="text-sm font-medium">Open</p>
+                                <div className="w-4 h-4 bg-red-500 rounded-full ml-2"></div>
+                                <p className="text-sm font-medium">Close</p>
+                                <div className="w-4 h-4 bg-yellow-500 rounded-full ml-2"></div>
+                                <p className="text-sm font-medium">Maintenance</p>
+                            </div>
+                        </label>
+                        <div className="flex flex-row justify-center items-center mt-8 mb-8 rounded-lg">
                             <DatePicker
                                 selected={null}
                                 inline
@@ -244,174 +407,28 @@ export default function RentalForm({ id }) {
                                         dates: availabilityDates,
                                     },
                                 ]}
-                                dayClassName={(date) =>
-                                    availabilityDates.some((availableDate) => isSameDay(date, availableDate))
-                                        ? 'available-day'
-                                        : ''
-                                }
+                                dayClassName={(date) => {
+                                    if (reservedDates.some((reservedDate) => isSameDay(date, reservedDate))) {
+                                        return "reserved-day";
+                                    } else if (
+                                        maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
+                                    ) {
+                                        return "maintenance-day";
+                                    } else if (
+                                        availabilityDates.some((availableDate) => isSameDay(date, availableDate))
+                                    ) {
+                                        return "available-day";
+                                    } else {
+                                        return "unavailable-day"; // Ajout d'une classe pour les jours non disponibles
+                                    }
+                                }}
                                 onChange={handleDateChange}
+                                excludeDates={[...reservedDates, ...maintenanceDates]}
                             />
                         </div>
                     </div>
-                    <form onSubmit={rental} className="flex-1">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <input
-                                    id="brand"
-                                    name="brand"
-                                    type="text"
-                                    value={brand}
-                                    onChange={(ev) => setBrand(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Brand"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="model"
-                                    name="model"
-                                    type="text"
-                                    value={model}
-                                    onChange={(ev) => setModel(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Model"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="year"
-                                    name="year"
-                                    type="text"
-                                    value={year}
-                                    onChange={(ev) => setYear(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Year"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="mileage"
-                                    name="mileage"
-                                    type="text"
-                                    value={mileage}
-                                    onChange={(ev) => setMileage(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Mileage"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="price"
-                                    name="price"
-                                    type="text"
-                                    value={price}
-                                    onChange={(ev) => setPrice(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Price"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="registration"
-                                    name="registration"
-                                    type="text"
-                                    value={registration}
-                                    onChange={(ev) => setRegistration(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Registration"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="status"
-                                    name="status"
-                                    type="text"
-                                    value={status}
-                                    onChange={(ev) => setStatus(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Car Status"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    value={email}
-                                    onChange={(ev) => setEmail(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Email"
-                                />
-                            </div>
-                            <div>
-                                <DatePicker
-                                    selected={startDate}
-                                    onChange={(date) => setStartDate(date)}
-                                    placeholderText="Start Date"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                />
-                            </div>
-                            <div>
-                                <DatePicker
-                                    selected={endDate}
-                                    onChange={(date) => setEndDate(date)}
-                                    placeholderText="End Date"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="startHour"
-                                    name="startHour"
-                                    type="time"
-                                    value={startTime}
-                                    onChange={(ev) => setStartTime(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Start Hour"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="endHour"
-                                    name="endHour"
-                                    type="time"
-                                    value={endTime}
-                                    onChange={(ev) => setEndTime(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="End Hour"
-                                />
-                            </div>
-                            <div>
-                                <select id="rentalStatus" value={selectedStatus} onChange={handleStatusChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                    <option value="reserved">Reserved</option>
-                                    <option value="ongoing">On going</option>
-                                    <option value="completed">Completed</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="mt-8 text-center">
-                            <p className="text-xl font-bold">Total: {total} DT</p>
-                        </div>
-                        <div className="mt-8 flex justify-end">
-
-                            <button
-                                type="submit"
-                                className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                            >
-                                Rental
-                            </button>
-                            <button
-                                type="button"
-                                className="ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                                onClick={goBack}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
-
     );
 }

@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import { useRouter } from 'next/router';
-import {AiOutlineCalendar, AiOutlineClockCircle, AiOutlineEnvironment, AiOutlineHome, AiOutlineIdcard, AiOutlineMail, AiOutlinePhone, AiOutlineUser} from "react-icons/ai";
-import {FaCar, FaEquals, FaMoneyBillWave} from "react-icons/fa";
+import {AiOutlineClockCircle} from "react-icons/ai";
+import {FaCalendar, FaCar, FaEquals, FaMoneyBillWave} from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useSpring, animated } from 'react-spring';
 import { DateRangePicker } from 'react-dates';
@@ -10,49 +10,41 @@ import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import axios from "axios";
 import {toast} from "react-toastify";
-import Cookies from "js-cookie";
-import jwt from "jsonwebtoken";
-import {io} from 'socket.io-client'
+import 'boxicons/css/boxicons.min.css';
+import { BeatLoader } from "react-spinners";
 
-const socket = io('http://localhost:8000',{transports:['websocket']})
+function ReservationForm() {
 
-function ReservationForm({ id }) {
-
-    const [agencyName, setAgencyName] = useState("");
+    const router = useRouter();
     const [brand, setBrand] = useState("");
+    const [model, setModel] = useState("")
     const [price, setPrice] = useState("");
+    const [livraison, setLivraison] = useState(20)
     const [images, setImages] = useState([]);
+    const [description, setDescription] = useState('')
     const [availabilityDates, setAvailabilityDates] = useState([]);
-    const [carAvailability, setCarAvailability] = useState([]);
     const [reservedDates, setReservedDates] = useState([]);
     const [selectedDates, setSelectedDates] = useState([moment(), moment()]);
     const [selectedStartTime, setSelectedStartTime] = useState('');
     const [selectedReturnTime, setSelectedReturnTime] = useState('');
     const [focusedInput, setFocusedInput] = useState(null);
-    const [name, setName] = useState('');
-    const [firstname, setFirstName] = useState('');
-    const [email, setEmail] = useState('');
-    const [telephone, setTelephone] = useState('');
-    const [numPermis, setNumPermis] = useState('');
-    const [address, setAddress] = useState('');
-    const [city, setCity] = useState('');
-    const [step, setStep] = useState(1);
-    const [clientInfo, setClientInfo] = useState(null);
-    const [newReservations, setNewReservations] = useState([]);
-    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
+    const { id } = router.query;
+
+
 
     useEffect(() => {
         if (id) {
             axios
-                .get('/api/auth/AllCars?id='+id, { withCredentials: true })
+                .get('/api/client/AllCars?id='+id)
                 .then((response) => {
                     const carData = response.data;
-                    setAgencyName(carData.Agency.name);
                     setBrand(carData.brand);
+                    setModel(carData.model);
                     setPrice(carData.price.toString());
+                    setDescription(carData.description);
                     setImages(carData.image ? [carData.image] : []);
                     setAvailabilityDates(carData.availability.map((avail) => new Date(avail.date)));
-                    setCarAvailability(carData.availability);
                     const reservedDates = [];
                     for (const rental of carData.rentals) {
                         let date = new Date(rental.startDate);
@@ -66,17 +58,7 @@ function ReservationForm({ id }) {
                 })
                 .catch((error) => {
                     if (error.response) {
-                        toast.warning('An error occurred while loading data',
-                            {
-                                position: "top-center",
-                                autoClose: 3000,
-                                hideProgressBar: false,
-                                closeOnClick: true,
-                                pauseOnHover: false,
-                                draggable: false,
-                                progress: undefined,
-                                theme: "colored",
-                            });
+                        toast.warning('An error occurred while loading data');
                     }
                 });
         }
@@ -84,506 +66,285 @@ function ReservationForm({ id }) {
 
     const isOutsideRangeStart = (day) => {
         const isBeforeToday = day.isBefore(moment().startOf('day'));
-        const isReserved = reservedDates.some(date =>
+        const isReserved = reservedDates.some((date) =>
             date.getFullYear() === day.year() &&
             date.getMonth() === day.month() &&
             date.getDate() === day.date()
         );
-        const isAvailable = availabilityDates.some(date =>
+        const isAvailable = availabilityDates.some((date) =>
             date.getFullYear() === day.year() &&
             date.getMonth() === day.month() &&
             date.getDate() === day.date()
         );
+
         return isBeforeToday || isReserved || !isAvailable;
     };
 
     const isOutsideRangeEnd = (day) => {
         const isBeforeToday = day.isBefore(moment().startOf('day'));
-        const isReserved = reservedDates.some(date =>
+        const isReserved = reservedDates.some((date) =>
             date.getFullYear() === day.year() &&
             date.getMonth() === day.month() &&
             date.getDate() === day.date()
         );
-        const isAvailable = availabilityDates.some(date =>
-            date.getFullYear() === day.year() &&
-            date.getMonth() === day.month() &&
-            date.getDate() === day.date()
-        );
-        return isBeforeToday || isReserved || !isAvailable;
+
+        if (isReserved) {
+            return true; // Désactive tous les jours après la première date indisponible
+        }
+
+        const startDate = selectedDates.startDate;
+        const maxEndDate = moment(startDate).add(1, 'year'); // Date de fin maximale (1 an après la date de début choisie)
+        const currentDate = moment(startDate);
+        while (currentDate.isSameOrBefore(maxEndDate, 'day')) {
+            const currentDay = currentDate.toDate();
+            const isAvailable = availabilityDates.some((date) =>
+                date.getFullYear() === currentDay.getFullYear() &&
+                date.getMonth() === currentDay.getMonth() &&
+                date.getDate() === currentDay.getDate()
+            );
+
+            if (!isAvailable) {
+                break; // Arrête la boucle si on atteint la première date indisponible
+            }
+
+            if (currentDay.getFullYear() === day.year() &&
+                currentDay.getMonth() === day.month() &&
+                currentDay.getDate() === day.date()) {
+                return false; // Le jour est disponible et ne doit pas être désactivé
+            }
+
+            currentDate.add(1, 'day'); // Passe au jour suivant
+        }
+
+        return true; // Désactive tous les jours après la première date indisponible
     };
 
 
-    useEffect(() => {
-        const userToken = Cookies.get('token'); // Vérifiez le nom de votre cookie contenant le JWT
-        if (userToken) {
-            try {
-                const decodedToken = jwt.decode(userToken);
-                if (decodedToken) {
-                    setClientInfo(decodedToken);
-                    setName(decodedToken.name);
-                    setFirstName(decodedToken.firstname);
-                    setEmail(decodedToken.email);
-                    setNumPermis(decodedToken.numPermis);
-                    setTelephone(decodedToken.telephone);
-                    setAddress(decodedToken.address);
-                    setCity(decodedToken.city);
-                }
 
-            } catch (error) {
-                console.log('Erreur de décodage du JWT :', error);
-            }
-        }
-    }, []);
 
     const calculatePrice = () => {
         const pricePerDay = parseFloat(price);
         const differenceInDays = selectedDates.endDate
             ? (selectedDates.endDate.diff(selectedDates.startDate, 'days') )
             : 0;
-        const totalPrice = pricePerDay * differenceInDays;
-
+        const totalPrice = pricePerDay * differenceInDays + livraison; // Ajout du coût de la livraison
         return totalPrice.toFixed(1);
     };
-
-    const handleNextStep = () => {
-        setStep(step + 1);
-    };
-
-    const handlePreviousStep = () => {
-        setStep(step - 1);
-    };
+    const totalPrice = calculatePrice();
 
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const data = {
+    function generateTimeOptions(startHour, endHour, interval) {
+        const options = [];
 
-            carId: id,
-            email,
-            startDate: selectedDates.startDate.format(),
-            endDate: selectedDates.endDate.format(),
-            startTime: selectedStartTime,
-            endTime: selectedReturnTime,
-            total: parseFloat(calculatePrice()),
-            status: 'reserved',
-        };
-        try {
-            const response = await axios.post(`/api/client/reservation/`, { ...data, id }, { withCredentials: true });
-            if (response.status === 201) {
-                const reservationId = response.data.id; // Récupérez l'ID de la réservation depuis la réponse
-                socket.emit('newReservation', { id: reservationId, ...data });
-                await router.push('/client/ManageReservations');
-            } else {
-                console.error('Error creating rental:', response);
+        for (let hour = startHour; hour <= endHour; hour++) {
+            for (let minute = 0; minute < 60; minute += interval) {
+                const formattedHour = hour.toString().padStart(2, '0');
+                const formattedMinute = minute.toString().padStart(2, '0');
+                const time = `${formattedHour}:${formattedMinute}`;
+                options.push(
+                    <option key={time} value={time}>
+                        {time}
+                    </option>
+                );
             }
-        } catch (error) {
-            console.error('Error creating rental:', error);
         }
+
+        return options;
+    }
+    const goStep2 = () => {
+        setIsLoading(true);
+        const query = `pickupDate=${selectedDates.startDate.format('YYYY-MM-DD')}&returnDate=${selectedDates.endDate.format('YYYY-MM-DD')}&pickupTime=${selectedStartTime}&returnTime=${selectedReturnTime}&totalPrice=${totalPrice}`;
+        router.push(`/reservations/new/step2?id=${id}&${query}`);
     };
 
-    socket.on("newReservation",(data) =>{
-        console.log(data)
-    })
-
-
-    const ProgressBar = ({ step }) => {
-        const totalSteps = 3;
-        const progress = (step / totalSteps) * 100;
-
-        return (
-            <div className=" w-full bg-gray-200 rounded h-2">
-                <div
-                    className="h-full text-center text-xs text-white bg-blue-500 rounded"
-                    style={{ width: `${progress}%` }}
-                ></div>
-            </div>
-        );
-    };
-    const fade = useSpring({
-        from: { opacity: 3 },
-        to: { opacity: 6 },
-        delay: 600,
-    });
+    const isDataComplete =   selectedDates.startDate && selectedDates.endDate && selectedStartTime && selectedReturnTime;
 
     return(
-        <form onSubmit={handleSubmit} className="mt-20 w-full mx-auto  p-6 rounded ">
-            <ProgressBar step={step} />
-            <div className="mt-4 text-center text-blue-600"> Etape {step}/3</div>
-            {step === 1 && (
-                <>
 
-                    <div className="mt-2 max-w-3xl mx-auto  p-6 rounded ">
-                        <div className="mt-6 mx-auto flex flex-col md:flex-row">
-
-                            <div className="-mt-4 md:w-1/2">
-                                {images.length > 0 ? (
-                                    <img src={images[0]} alt="Car" className="w-full h-auto mb-6" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
-                                        <span className="text-gray-500 text-lg"><img src="/placeholder.png" alt="img"/></span>
-                                    </div>
-                                )}
-                                <div className="bg-white p-5 rounded-lg shadow-lg flex flex-wrap justify-between items-start">
-                                    <div className="flex items-center  p-2 rounded-lg  mb-8 w-full md:w-auto md:flex-3">
-                                        <FaCar size={20} className="text-blue-500" />
-                                        <div className="ml-4">
-                                            <p className="text-xl text-blue-700 font-bold">{brand}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center  p-2 rounded-lg  mb-6 w-full md:w-auto md:flex-2">
-                                        <FaMoneyBillWave size={20} className="text-blue-500" />
-                                        <div className="ml-4">
-                                            <p className="text-xl text-blue-700 font-bold">{price} DT</p>
-                                        </div>
-                                    </div>
-
-                                    <motion.div
-                                        className=" flex items-center  p-2 rounded-lg shadow w-full md:w-auto md:flex-2"
-                                        initial={{opacity: 0, y: -100}}
-                                        animate={{opacity: 20, y: 0}}
-                                        transition={{type: 'spring', stiffness: 90}}
-                                    >
-                                        <FaEquals size={20} className="text-green-400" />
-                                        <div className="ml-4">
-                                            <p className="text-xl text-green-400 font-bold">{calculatePrice()} DT</p>
-                                        </div>
-                                    </motion.div>
-                                </div>
-
-                            </div>
-                            <div className="mt-12 md:w-1/2 md:pl-12">
-                                <animated.div style={fade} className="-mt-8 mb-12 bg-blue-100 p-6 rounded-lg shadow">
-                                    <DateRangePicker
-                                        startDate={selectedDates.startDate}
-                                        startDateId="start_date_id"
-                                        endDate={selectedDates.endDate}
-                                        endDateId="end_date_id"
-                                        onDatesChange={({ startDate, endDate }) => setSelectedDates({ startDate, endDate })}
-                                        focusedInput={focusedInput}
-                                        onFocusChange={(focusedInput) => setFocusedInput(focusedInput)}
-                                        numberOfMonths={1}
-                                        isOutsideRange={focusedInput === 'startDate' ? isOutsideRangeStart : isOutsideRangeEnd}
-                                    />
-                                </animated.div>
-                                <animated.div style={fade} className="mb-8 bg-blue-100 p-6 rounded-lg shadow">
-                                    <div className="flex justify-between mb-6">
-                                        <div className="w-1/2 pr-3">
-                                            <div className="flex items-center mb-2">
-                                                <AiOutlineCalendar className="mr-2" />
-                                                <label className="text-gray-700">StartDate :</label>
-                                            </div>
-                                            <input
-                                                type="text"
-                                                value={selectedDates.startDate ? selectedDates.startDate.format('DD/MM/YYYY') : ''}
-                                                readOnly
-                                                className="w-full px-4 py-2 border border-gray-300 rounded"
-                                            />
-                                        </div>
-                                        <div className="w-1/2 pl-2">
-                                            <div className="flex items-center mb-2">
-                                                <AiOutlineCalendar className="mr-2" />
-                                                <label className="text-gray-700">EndDate :</label>
-                                            </div>
-                                            <input
-                                                type="text"
-                                                value={selectedDates.endDate ? selectedDates.endDate.format('DD/MM/YYYY') : ''}
-                                                readOnly
-                                                className="w-full px-4 py-2 border border-gray-300 rounded"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <div className="w-1/2 pr-2">
-                                            <div className="flex items-center mb-2">
-                                                <AiOutlineClockCircle className="mr-2" />
-                                                <label className="text-gray-700">Start time :</label>
-                                            </div>
-                                            <input
-                                                type="time"
-                                                value={selectedStartTime}
-                                                onChange={(event) => setSelectedStartTime(event.target.value)}
-                                                required
-                                                className="w-full px-4 py-2 border border-gray-300 rounded"
-                                            />
-                                        </div>
-                                        <div className="w-1/2 pl-2">
-                                            <div className="flex items-center mb-2">
-                                                <AiOutlineClockCircle className="mr-2" />
-                                                <label className="text-gray-700">End time :</label>
-                                            </div>
-                                            <input
-                                                type="time"
-                                                value={selectedReturnTime}
-                                                onChange={(event) => setSelectedReturnTime(event.target.value)}
-                                                required
-                                                className="w-full px-4 py-2 border border-gray-300 rounded"
-                                            />
-                                        </div>
-                                    </div>
-                                </animated.div>
-                            </div>
-                        </div>
-
-
-
-                        <button
-                            type="button"
-                            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                            onClick={handleNextStep}
-                        >
-                            Suivant
-                        </button>
-                    </div>
-                </>
-            )}
-
-            {step === 2 && (
-                <div>
-                    {clientInfo && (
-                        <>
-
-                            <div className="mt-10 max-w-3xl mx-auto  p-6 rounded shadow-xl">
-                                <h3 className=" text-center mb-4">Informations personnelles</h3>
-
-                                <div className="flex flex-wrap -mx-2 mb-4">
-                                    <div className="w-full sm:w-1/2 px-2 mb-4">
-                                        <div className="relative">
-                                            <input
-                                                type="text"
-                                                value={name}
-                                                onChange={(event) => setName(event.target.value)}
-                                                required
-                                                placeholder="Enter your name"
-                                                className="w-full px-4 py-2 border border-gray-300 rounded pl-10"
-                                            />
-                                            <AiOutlineUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-600" />
-                                        </div>
-                                    </div>
-                                    <div className="w-full sm:w-1/2 px-2 mb-4">
-                                        <div className="relative">
-                                            <input
-                                                type="text"
-                                                value={firstname}
-                                                onChange={(event) => setFirstName(event.target.value)}
-                                                required
-                                                placeholder="Enter your first name"
-                                                className="w-full px-4 py-2 border border-gray-300 rounded pl-10"
-                                            />
-                                            <AiOutlineUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-600" />
-                                        </div>
-                                    </div>
-                                    <div className="w-full px-2 mb-4">
-                                        <div className="relative">
-                                            <input
-                                                type="email"
-                                                value={email}
-                                                onChange={(event) => setEmail(event.target.value)}
-                                                required
-                                                placeholder="Enter your email"
-                                                className="w-full px-4 py-2 border border-gray-300 rounded pl-10"
-                                            />
-                                            <AiOutlineMail className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-600" />
-                                        </div>
-                                    </div>
-                                    <div className="w-full px-2 mb-4">
-                                        <div className="relative">
-                                            <input
-                                                type="tel"
-                                                value={telephone}
-                                                onChange={(event) => setTelephone(event.target.value)}
-                                                required
-                                                placeholder="Enter your phone number"
-                                                className="w-full px-4 py-2 border border-gray-300 rounded pl-10"
-                                            />
-                                            <AiOutlinePhone className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-600" />
-                                        </div>
-                                    </div>
-                                    <div className="w-full px-2 mb-4">
-                                        <div className="relative">
-                                            <input
-                                                type="text"
-                                                value={address}
-                                                onChange={(event) => setAddress(event.target.value)}
-                                                required
-                                                placeholder="Enter your address"
-                                                className="w-full px-4 py-2 border border-gray-300 rounded pl-10"
-                                            />
-                                            <AiOutlineHome className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-600" />
-                                        </div>
-                                    </div>
-                                    <div className="w-full px-2 mb-4">
-                                        <div className="relative">
-                                            <input
-                                                type="text"
-                                                value={city}
-                                                onChange={(event) => setCity(event.target.value)}
-                                                required
-                                                placeholder="Enter your city"
-                                                className="w-full px-4 py-2 border border-gray-300 rounded pl-10"
-                                            />
-                                            <AiOutlineEnvironment className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-600" />
-                                        </div>
-                                    </div>
-                                    <div className="w-full px-2 mb-4">
-                                        <div className="relative">
-                                            <input
-                                                type="text"
-                                                value={numPermis}
-                                                onChange={(event) => setNumPermis(event.target.value)}
-                                                required
-                                                placeholder="Enter your driver's license number"
-                                                className="w-full px-4 py-2 border border-gray-300 rounded pl-10"
-                                            />
-                                            <AiOutlineIdcard className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-600" />
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <div className="flex justify-between">
-                                    <button
-                                        type="button"
-                                        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                                        onClick={handlePreviousStep}
-                                    >
-                                        Précédent
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                                        onClick={handleNextStep}
-                                    >
-                                        Suivant
-                                    </button>
-                                </div>
-                            </div>
-                        </>
-                    )}
+        <div className="flex">
+            <div className="flex-grow flex flex-col space-y-5 mt-4 ml-16 mr-8">
+                <div className="uppercase mt-4 mb-4 text-black text-xl font-extrabold">
+                    <h1>CHOOSE YOUR OPTIONS</h1>
                 </div>
-            )}
+                <div className="bg-white p-5 rounded-lg shadow-lg">
+                    <p>Add dates to see the price.</p>
+                    <div className="flex flex-row justify-center items-center mt-4 mb-4 rounded-lg">
+                        <DateRangePicker
+                            startDate={selectedDates.startDate}
+                            startDateId="start_date_id"
+                            endDate={selectedDates.endDate}
+                            endDateId="end_date_id"
+                            onDatesChange={({ startDate, endDate }) => setSelectedDates({ startDate, endDate })}
+                            focusedInput={focusedInput}
+                            onFocusChange={(focusedInput) => setFocusedInput(focusedInput)}
+                            numberOfMonths={1}
+                            isOutsideRange={focusedInput === 'startDate' ? isOutsideRangeStart : isOutsideRangeEnd}
+                            dayClassName={({ date }) => {
+                                const isSelected =
+                                    selectedDates.startDate &&
+                                    selectedDates.endDate &&
+                                    date.isSameOrAfter(selectedDates.startDate) &&
+                                    date.isSameOrBefore(selectedDates.endDate);
+                                const isStartDay = selectedDates.startDate && date.isSame(selectedDates.startDate, 'day');
+                                const isEndDay = selectedDates.endDate && date.isSame(selectedDates.endDate, 'day');
+                                const isInRange =
+                                    selectedDates.startDate &&
+                                    selectedDates.endDate &&
+                                    date.isAfter(selectedDates.startDate) &&
+                                    date.isBefore(selectedDates.endDate);
 
+                                const classNames = ['DateRangePicker__day'];
+                                if (isSelected) classNames.push('DateRangePicker__day--selected');
+                                if (isStartDay) classNames.push('DateRangePicker__day--start');
+                                if (isEndDay) classNames.push('DateRangePicker__day--end');
+                                if (isInRange) classNames.push('DateRangePicker__day--in-range');
 
-            {step === 3 && (
-                <>
-
-                    <h3 className="mt-12 text-center mb-6 text-lg font-bold">Recapitulatif</h3>
-                    <div className="mt-4  flex justify-between items-center  p-2 rounded-lg shadow">
-                        <h3 className="  text-2xl text-black font-semibold">Agence</h3>
-                        <p className="text-2xl text-black font-bold">{agencyName} </p>
+                                return classNames.join(' ');
+                            }}
+                        />
                     </div>
-                    <div className="mt-12 max-w-4xl mx-auto p-6 rounded ">
-                        <div className="flex flex-col max-w-4xl md:flex-row">
-                            <div className="-mt-2 md:w-1/3">
-                                <img src={images} alt="" className="w-full h-auto mb-4 rounded" />
-                            </div>
-                            <div className="-mt-3 md:w-2/3 md:pl-4">
-
-                                <div className="flex flex-wrap -mx-2">
-                                    <div className="w-full md:w-1/2 p-2">
-                                        <div className="border p-4 rounded shadow">
-                                            <h4 className="font-semibold mb-2">Prix initial:</h4>
-                                            <p className="text-lg">{price} DT</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full md:w-1/2 p-2">
-                                        <div className="border p-4 rounded shadow">
-                                            <h4 className="font-semibold mb-2">Dates de réservation:</h4>
-                                            <p className="text-lg">  {selectedDates.startDate ? selectedDates.startDate.format('MM/DD/YYYY') : '...'} -
-                                                {selectedDates.endDate ? selectedDates.endDate.format('MM/DD/YYYY') : '...'}</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full md:w-1/2 p-2">
-                                        <div className="border p-4 rounded shadow">
-                                            <h4 className="font-semibold mb-2">Heure de départ:</h4>
-                                            <p className="text-lg">{selectedStartTime}</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full md:w-1/2 p-2">
-                                        <div className="border p-4 rounded shadow">
-                                            <h4 className="font-semibold mb-2">Heure de retour:</h4>
-                                            <p className="text-lg">{selectedReturnTime}</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full md:w-1/2 p-2">
-                                        <div className="border p-4 rounded shadow">
-                                            <h4 className="font-semibold mb-2">Nom:</h4>
-                                            <p className="text-lg">{name}</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full md:w-1/2 p-2">
-                                        <div className="border p-4 rounded shadow">
-                                            <h4 className="font-semibold mb-2">Prénom:</h4>
-                                            <p className="text-lg">{firstname}</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full md:w-1/2 p-2 ">
-                                        <div className="border p-4 rounded shadow">
-                                            <h4 className="font-semibold mb-2 ">Email:</h4>
-                                            <p className="text-lg">{email}</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full md:w-1/2 p-2">
-                                        <div className="border p-4 rounded shadow">
-                                            <h4 className="font-semibold mb-2">Téléphone:</h4>
-                                            <p className="text-lg">{telephone}</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full md:w-1/2 p-2">
-                                        <div className="border p-4 rounded shadow">
-                                            <h4 className="font-semibold mb-2">Adresse:</h4>
-                                            <p className="text-lg">{address}</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full md:w-1/2 p-2">
-                                        <div className="border p-4 rounded shadow">
-                                            <h4 className="font-semibold mb-2">Ville:</h4>
-                                            <p className="text-lg">{city}</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full md:w-1/2 p-2">
-                                        <div className="border p-4 rounded shadow">
-                                            <h4 className="font-semibold mb-2">Numéro de permis de conduire:</h4>
-                                            <p className="text-lg">{numPermis}</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full md:w-1/2 p-2">
-                                        <div className="border p-4 rounded shadow">
-                                            <h4 className="font-semibold mb-2">Marque:</h4>
-                                            <p className="text-lg">{brand}</p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full p-2">
-                                        <div className="border p-4 rounded shadow">
-                                            <h4 className="font-semibold mb-2">Total:</h4>
-                                            <p className="text-lg text-green-600 ">{calculatePrice()} DT</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                </div>
+                <div className="bg-white p-5 rounded-lg shadow-lg">
+                    <h2 className="mb-4">Select time</h2>
+                    <div className="flex flex-row items-center mt-2">
+                        <div className="flex items-center">
+                            <AiOutlineClockCircle className="mr-2 text-blue-500"/>
+                            <label className="text-gray-700 mr-2">Start time:</label>
                         </div>
-
-                        <div className="mt-4 flex justify-between">
-                            <button
-                                type="button"
-                                className="mr-20 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                                onClick={handlePreviousStep}
-                            >
-                                Précédent
-                            </button>
-                            <button
-                                type="button"
-                                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                                onClick={handleSubmit}
-                            >
-                                Valider
-                            </button>
+                        <select
+                            value={selectedStartTime}
+                            onChange={(event) => setSelectedStartTime(event.target.value)}
+                            required
+                            className="appearance-none w-32 bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                        >
+                            <option value="">-- --</option>
+                            {generateTimeOptions(8, 22, 15)}
+                        </select>
+                        <div className="flex items-center ml-4">
+                            <AiOutlineClockCircle className="mr-2 text-blue-500"/>
+                            <label className="text-gray-700 mr-2">End time:</label>
+                        </div>
+                        <select
+                            value={selectedReturnTime}
+                            onChange={(event) => setSelectedReturnTime(event.target.value)}
+                            required
+                            className="appearance-none w-32 bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline text-center"
+                        >
+                            <option value="">-- --</option>
+                            {generateTimeOptions(8, 22, 15)}
+                        </select>
+                    </div>
+                    <div className=" mt-8 flex text-justify text-sm">
+                        <p>
+                            Dear user, please note that it is imperative to
+                            specify the exact hours for your rental.
+                            We kindly ask you to provide precise details of the
+                            start and end times of your rental period.
+                        </p>
+                    </div>
+                </div>
+                <div className="uppercase mt-4 mb-4 text-black text-xl font-extrabold">
+                    <h1>description</h1>
+                </div>
+                <div className="bg-white h-48 p-5 rounded-lg shadow-lg">
+                    <div className="flex flex-col h-full">
+                        <div className="overflow-auto">
+                            <p className="text-justify mt-4">{description}</p>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div className="flex-grow-0 mr-16">
+                <div className="bg-white p-8 rounded-lg shadow-lg">
+                    <div className="uppercase text-center mt-4 mb-4 text-black text-xl font-extrabold">
+                        <h2>Your order</h2>
+                    </div>
+                    <div className=" justify-items-center mt-4 w-full h-full">
+                        {images.length > 0 ? (
+                            <img src={images[0]} alt="Car" className="max-w-56 max-h-56 mb-4 rounded-lg" />
+                        ) : (
+                            <div className="max-w-56 max-h-56 flex items-center justify-center bg-gray-200 rounded-lg">
+                                <img src="/placeholder.png" alt="img" className="w-1/2" />
+                            </div>
+                        )}
+                        <div className="mt-4 flex items-center">
+                            <FaCar size={20} className="text-blue-500" />
+                            <p className="ml-2 text-xl text-blue-700 font-bold">{brand}</p>
+                        </div>
+                        <div className="flex flex-col mb-4">
+                            <p className="ml-2 text-sm">{model}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center">
+                        <FaCalendar size={20} className="text-blue-500" />
+                        <div className="h-4 mx-2"></div>
+                        <p className="text-lg">Options selected </p>
+                    </div>
+                    <div className="flex items-center mt-4">
+                        <i className=' text-blue-500 bx bx-map'></i>
+                        <div className="border-l h-8 mx-2"></div>
+                        <p className="text-xl">
+                            {selectedDates.startDate ? moment(selectedDates.startDate).format('DD MMMM') : ''}, {selectedStartTime}
+                        </p>
+                    </div>
+                    <div className="flex items-center">
+                        <i className='text-blue-500 bx bxs-map-pin'></i>
+                        <div className="border-l h-8 mx-2"></div>
+                        <p className="text-xl">
+                            {selectedDates.endDate ? moment(selectedDates.endDate).format('DD MMMM') : ''}, {selectedReturnTime}
+                        </p>
+                    </div>
+                    <hr className="my-4" />
+                    <h3 className="text-lg text-black font-extrabold  mb-2">Trajets :</h3>
+                    <div className="flex flex-col">
+                        <p className="mt-2 text-gray-600 flex items-center">
+                            Delivery and collection : {livraison} <FaMoneyBillWave size={20} className="ml-4 text-blue-500" />
+                        </p>
+                        <p className="mt-2 text-gray-600 flex items-center">
+                            Vehicle location : {price}  <FaMoneyBillWave size={20} className="ml-4 text-blue-500" />
+                        </p>
+                    </div>
 
-                </>
-            )}
-        </form>
+                    <hr className="my-4" />
+                    <div className="flex flex-col">
+                        <motion.div
+                            className="flex items-center p-2 rounded-lg w-full"
+                            initial={{ opacity: 0, y: -100 }}
+                            animate={{ opacity: 20, y: 0 }}
+                            transition={{ type: 'spring', stiffness: 90 }}
+                        >
+                            <h3 className="text-lg text-black font-extrabold mt-2 mb-2 mr-4">TOTAL </h3>
+                            <FaEquals size={20} className="text-blue-400" />
+                            <div className="ml-4">
+                                <p className="text-xl text-blue-400 font-bold">{calculatePrice()} DT</p>
+                            </div>
+                        </motion.div>
+                        <motion.div
+                            className="flex justify-center mt-4 mb-4"
+                            initial={{ opacity: 0, y: -100 }}
+                            animate={{ opacity: 20, y: 0 }}
+                            transition={{ type: 'spring', stiffness: 90 }}
+                        >
+                            <button
+                                onClick={goStep2}
+                                className={`uppercase w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500 ${!isDataComplete ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                disabled={!isDataComplete}
+                            >
+                                {isLoading ? "Ongoing..." : "Continue"}
+                                {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
+                            </button>
+                        </motion.div>
+                        <div className="flex text-justify text-sm">
+                            <p>Une caution de 300€ sera demandée automatiquement le jour de votre location</p>
+                        </div>
+                        <div className="flex text-justify text-sm">
+                            <p>Cette somme sera libérée 7 jours après le retour du véhicule sous réserve
+                                que les conditions générales de location aient été respectées</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
 

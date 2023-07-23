@@ -70,6 +70,10 @@ const SearchResultsPage = () => {
     // Convertir les résultats de recherche en objet JavaScript
     const searchResults = JSON.parse(cars);
 
+    function goReservations(id) {
+        router.push(`/reservations/new/step1?id=${id}`);
+    }
+
     return (
         <section id="models-main">
             <div className="py-8 px-8 lg:px-32 lg:py-16 my-8">
@@ -121,9 +125,9 @@ const SearchResultsPage = () => {
                                     <hr className="border border-lighter-grey" />
                                 </div>
                                 <div className="flex space-x-4">
-                                    <Link href={`/client/Reservations/new/${car.id}`} className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full">
+                                    <button onClick={() => goReservations(car.id)} className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full">
                                         Book now
-                                    </Link>
+                                    </button>
                                     <button
                                         onClick={() => openModal(car)}
                                         className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full"

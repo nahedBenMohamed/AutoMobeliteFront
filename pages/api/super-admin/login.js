@@ -15,13 +15,13 @@ export default async function handle(req, res) {
 
     // Verify if the user exists
     if (!agencyUser) {
-        return res.status(401).json({ error: 'Incorrect email or password.' });
+        return res.status(401).json({ error: 'User not found.' });
     }
 
     // Verify the password
     const passwordMatch = await bcrypt.compare(password, agencyUser.password);
     if (!passwordMatch) {
-        return res.status(401).json({ error: 'Incorrect email or password.' });
+        return res.status(401).json({ error: 'Incorrect password.' });
     }
 
     // Generate a token for the user after verification of the data
@@ -30,7 +30,7 @@ export default async function handle(req, res) {
             agencyUserId: agencyUser.id,
             role: agencyUser.role,
             name: agencyUser.name,
-            firstname:agencyUser.firstname,
+            firstname: agencyUser.firstname,
         },
         process.env.JWT_SECRET,
         { expiresIn: '5h' }
@@ -40,9 +40,10 @@ export default async function handle(req, res) {
     setCookie({ res }, 'token', token, {
         httpOnly: true,
         path: '/',
-        maxAge: 5*3600, // Cookie's lifetime in seconds
+        maxAge: 5 * 3600, // Cookie's lifetime in seconds
     });
 
     // Return the response with the user's role
-    return res.status(200).json({  message: 'Successful login', role: agencyUser.role });
+    return res.status(200).json({ message: 'Successful login', role: agencyUser.role });
 }
+

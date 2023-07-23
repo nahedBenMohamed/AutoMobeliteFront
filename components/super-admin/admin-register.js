@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import {HiEye, HiEyeOff, HiLockClosed, HiMail, HiUser} from "react-icons/hi";
 import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import {BeatLoader} from "react-spinners";
 
 const RegisterAdmin = () => {
 
@@ -14,64 +15,34 @@ const RegisterAdmin = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordVisible, setPasswordVisible]= useState();
     const [goToAdmin, setGoToAdmin] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setIsLoading(true);
 
         // Vérification des données côté client (facultatif)
         if (!name || !firstname || !email || !password || !confirmPassword) {
-            toast.error('Please complete all fields.', {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            })
+            toast.error('Please complete all fields.')
+            setIsLoading(false);
             return;
         }
         if (password !== confirmPassword) {
-            toast.error('Passwords do not match', {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            })
+            toast.error('Passwords do not match')
+            setIsLoading(false);
             return;
         }
 
         if (password.length < 8) {
-            toast.warning('Password must be at least 8 characters', {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            })
+            toast.warning('Password must be at least 8 characters')
+            setIsLoading(false);
             return;
         }
 
         const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*]).{8,}$/;
         if (!passwordRegex.test(password)) {
-            toast.warning('The password must contain at least one uppercase letter, one lowercase letter, one number and one special character', {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            })
+            toast.warning('The password must contain at least one uppercase letter, one lowercase letter, one number and one special character')
+            setIsLoading(false);
             return;
         }
 
@@ -85,55 +56,29 @@ const RegisterAdmin = () => {
             });
 
             if (response.ok) {
-                toast.success('User has been registered successfully!', {
-                    position: "top-center",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+                toast.success('User has been registered successfully!');
+                setIsLoading(false);
                 setTimeout(() => {
                     setGoToAdmin(true);
                 }, 2000);
 
             }  else {
                 const errorData = await response.json();
-                toast.error(errorData.message, {
-                    position: "top-center",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
-
+                toast.error(errorData.message);
+                setIsLoading(false);
             }
         } catch (errorData) {
-            toast.success(errorData.message, {
-                position: "top-center",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.success(errorData.message);
+            setIsLoading(false);
         }
     };
 
     if (goToAdmin) {
-        router.push("/super-admin/dashboard/manage-admin");
+        router.push("/super-admin/dashboard/manage");
     }
 
     function goBack (){
-        router.push('/super-admin/dashboard/manage-admin')
-        return null
+        router.push('/super-admin/dashboard/manage')
     }
 
     return (
@@ -141,7 +86,7 @@ const RegisterAdmin = () => {
             <ToastContainer
                 position="top-center"
                 autoClose={3000}
-                hideProgressBar={false}
+                hideProgressBar={true}
                 newestOnTop
                 closeOnClick={true}
                 rtl={false}
@@ -242,16 +187,17 @@ const RegisterAdmin = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="mt-8">
+                        <div className="mt-8 flex justify-end">
                             <button
                                 type="submit"
-                                className="w-1/2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                className="uppercase w-1/2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             >
-                                Create Admin account
+                                {isLoading ? "Wait" : "Create Admin"}
+                                {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
                             </button>
                             <button
                                 type="button"
-                                className="ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                className="uppercase ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
                                 onClick={goBack}
                             >
                                 Cancel

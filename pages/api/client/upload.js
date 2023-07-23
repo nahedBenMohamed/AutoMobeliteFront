@@ -2,25 +2,10 @@ import multiparty from 'multiparty';
 import fs from 'fs';
 import path from 'path';
 import prisma from "@/lib/prisma";
-import jwt from 'jsonwebtoken';
-import { parseCookies } from 'nookies';
 
 export default async function handle(req, res) {
     const form = new multiparty.Form();
-
-    // Get the token from the cookie
-    const { token } = parseCookies({ req });
-
-    let payload;
-    try {
-        // Verify the token
-        payload = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (error) {
-        return res.status(401).json({ error: 'Invalid token' });
-    }
-
-    // Use the id from the token
-    const clientId = payload.clientId;
+    const { clientId } = req.query;
 
     try {
         // Parse the incoming form data
@@ -37,13 +22,12 @@ export default async function handle(req, res) {
         // Define the target path where the file will be saved
         const targetPath = path.join(process.cwd(), '/public/client/', fileName);
 
-
         // Move the file to the target path
         fs.renameSync(tempPath, targetPath);
 
-        // Update the car record in the database with the filename of the uploaded image
+        // Update the client record in the database with the filename of the uploaded image
         await prisma.client.update({
-            where: { id: clientId },
+            where: { id: parseInt(clientId) },
             data: { image: fileName },
         });
 

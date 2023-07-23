@@ -1,8 +1,14 @@
-import React from "react";
-import Link from "next/link";
+import React, {useState} from "react";
+import {useRouter} from "next/router";
+import {BeatLoader} from "react-spinners";
 
 const Modal = ({ onClose, car }) => {
-
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
+    function goReservations(id) {
+        setIsLoading(true)
+        router.push(`/reservations/new/step1?id=${id}`);
+    }
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-auto">
             <div className=" inset-0 bg-black opacity-50" onClick={onClose}></div>
@@ -33,7 +39,7 @@ const Modal = ({ onClose, car }) => {
                         <div className="flex justify-between">
                             <button
                                 onClick={onClose}
-                                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                                className="bg-blue-500 text-white py-2 px-4 rounded  hover:bg-red-500"
                             >
                                 Close
                             </button>
@@ -50,9 +56,10 @@ const Modal = ({ onClose, car }) => {
                             <p><span className="font-bold">Status:</span>&nbsp;{car.status}</p>
                             <p><span className="font-bold">Parking:</span>&nbsp;{car.parkingName}</p>
                             <p><span className="font-bold">Agency:</span>&nbsp;{car.Agency?.name}</p>
-                            <Link href={`/client/Reservations/new/${car.id}`} className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full hover:bg-green-500">
-                                Book now
-                            </Link>
+                            <button onClick={() => goReservations(car.id)} className="block text-center bg-blue-600 p-2 hover:bg-green-500 font-bold text-white rounded w-full">
+                                {isLoading ? "Book now..." : "Book now"}
+                                {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ import Sidebar from "@/components/admin/Sidebar";
 import Navbar from "@/components/admin/Navbar";
 import {protectRoute} from "@/utils/auth";
 import RentalForm from "@/components/admin/RentalForm";
+import Footer from "@/components/admin/Footer";
 
 
 
@@ -26,7 +27,7 @@ export default function EditCar({session}){
     return(
 
         <main>
-            <Sidebar />
+            <Sidebar session={session} />
             <section id="content">
                 <Navbar session={session} />
                 <div style={{
@@ -36,7 +37,6 @@ export default function EditCar({session}){
                         <RentalForm {...carInfo}/>
                     )}
                 </div>
-
             </section>
         </main>
 

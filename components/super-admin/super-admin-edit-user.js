@@ -50,7 +50,7 @@ const EditUser = ({id}) => {
                             {
                                 position: "top-center",
                                 autoClose: 3000,
-                                hideProgressBar: false,
+                                hideProgressBar: true,
                                 closeOnClick: true,
                                 pauseOnHover: false,
                                 draggable: false,
@@ -70,7 +70,7 @@ const EditUser = ({id}) => {
             toast.error('Please complete all fields.', {
                 position: "top-center",
                 autoClose: 3000,
-                hideProgressBar: false,
+                hideProgressBar: true,
                 closeOnClick: false,
                 pauseOnHover: true,
                 draggable: false,
@@ -94,7 +94,7 @@ const EditUser = ({id}) => {
             toast.error('Please enter a valid Tunisian phone number.', {
                 position: "top-center",
                 autoClose: 3000,
-                hideProgressBar: false,
+                hideProgressBar: true,
                 closeOnClick: false,
                 pauseOnHover: true,
                 draggable: false,
@@ -129,7 +129,7 @@ const EditUser = ({id}) => {
             toast.success('The User has been successfully registered!', {
                 position: "top-center",
                 autoClose: 2000,
-                hideProgressBar: false,
+                hideProgressBar: true,
                 closeOnClick: false,
                 pauseOnHover: true,
                 draggable: false,
@@ -147,7 +147,7 @@ const EditUser = ({id}) => {
                     toast.warning('Please provide an admin ID.', {
                         position: "top-center",
                         autoClose: 3000,
-                        hideProgressBar: false,
+                        hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnHover: false,
                         draggable: false,
@@ -158,7 +158,7 @@ const EditUser = ({id}) => {
                     toast.warning('Admin not found.', {
                         position: "top-center",
                         autoClose: 3000,
-                        hideProgressBar: false,
+                        hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnHover: false,
                         draggable: false,
@@ -169,7 +169,7 @@ const EditUser = ({id}) => {
                     toast.warning('Invalid agency name.', {
                         position: "top-center",
                         autoClose: 3000,
-                        hideProgressBar: false,
+                        hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnHover: false,
                         draggable: false,
@@ -180,7 +180,7 @@ const EditUser = ({id}) => {
                     toast.warning('The specified agency already has a responsible.', {
                         position: "top-center",
                         autoClose: 3000,
-                        hideProgressBar: false,
+                        hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnHover: false,
                         draggable: false,
@@ -191,7 +191,7 @@ const EditUser = ({id}) => {
                     toast.warning('An agency name is required when the admin is responsible for an agency.', {
                         position: "top-center",
                         autoClose: 3000,
-                        hideProgressBar: false,
+                        hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnHover: false,
                         draggable: false,
@@ -204,7 +204,7 @@ const EditUser = ({id}) => {
                     toast.warning(errorMessage, {
                         position: "top-center",
                         autoClose: 3000,
-                        hideProgressBar: false,
+                        hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnHover: false,
                         draggable: false,
@@ -216,7 +216,7 @@ const EditUser = ({id}) => {
                 toast.error('An error occurred. Please try again later', {
                     position: "top-center",
                     autoClose: 3000,
-                    hideProgressBar: false,
+                    hideProgressBar: true,
                     closeOnClick: true,
                     pauseOnHover: false,
                     draggable: false,
@@ -243,7 +243,7 @@ const EditUser = ({id}) => {
                         {
                             position: "top-center",
                             autoClose: 3000,
-                            hideProgressBar: false,
+                            hideProgressBar: true,
                             closeOnClick: true,
                             pauseOnHover: false,
                             draggable: false,
@@ -255,7 +255,7 @@ const EditUser = ({id}) => {
                         {
                             position: "top-center",
                             autoClose: 3000,
-                            hideProgressBar: false,
+                            hideProgressBar: true,
                             closeOnClick: true,
                             pauseOnHover: false,
                             draggable: false,
@@ -269,7 +269,7 @@ const EditUser = ({id}) => {
                         {
                             position: "top-center",
                             autoClose: 3000,
-                            hideProgressBar: false,
+                            hideProgressBar: true,
                             closeOnClick: true,
                             pauseOnHover: false,
                             draggable: false,
@@ -286,7 +286,7 @@ const EditUser = ({id}) => {
             toast.error("No image to delete", {
                 position: "top-center",
                 autoClose: 3000,
-                hideProgressBar: false,
+                hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: false,
                 draggable: false,
@@ -300,7 +300,7 @@ const EditUser = ({id}) => {
             toast.success("Image deleted successfully!", {
                 position: "top-center",
                 autoClose: 3000,
-                hideProgressBar: false,
+                hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: false,
                 draggable: false,
@@ -312,7 +312,7 @@ const EditUser = ({id}) => {
             toast.error(`An error occurred while deleting the image`, {
                 position: "top-center",
                 autoClose: 3000,
-                hideProgressBar: false,
+                hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: false,
                 draggable: false,

@@ -8,18 +8,21 @@ import CustomButton from "@/components/client/CustomButton";
 const Models = () => {
     const [cars, setCars] = useState([]);
     const [selectedCar, setSelectedCar] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
 
     useEffect(() => {
-        axios.get('/api/auth/AllCars').then((response) => {
+        axios.get('/api/client/AllCars').then((response) => {
             setCars(response.data.reverse().slice(0, 3));
         });
     }, []);
 
     const router = useRouter();
-    const handleScroll =()=>{
 
-    }
+
+    const handleClick = () => {
+        setIsLoading(true);
+    };
 
     const openModal = (car) => {
         setSelectedCar(car);
@@ -63,9 +66,6 @@ const Models = () => {
                                         <p className="text-custom-grey">per day</p>
                                     </div>
                                 </div>
-
-
-
                                 <div className="flex space-x-4">
 
                                     <button
@@ -80,11 +80,11 @@ const Models = () => {
                     ))}
                 </div>
                 <div className=" flex justify-center transition-all duration-300 transform hover:scale-x-110">
-                    <Link href="/Models">
+                    <Link href="/models">
                         <CustomButton
                             title="Explore more  Cars"
-                            containerStyles="bg-primary-blue text-white rounded-full mt-10"
-                            handleClick={handleScroll}
+                            containerStyles={`text-white rounded-full mt-10 ${isLoading ? 'spinner' : 'bg-primary-blue'}`}
+                            handleClick={handleClick}
                         />
                     </Link>
                 </div>

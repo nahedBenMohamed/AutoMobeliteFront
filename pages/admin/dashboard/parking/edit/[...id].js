@@ -1,6 +1,6 @@
 import Sidebar from "@/components/admin/Sidebar";
 import Parkingform from "@/components/admin/Parkingform";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import Navbar from "@/components/admin/Navbar";
 import axios from "axios";
@@ -27,7 +27,7 @@ export default function EditParking({session}){
     return(
 
         <main>
-            <Sidebar />
+            <Sidebar session={session} />
             <section id="content">
                 <Navbar session={session}/>
                 <div style={{ margin: '60px 90px' }}>

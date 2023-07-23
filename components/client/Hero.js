@@ -1,15 +1,19 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Image from 'next/image';
 import CustomButton from "@/components/client/CustomButton";
 import Link from "next/link";
 import { motion } from 'framer-motion';
+import {BeatLoader} from "react-spinners";
 
 
 
 const Hero = () => {
-    const handleScroll =()=>{
+    const [isLoading, setIsLoading] = useState(false);
 
-    }
+    const handleClick = () => {
+        setIsLoading(true);
+    };
+
 
     // Définir les variants pour les animations
     const container = {
@@ -51,9 +55,11 @@ const Hero = () => {
                     <Link href="/models">
                         <CustomButton
                             title="Explore Cars"
-                            containerStyles="bg-primary-blue text-white rounded-full mt-10"
-                            handleClick={handleScroll}
-                        />
+                            containerStyles={`text-white rounded-full mt-10 ${isLoading ? 'spinner' : 'bg-primary-blue'}`}
+                            handleClick={handleClick}
+                        >
+                            {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
+                        </CustomButton>
                     </Link>
                 </motion.div>
             </motion.div>

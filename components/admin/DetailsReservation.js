@@ -30,6 +30,10 @@ const ReservationDetails = ({id}) => {
         return <p><Spinner /></p>;
     }
 
+    function goEditRental(id) {
+        router.push(`/admin/dashboard/reservations/edit/${id}`);
+    }
+
     return (
         <div className="flex items-center justify-center w-full h-screen bg-gray-100">
             <div className="max-w-screen-lg w-full bg-white p-8 rounded-lg shadow-md">
@@ -82,10 +86,6 @@ const ReservationDetails = ({id}) => {
                                 {new Date(rentalData.endTime).toLocaleTimeString()}
                             </div>
                             <div className="flex">
-                                <p className="w-1/3 text-sm font-bold">Car Status:</p>
-                                {rentalData.car.status}
-                            </div>
-                            <div className="flex">
                                 <p className="w-1/3 text-sm font-bold">Rental Status:</p>
                                 {rentalData.status}
                             </div>
@@ -123,15 +123,14 @@ const ReservationDetails = ({id}) => {
                     </div>
                 </div>
                 <div className="mt-8 flex justify-end">
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-1">
-                        <Link href={`/admin/dashboard/reservations/edit/${rentalData.id}`}>
-                            Update Rental
-                        </Link>
-
+                    <button
+                        onClick={() => goEditRental(rentalData.id)}
+                        className="uppercase bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-1">
+                        Update Rental
                     </button>
                     <button
                         onClick={handleGoBack}
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        className="uppercase bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     >
                         Go Back
                     </button>

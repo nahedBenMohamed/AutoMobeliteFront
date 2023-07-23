@@ -3,12 +3,13 @@ import Navbar from "@/components/admin/Navbar";
 import {protectRoute} from "@/utils/auth";
 import React from "react";
 import RevenusDepenses from "@/components/admin/RevenusDepenses";
+import Footer from "@/components/admin/Footer";
 
 
 export default function Reservations ({session})  {
     return (
         <main>
-            <Sidebar />
+            <Sidebar session={session} />
             <section id="content">
                 <Navbar session={session}/>
                 <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", alignItems: "center", margin: "40px 30px"}}>
@@ -21,6 +22,7 @@ export default function Reservations ({session})  {
                     <RevenusDepenses />
                 </div>
             </section>
+            <Footer/>
         </main>
     );
 };

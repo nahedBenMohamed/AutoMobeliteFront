@@ -6,6 +6,7 @@ import {FiPlus, FiTrash2} from "react-icons/fi";
 import {getCountryCallingCode, parsePhoneNumberFromString} from "libphonenumber-js";
 import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import {BeatLoader} from "react-spinners";
 
 const SuperAdminAgenceForm = ({ id }) => {
 
@@ -18,6 +19,7 @@ const SuperAdminAgenceForm = ({ id }) => {
     const [images, setImages] = useState([]);
     const [goToAgency, setGoToAgency] = useState(false);
     const [isActive, setIsActive] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Function to set the default telephone value with country code
     const getDefaultTelephone = () => {
@@ -41,17 +43,7 @@ const SuperAdminAgenceForm = ({ id }) => {
                 })
                 .catch((error) => {
                     if (error.response) {
-                        toast.warning('An error occurred while loading data',
-                            {
-                                position: "top-center",
-                                autoClose: 3000,
-                                hideProgressBar: false,
-                                closeOnClick: true,
-                                pauseOnHover: false,
-                                draggable: false,
-                                progress: undefined,
-                                theme: "colored",
-                            });
+                        toast.warning('An error occurred while loading data');
                     }
                 });
         }
@@ -59,19 +51,12 @@ const SuperAdminAgenceForm = ({ id }) => {
 
     async function saveAgence(ev) {
         ev.preventDefault();
+        setIsLoading(true);
 
         // Vérification des données côté client (facultatif)
         if (!name || !telephone || !email || !address || !responsibleEmail) {
-            toast.error('Please complete all fields.', {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.error('Please complete all fields.');
+            setIsLoading(false);
             return;
         }
 
@@ -86,16 +71,8 @@ const SuperAdminAgenceForm = ({ id }) => {
         const isPhoneNumberValid = phoneNumber && phoneNumber.isValid() && phoneNumberRegex.test(telephoneString);
 
         if (!isPhoneNumberValid) {
-            toast.error('Please enter a valid Tunisian phone number.', {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.error('Please enter a valid Tunisian phone number.');
+            setIsLoading(false);
             return;
         }
 
@@ -117,45 +94,20 @@ const SuperAdminAgenceForm = ({ id }) => {
                 // Create
                 await axios.post("/api/super-admin/manage-agence/agence", data);
             }
-            toast.success('The Agency has been successfully registered!', {
-                position: "top-center",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
-
+            toast.success('The Agency has been successfully registered!');
+            setIsLoading(false);
             setTimeout(() => {
                 setGoToAgency(true);
-            }, 2000);
+            }, 1000);
         } catch (error) {
             if (error.response) {
                 if (error.response.data.message) {
-                    toast.warning(error.response.data.message, {
-                        position: "top-center",
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: false,
-                        draggable: false,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                    toast.warning(error.response.data.message);
+                    setIsLoading(false);
                 }
             } else {
-                toast.error('An error occurred while saving the agency.', {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+                toast.error('An error occurred while saving the agency.');
+                setIsLoading(false);
             }
         }
     }
@@ -177,7 +129,7 @@ const SuperAdminAgenceForm = ({ id }) => {
                         {
                             position: "top-center",
                             autoClose: 3000,
-                            hideProgressBar: false,
+                            hideProgressBar: true,
                             closeOnClick: true,
                             pauseOnHover: false,
                             draggable: false,
@@ -189,7 +141,7 @@ const SuperAdminAgenceForm = ({ id }) => {
                         {
                             position: "top-center",
                             autoClose: 3000,
-                            hideProgressBar: false,
+                            hideProgressBar: true,
                             closeOnClick: true,
                             pauseOnHover: false,
                             draggable: false,
@@ -203,7 +155,7 @@ const SuperAdminAgenceForm = ({ id }) => {
                         {
                             position: "top-center",
                             autoClose: 3000,
-                            hideProgressBar: false,
+                            hideProgressBar: true,
                             closeOnClick: true,
                             pauseOnHover: false,
                             draggable: false,
@@ -220,7 +172,7 @@ const SuperAdminAgenceForm = ({ id }) => {
             toast.error("No image to delete", {
                 position: "top-center",
                 autoClose: 3000,
-                hideProgressBar: false,
+                hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: false,
                 draggable: false,
@@ -235,7 +187,7 @@ const SuperAdminAgenceForm = ({ id }) => {
             toast.success("Image deleted successfully!", {
                 position: "top-center",
                 autoClose: 3000,
-                hideProgressBar: false,
+                hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: false,
                 draggable: false,
@@ -247,7 +199,7 @@ const SuperAdminAgenceForm = ({ id }) => {
             toast.error(`An error occurred while deleting the image`, {
                 position: "top-center",
                 autoClose: 3000,
-                hideProgressBar: false,
+                hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: false,
                 draggable: false,
@@ -260,12 +212,12 @@ const SuperAdminAgenceForm = ({ id }) => {
     }
 
     if (goToAgency) {
-        router.push("/super-admin/dashboard/agence");
+        router.push("/super-admin/dashboard/manage");
 
         return null;
     }
     function goBack (){
-        router.push("/super-admin/dashboard/agence");
+        router.push("/super-admin/dashboard/manage");
     }
 
     return (
@@ -273,7 +225,7 @@ const SuperAdminAgenceForm = ({ id }) => {
             <ToastContainer
                 position="top-center"
                 autoClose={3000}
-                hideProgressBar={false}
+                hideProgressBar={true}
                 newestOnTop
                 closeOnClick={true}
                 rtl={false}
@@ -309,7 +261,7 @@ const SuperAdminAgenceForm = ({ id }) => {
                                    className=" text-blue-500 hover:text-blue-700 mx-1 cursor-pointer">
                                 <FiPlus size={18}/>
                             </label>
-                            <button type="button" className="text-red-500 hover:text-red-700"
+                            <button type="button" className="-mt-1.5 text-red-500 hover:text-red-700"
                                     onClick={deleteImage}>
                                 <FiTrash2 size={18}/>
                             </button>
@@ -399,13 +351,14 @@ const SuperAdminAgenceForm = ({ id }) => {
                         <div className="mt-8 flex justify-end">
                             <button
                                 type="submit"
-                                className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                className="uppercase ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
                             >
-                                {id ? "Update" : "Save"}
+                                {isLoading ? "Wait" : id ? "Update" : "Save"}
+                                {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
                             </button>
                             <button
                                 type="button"
-                                className="ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                className="uppercase ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
                                 onClick={goBack}
                             >
                                 Cancel

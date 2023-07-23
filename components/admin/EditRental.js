@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {eachDayOfInterval, isSameDay} from "date-fns";
+import {FaCar} from "react-icons/fa";
 
 
 
@@ -29,21 +30,14 @@ export default function EditRental({ id }) {
     const [goToRental, setGoToRental] = useState(false);
     const [total, setTotal] = useState(0);
     const [carId,setCarId] = useState(null);
-
-    const [selectedCarStatus, setSelectedCarStatus] = useState('available');
+    const [brand, setBrand] = useState("");
+    const [model, setModel] = useState("");
     const [selectedStatus, setSelectedStatus] = useState('reserved');
+    const router = useRouter();
 
     const handleStatusChange = (event) => {
         setSelectedStatus(event.target.value);
     };
-
-    const handleCarStatusChange = (event) => {
-        setSelectedCarStatus(event.target.value);
-    };
-
-
-
-    const router = useRouter();
 
     useEffect(() => {
         if (id) {
@@ -59,7 +53,9 @@ export default function EditRental({ id }) {
                     setTelephone(rentalData.client.telephone);
                     setNumPermis(rentalData.client.numPermis);
                     setCarId(rentalData.car.id);
-                    setSelectedCarStatus(rentalData.car.status);
+                    setSelectedStatus(rentalData.status);
+                    setBrand(rentalData.car.brand);
+                    setModel(rentalData.car.model);
                     setImages(rentalData.car.image ? [rentalData.car.image] : []);
                     setStartDate(rentalData.startDate ? new Date(rentalData.startDate) : null);
                     setEndDate(rentalData.endDate ? new Date(rentalData.endDate) : null);
@@ -97,17 +93,7 @@ export default function EditRental({ id }) {
         ev.preventDefault();
 
         if (!email || !startTime || !endTime || !startDate || !endDate) {
-            toast.error('Please complete all fields.',
-                {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+            toast.error('Please complete all fields.');
             return;
         }
 
@@ -116,66 +102,28 @@ export default function EditRental({ id }) {
             carId: setCarId,
             email,
             rentalStatus: selectedStatus,
-            carStatus: selectedCarStatus,
         };
 
         try {
             if (id) {
                 await axios.put(`/api/admin/manage-reservation/reservation/`, { ...data, id }, { withCredentials: true });
             }
-            toast.success('reservation created with success', {
-                position: "top-center",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
-
+            toast.success('rental status updated with success');
             setTimeout(() => {
                 setGoToRental(true);
-            }, 2000);
+            }, 1000);
         } catch (error) {
             if (error.response) {
                 if (error.response.data.error) {
                     if (error.response.data.error === "Parking not found") {
-                        toast.warning("Parking not found", {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                        toast.warning("Parking not found");
                         return;
                     } else if (error.response.data.error === "Invalid Parking name") {
-                        toast.warning("Invalid Parking name", {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                        toast.warning("Invalid Parking name");
                         return;
                     }
                 }
-                toast.error("Verify your informations", {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+                toast.error("Verify your informations");
             }
         }
     }
@@ -189,11 +137,11 @@ export default function EditRental({ id }) {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center max-w-6xl">
+        <div className="flex">
             <ToastContainer
                 position="top-center"
-                autoClose={3000}
-                hideProgressBar={false}
+                autoClose={2000}
+                hideProgressBar={true}
                 newestOnTop
                 closeOnClick={true}
                 rtl={false}
@@ -202,243 +150,244 @@ export default function EditRental({ id }) {
                 pauseOnHover={false}
                 theme="colored"
             />
-            <div className="max-w-screen-lg w-full bg-white p-8 rounded-lg shadow-md">
-                <h2 className="mt-2 mb-8 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            <div className="flex-grow flex flex-col space-y-5 mr-4">
+                <div className="uppercase ml-7 mt-4 mb-4 text-black text-xl font-extrabold">
                     Update Rental
-                </h2>
-                <div className="grid grid-cols-2 gap-8">
-                    <div className="flex flex-col items-center">
-                        <div className="w-auto h-auto mb-4 relative">
+                </div>
+                <div className="bg-white p-5 rounded-lg shadow-lg">
+                    <div className="flex flex-row justify-center items-center mt-4 mb-4 rounded-lg">
+                        <form onSubmit={rental} className="flex-1">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="mb-4">
+                                    <label htmlFor="year" className="block text-xs mb-1">Name Client:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="name"
+                                            name="name"
+                                            type="text"
+                                            disabled={true}
+                                            value={name}
+                                            onChange={(ev) => setName(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Name"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="year" className="block text-xs mb-1">FirstName Client:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="firstname"
+                                            name="firstname"
+                                            type="text"
+                                            disabled={true}
+                                            value={firstname}
+                                            onChange={(ev) => setFirstName(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="First Name"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="kilometer" className="block text-xs mb-1">Email Client:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="email"
+                                            name="email"
+                                            type="text"
+                                            disabled={true}
+                                            value={email}
+                                            onChange={(ev) => setEmail(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Email"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="price" className="block text-xs mb-1">Address:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="address"
+                                            name="address"
+                                            type="text"
+                                            disabled={true}
+                                            value={address}
+                                            onChange={(ev) => setAddress(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Address"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="carStatus" className="block text-xs mb-1">Phone Client:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="phone"
+                                            name="phone"
+                                            type="phone"
+                                            disabled={true}
+                                            value={telephone}
+                                            onChange={(ev) => setTelephone(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Telephone"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="gearBox" className="block text-xs mb-1">City Client:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="city"
+                                            name="city"
+                                            type="text"
+                                            disabled={true}
+                                            value={city}
+                                            onChange={(ev) => setCity(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="City"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="gearBox" className="block text-xs mb-1">Driver's Licence Client:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="numPermis"
+                                            name="numPermis"
+                                            type="text"
+                                            disabled={true}
+                                            value={numPermis}
+                                            onChange={(ev) => setNumPermis(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Num Permis"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="startDate" className="block text-xs mb-1">Start Date</label>
+                                    <input
+                                        type="text"
+                                        value={startDate ? startDate.toLocaleDateString('fr-FR') : ''}
+                                        onChange={(event) => setStartDate(new Date(event.target.value))}
+                                        disabled={true}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        placeholder="Start Date"
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="endDate" className="block text-xs mb-1">End Date</label>
+                                    <input
+                                        type="text"
+                                        value={endDate ? endDate.toLocaleDateString('fr-FR') : ''}
+                                        onChange={(event) => setEndDate(new Date(event.target.value))}
+                                        disabled={true}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        placeholder="End Date"
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="door" className="block text-xs mb-1">Rental Status:</label>
+                                    <div className="relative">
+                                        <select id="rentalStatus" value={selectedStatus} onChange={handleStatusChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                            <option value="reserved">Reserved</option>
+                                            <option value="ongoing">On going</option>
+                                            <option value="completed">Completed</option>
+                                            <option value="cancelled">Cancelled</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex justify-end">
+                                <button
+                                    type="submit"
+                                    className="uppercase ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                >
+                                    {id ? "Update" : "Save"}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="uppercase ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                    onClick={goBack}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div className="flex-grow-0">
+                <div className="bg-white p-8 rounded-lg shadow-lg">
+                    <div className=" justify-items-center mt-4 w-full h-full">
+                        <div className=" justify-items-center mt-4 w-full h-full">
                             {images.length > 0 ? (
-                                <img src={images[0]} alt="Car" className="w-full h-full object-cover rounded-lg" />
+                                <img src={images[0]} alt="Car" className="max-w-56 max-h-56 mb-4 rounded-lg" />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
-                                  <span className="text-gray-500 text-lg">
-                                    <img src="/placeholder.png" alt="Placeholder" />
-                                  </span>
+                                <div className="max-w-56 max-h-56 flex items-center justify-center bg-gray-200 rounded-lg">
+                                    <img src="/placeholder.png" alt="img" className="w-1/2" />
                                 </div>
                             )}
+                            <div className="mt-4 flex items-center">
+                                <FaCar size={20} className="text-blue-500" />
+                                <p className="ml-2 text-xl text-blue-700 font-bold">{brand}</p>
+                            </div>
+                            <div className="flex flex-col mb-4">
+                                <p className="ml-2 text-sm">{model}</p>
+                            </div>
                         </div>
-                        <div className="mt-8 mb-8">
-                            <label className="mb-4 flex items-center text-sm font-medium text-gray-700">
-                                Availability:
-                                <div className="flex flex-row space-x-2 ml-2">
-                                    <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-                                    <p className="text-sm font-medium">Open</p>
-                                    <div className="w-4 h-4 bg-red-500 rounded-full ml-2"></div>
-                                    <p className="text-sm font-medium">Close</p>
-                                </div>
-                            </label>
+                    </div>
+                    <div className="mt-16 mb-16">
+                        <label className="mt-4 mb-4 flex items-center text-sm font-medium text-gray-700">
+                            Availability:
+                            <div className="flex flex-row space-x-2 ml-2">
+                                <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                                <p className="text-sm font-medium">Open</p>
+                                <div className="w-4 h-4 bg-red-500 rounded-full ml-2"></div>
+                                <p className="text-sm font-medium">Close</p>
+                                <div className="w-4 h-4 bg-yellow-500 rounded-full ml-2"></div>
+                                <p className="text-sm font-medium">Maintenance</p>
+                            </div>
+                        </label>
+                        <div className="flex flex-row justify-center items-center mt-8 mb-8 rounded-lg">
                             <DatePicker
+                                selected={null}
                                 inline
+                                minDate={new Date()}
                                 highlightDates={[
-                                    { "reserved-day": reservedDates },
-                                    { "maintenance-day": maintenanceDates },
-                                    { "available-day": availabilityDates },
+                                    {
+                                        selectable: false,
+                                        startDate,
+                                        endDate,
+                                        dates: availabilityDates.filter((date) =>
+                                            isSameDay(date, startDate) || isSameDay(date, endDate)
+                                        ),
+                                    },
+                                    {
+                                        selectable: true,
+                                        dates: availabilityDates,
+                                    },
                                 ]}
                                 dayClassName={(date) => {
-                                    const currentDate = new Date();
-                                    currentDate.setHours(0, 0, 0, 0); // Réinitialise les heures, minutes, secondes et millisecondes à 0 pour la comparaison
-
-                                    if (isSameDay(date, currentDate)) {
-                                        return "current-day";
-                                    }
-                                    if (date < currentDate) {
-                                        return "past-day";
-                                    }
                                     if (reservedDates.some((reservedDate) => isSameDay(date, reservedDate))) {
                                         return "reserved-day";
-                                    }
-                                    if (availabilityDates.some((availableDate) => isSameDay(date, availableDate))) {
-                                        return "available-day";
-                                    }
-                                    if (maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))) {
+                                    } else if (
+                                        maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
+                                    ) {
                                         return "maintenance-day";
+                                    } else if (
+                                        availabilityDates.some((availableDate) => isSameDay(date, availableDate))
+                                    ) {
+                                        return "available-day";
+                                    } else {
+                                        return "unavailable-day"; // Ajout d'une classe pour les jours non disponibles
                                     }
-                                    return "";
                                 }}
+                                excludeDates={[...reservedDates, ...maintenanceDates]}
                             />
                         </div>
                     </div>
-                    <form onSubmit={rental} className="flex-1">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <input
-                                    id="name"
-                                    name="name"
-                                    type="text"
-                                    disabled={true}
-                                    value={name}
-                                    onChange={(ev) => setName(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Name"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="firstname"
-                                    name="firstname"
-                                    type="text"
-                                    disabled={true}
-                                    value={firstname}
-                                    onChange={(ev) => setFirstName(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="First Name"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="email"
-                                    name="email"
-                                    type="text"
-                                    disabled={true}
-                                    value={email}
-                                    onChange={(ev) => setEmail(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Email"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="address"
-                                    name="address"
-                                    type="text"
-                                    disabled={true}
-                                    value={address}
-                                    onChange={(ev) => setAddress(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Address"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="city"
-                                    name="city"
-                                    type="text"
-                                    disabled={true}
-                                    value={city}
-                                    onChange={(ev) => setCity(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="City"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="phone"
-                                    name="phone"
-                                    type="phone"
-                                    disabled={true}
-                                    value={telephone}
-                                    onChange={(ev) => setTelephone(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Telephone"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="city"
-                                    name="city"
-                                    type="text"
-                                    disabled={true}
-                                    value={city}
-                                    onChange={(ev) => setCity(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="City"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="numPermis"
-                                    name="numPermis"
-                                    type="text"
-                                    disabled={true}
-                                    value={numPermis}
-                                    onChange={(ev) => setNumPermis(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Num Permis"
-                                />
-                            </div>
-                            <div>
-                                <DatePicker
-                                    selected={startDate ? new Date(startDate) : null}
-                                    disabled={true}
-                                    onChange={(date) => setStartDate(date)}
-                                    placeholderText="Start Date"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                />
-                            </div>
-                            <div>
-                                <DatePicker
-                                    selected={endDate ? new Date(endDate) : null}
-                                    disabled={true}
-                                    onChange={(date) => setEndDate(date)}
-                                    placeholderText="End Date"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="startHour"
-                                    name="startHour"
-                                    type="time"
-                                    disabled={true}
-                                    value={startTime}
-                                    onChange={(ev) => setStartTime(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Start Hour"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="endHour"
-                                    name="endHour"
-                                    type="time"
-                                    disabled={true}
-                                    value={endTime}
-                                    onChange={(ev) => setEndTime(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="End Hour"
-                                />
-                            </div>
-                            <div>
-                                <label>Car status</label>
-                                <select id="carStatus" value={selectedCarStatus} onChange={handleCarStatusChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                    <option value="available">Available</option>
-                                    <option value="rented">Rented</option>
-                                    <option value="maintenance">Maintenance</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label>Rental status</label>
-                                <select id="rentalStatus" value={selectedStatus} onChange={handleStatusChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                    <option value="reserved">Reserved</option>
-                                    <option value="ongoing">On going</option>
-                                    <option value="completed">Completed</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="mt-8 text-center">
-                            <p className="text-xl font-bold">Total: {total} DT</p>
-                        </div>
-                        <div className="mt-8 flex justify-end">
-                            <button
-                                type="submit"
-                                className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                            >
-                                Update Rental
-                            </button>
-                            <button
-                                type="button"
-                                className="ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                                onClick={goBack}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
-
     );
 }

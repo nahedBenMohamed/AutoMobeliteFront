@@ -23,7 +23,7 @@ const SuperAdminDetailsAgence = ({ id }) => {
     }, [id]);
 
     const handleGoBack = () => {
-        router.push("/super-admin/dashboard/agence");
+        router.push("/super-admin/dashboard/manage");
     };
 
     if (!agencyData) {
@@ -33,7 +33,7 @@ const SuperAdminDetailsAgence = ({ id }) => {
     const { name, address, email, image,telephone, AgencyUser,totalCars,totalParkings } = agencyData;
 
     return (
-        <div className="flex items-center justify-center w-full h-screen bg-gray-100">
+        <div className="flex items-center justify-center w-full h-screen">
             <div className="max-w-screen-lg w-full bg-white p-8 rounded-lg shadow-md">
                 <h2 className="mt-2 mb-8 text-center text-2xl font-bold leading-9 text-gray-900">
                     Details Agency

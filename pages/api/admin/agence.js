@@ -81,12 +81,24 @@ export default async function handle(req, res) {
                         const totalReservations = await prisma.rental.count({
                             where: { car: { agencyId: agency.id } },
                         });
+                        const totalReservationsCancelled = await prisma.rental.count({
+                            where: { car: { agencyId: agency.id }, status: 'cancelled' },
+                        });
+                        const totalReservationsInProgress = await prisma.rental.count({
+                            where: { car: { agencyId: agency.id }, status: 'ongoing' },
+                        });
+                        const totalReservationsCompleted = await prisma.rental.count({
+                            where: { car: { agencyId: agency.id }, status: 'completed' },
+                        });
 
                         return {
                             ...agency,
                             totalCars,
                             totalParkings,
                             totalReservations,
+                            totalReservationsCancelled,
+                            totalReservationsInProgress,
+                            totalReservationsCompleted,
                         };
                     })
                 );

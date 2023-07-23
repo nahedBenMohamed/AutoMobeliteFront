@@ -12,7 +12,7 @@ export default function SuperAdminSidebar() {
 
     const handleLogout = async () => {
         try {
-            const res = await fetch('/api/auth/logout', {
+            const res = await fetch('/api/super-admin/logout', {
                 method: 'POST',
             });
 
@@ -56,47 +56,30 @@ export default function SuperAdminSidebar() {
                         <span className="text">Users</span>
                     </Link>
                 </li>
-                <li
-                    className="relative"
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                    onClick={() => setIsLinkClicked(true)}
-                >
-                        <Link href="/super-admin/dashboard/manage-admin">
-                            <div className="flex items-center space-x-2">
-                                <i class='bx bx-cog'></i>
-                                <span className="text">Manage Admins</span>
-                            </div>
-                        </Link>
-                        {(isHovered || isLinkClicked) && (
-                            <ul className="absolute top-8 rounded-md py-2">
-                                <li>
-                                    <Link href="/super-admin/dashboard/agence" className="px-4 py-2 text-gray-800">
-                                        <div className="flex items-center space-x-2">
-                                            <i class='bx bxs-building-house'></i>
-                                            <span className="text">Manage Agencies</span>
-                                        </div>
-                                    </Link>
-                                </li>
-                            </ul>
-                        )}
+                <li className={pathname === '/super-admin/dashboard/manage' ? 'active' : ''}>
+                    <Link href="/super-admin/dashboard/manage">
+                        <i className='bx bx-cog'></i>
+                        <span className="text">Manage</span>
+                    </Link>
+                </li>
+                <li className={pathname === '/admin/dashboard/users' ? 'active' : ''}>
+                    <Link href="/super-admin/dashboard/maintenance">
+                        <i className="bx bxs-cog"></i>
+                        <span className="text">Maintenance</span>
+                    </Link>
                 </li>
                 <li className={pathname === '/super-admin/dashboard/parking' ? 'active' : ''}>
                     <Link href="/super-admin/dashboard/parking">
-
-                        <i class='bx bxs-parking'></i>
+                        <i className='bx bxs-parking'></i>
                         <span className="text">Parking</span>
-
                     </Link>
                 </li>
             </ul>
             <ul className="side-menu">
                 <li className={pathname === '/super-admin/dashboard/profile' ? 'active' : ''}>
                     <Link href="/super-admin/dashboard/profile">
-
-                        <i class='bx bxs-user-pin'></i>
+                        <i className='bx bxs-user-pin'></i>
                         <span className="text">Profile</span>
-
                     </Link>
                 </li>
                 <li>

@@ -1,64 +1,70 @@
 import React, { useState } from "react";
 import { useRouter } from 'next/router';
 import { HiEye, HiEyeOff, HiLockClosed, HiMail } from "react-icons/hi";
-import {AiOutlineUser} from "react-icons/ai";
+import { signIn } from "next-auth/react";
+import Link from "next/link";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import {BeatLoader} from "react-spinners";
 
 const LoginPage = () => {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
     const [passwordVisible, setPasswordVisible] = useState();
-    const [errorMessageVisible, setErrorMessageVisible] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setIsLoading(true);
 
         if (!email || !password) {
-            setMessage('Please fill in all fields');
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.error('Please fill in all fields');
+            setIsLoading(false);
             return;
         }
-
         try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
+            const data = await signIn('credentials', {
+                redirect: false,
+                email,
+                password,
             });
 
-            if (response.ok) {
-                await router.push('/client/homeconnected/');
-            } else {
-                const errorData = await response.json();
-                setMessage(errorData.error);
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
+            if (data && data.error) {
+                throw new Error(data.error);
             }
-        } catch (error) {
-            setMessage(error.error);
-            setErrorMessageVisible(true);
+            toast.success('login successful');
+            setIsLoading(false);
             setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+                router.push('/');
+            }, 2000);
+
+        } catch (error) {
+            console.log(error);
+            toast.error(error.message);
+            setIsLoading(false);
         }
     };
 
+
+
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden rounded-lg shadow-lg ">
+            <ToastContainer
+                position="top-center"
+                autoClose={2000}
+                hideProgressBar={true}
+                newestOnTop
+                closeOnClick={true}
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable={true}
+                pauseOnHover={false}
+                theme="colored"
+            />
             <div className="w-full p-4 bg-white rounded-lg shadow-lg lg:max-w-xl">
                 <h1 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                     <span className="inline-flex items-center">
-                        Welcome Back
-                        <AiOutlineUser className="ml-2 text-blue-600" size={28} />
-                      </span>
+                    Welcome Back
                 </h1>
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <form onSubmit={handleSubmit}>
@@ -108,13 +114,19 @@ const LoginPage = () => {
                                         Forgot password?
                                     </a>
                                 </div>
-                                <div className="flex items-end">
-                                    {errorMessageVisible && message && <p style={{ color: 'red' }}>{message}</p>}
-                                </div>
                             </div>
                             <div>
-                                <button type="submit" className="mt-4 w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-bold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                                    Login
+                                <button type="submit" className="uppercase mt-4 w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-bold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                                    {isLoading ? "Wait..." : "login"}
+                                    {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
+                                </button>
+                            </div>
+                            <div className="mt-8 flex flex-col items-center">
+                                <span className="text-gray-500 text-sm">OR</span>
+                            </div>
+                            <div>
+                                <button className="mt-4 w-full justify-center rounded-md text-black px-3 py-1.5 text-sm font-bold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                                    <Link href="/authentification/activate">Activate Account</Link>
                                 </button>
                             </div>
                         </div>

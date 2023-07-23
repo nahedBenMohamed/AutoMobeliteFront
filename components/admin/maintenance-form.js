@@ -6,6 +6,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { isSameDay } from "date-fns";
+import {FaCar} from "react-icons/fa";
+import {BeatLoader} from "react-spinners";
 
 export default function Maintenaceform({ id }) {
 
@@ -22,7 +24,7 @@ export default function Maintenaceform({ id }) {
     const [availabilityDates, setAvailabilityDates] = useState([]);
     const [reservedDates, setReservedDates] = useState([]);
     const [maintenanceDates, setMaintenanceDates] = useState([]);
-    const [selectedStatus, setSelectedStatus] = useState('available');
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -60,44 +62,22 @@ export default function Maintenaceform({ id }) {
                 })
                 .catch((error) => {
                     if (error.response) {
-                        toast.warning('An error occurred while loading data',
-                            {
-                                position: "top-center",
-                                autoClose: 3000,
-                                hideProgressBar: false,
-                                closeOnClick: true,
-                                pauseOnHover: false,
-                                draggable: false,
-                                progress: undefined,
-                                theme: "colored",
-                            });
+                        toast.warning('An error occurred while loading data');
                     }
                 });
         }
     }, [id]);
 
-    const handleStatusChange = (event) => {
-        setSelectedStatus(event.target.value);
-    };
 
     async function saveCar(ev) {
         ev.preventDefault();
+        setIsLoading(true);
 
         if (!description || !price || !startDate || !endDate) {
-            toast.error('Please complete all fields.',
-                {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+            toast.error('Please complete all fields.');
+            setIsLoading(false);
             return;
         }
-
         const data = {
             carId:id,
             price,
@@ -109,62 +89,19 @@ export default function Maintenaceform({ id }) {
         try {
             if (id) {
                 await axios.post(`/api/admin/manage-cars/maintenance/`, { ...data, id }, { withCredentials: true });
-            } /*else {
-                await axios.post("/api/admin/manage-cars/cars/" ,data, { withCredentials: true });
-            }*/
-            toast.success('The car has been registered for maintenance successfully!', {
-                position: "top-center",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
-
+            }
+            toast.success('The car has been registered for maintenance successfully!');
+            setIsLoading(false);
             setTimeout(() => {
                 setGoToMaintenance(true);
-            }, 2000);
+            }, 1000);
         } catch (error) {
             if (error.response) {
                 if (error.response.data.error) {
-                    if (error.response.data.error === "Parking not found") {
-                        toast.warning("Parking not found", {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
-                        return;
-                    } else if (error.response.data.error === "Invalid Parking name") {
-                        toast.warning("Invalid Parking name", {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
-                        return;
-                    }
+                    toast.warning(error.response.data.error);
                 }
-                toast.error("Verify your informations", {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+            toast.error("Verify your informations");
+            setIsLoading(false);
             }
         }
     }
@@ -177,12 +114,44 @@ export default function Maintenaceform({ id }) {
         router.push("/admin/dashboard/cars");
     }
 
+    const handleDateChange = (date) => {
+        if (!startDate) {
+            setStartDate(date);
+        } else if (!endDate && date > startDate) {
+            let currentDate = new Date(startDate);
+            let nextDate = new Date(startDate);
+            nextDate.setDate(nextDate.getDate() + 1);
+
+            while (currentDate < date) {
+                const isReserved = reservedDates.some((reservedDate) =>
+                    isSameDay(nextDate, reservedDate)
+                );
+                const isMaintenance = maintenanceDates.some((maintenanceDate) =>
+                    isSameDay(nextDate, maintenanceDate)
+                );
+
+                if (isReserved || isMaintenance) {
+                    setEndDate(null);
+                    return;
+                }
+
+                currentDate.setDate(currentDate.getDate() + 1);
+                nextDate.setDate(nextDate.getDate() + 1);
+            }
+
+            setEndDate(currentDate);
+        } else {
+            setStartDate(date);
+            setEndDate(null);
+        }
+    };
+
     return (
-        <div className="flex flex-col items-center justify-center max-w-6xl">
+        <div className="flex">
             <ToastContainer
                 position="top-center"
-                autoClose={3000}
-                hideProgressBar={false}
+                autoClose={2000}
+                hideProgressBar={true}
                 newestOnTop
                 closeOnClick={true}
                 rtl={false}
@@ -191,206 +160,185 @@ export default function Maintenaceform({ id }) {
                 pauseOnHover={false}
                 theme="colored"
             />
-            <div className="max-w-screen-lg w-full bg-white p-8 rounded-lg shadow-md">
-                <h2 className="mt-2 mb-8 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            <div className="flex-grow flex flex-col space-y-5 mr-8">
+                <div className="uppercase ml-7 mt-4 mb-4 text-black text-xl font-extrabold">
                     Add Maintenance Car
-                </h2>
-                <div className="grid grid-cols-2 gap-8">
-                    <div className="flex flex-col items-center">
-                        <div className="w-auto h-auto mb-4 relative">
+                </div>
+                <div className="bg-white p-5 rounded-lg shadow-lg">
+                    <div className="flex flex-row justify-center items-center mt-4 mb-4 rounded-lg">
+                        <form onSubmit={saveCar} className="flex-1">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="mb-4">
+                                    <label htmlFor="kilometer" className="block text-xs mb-1">Mileage:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="kilometer"
+                                            value={mileage}
+                                            onChange={(ev) => setMileage(ev.target.value)}
+                                            placeholder="kilometer"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mb-4">
+                                    <label htmlFor="matricule" className="block text-xs mb-1">Registration:</label>
+                                    <div className="relative">
+                                        <input
+                                            id="matricule"
+                                            value={registration}
+                                            onChange={(ev) => setRegistration(ev.target.value)}
+                                            placeholder="Registration"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                        />
+                                    </div>
+                                </div>
+                                {id && (
+                                    <>
+                                        <div className="mb-4">
+                                            <label htmlFor="startDate" className="block text-xs mb-1">Start Date</label>
+                                            <input
+                                                type="text"
+                                                value={startDate ? startDate.toLocaleDateString('fr-FR') : ''}
+                                                onChange={(event) => setStartDate(new Date(event.target.value))}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                                placeholder="Start Date"
+                                            />
+                                        </div>
+                                        <div className="mb-4">
+                                            <label htmlFor="endDate" className="block text-xs mb-1">End Date</label>
+                                            <input
+                                                type="text"
+                                                value={endDate ? endDate.toLocaleDateString('fr-FR') : ''}
+                                                onChange={(event) => setEndDate(new Date(event.target.value))}
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                                placeholder="End Date"
+                                            />
+                                        </div>
+                                    </>
+                                )}
+                                <div className="mb-4">
+                                    <label htmlFor="gearBox" className="block text-xs mb-1">Maintenance Price :</label>
+                                    <div className="relative">
+                                        <input
+                                            id="price"
+                                            name="price"
+                                            type="text"
+                                            value={price}
+                                            onChange={(ev) => setPrice(ev.target.value)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                            placeholder="Maintenance Price"
+                                        />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div className="bg-white h-48 p-5 rounded-lg">
+                                <div className="flex flex-col h-full">
+                                    <div className="relative overflow-auto">
+                                        <label htmlFor="door" className="block text-xs mb-1">Description:</label>
+                                      <textarea
+                                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                          value={description}
+                                          onChange={(ev) => setDescription(ev.target.value)}
+                                          rows={5}
+                                          placeholder="Enter a description..."
+                                      />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex justify-end">
+                                <button
+                                    type="button"
+                                    className="uppercase ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                    onClick={goBack}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="uppercase ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                >
+                                    {isLoading ? "Add to Maintenance" : "Add to Maintenance"}
+                                    {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div className="flex-grow-0">
+                <div className="bg-white p-8 rounded-lg shadow-lg">
+                    <div className=" justify-items-center mt-4 w-full h-full">
+                        <div className=" justify-items-center mt-4 w-full h-full">
                             {images.length > 0 ? (
-                                <img src={images[0]} alt="Car" className="w-full h-full object-cover rounded-lg" />
+                                <img src={images[0]} alt="Car" className="max-w-56 max-h-56 mb-4 rounded-lg" />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-lg">
-                                    <span className="text-gray-500 text-lg"><img src="/placeholder.png" alt="img"/></span>
+                                <div className="max-w-56 max-h-56 flex items-center justify-center bg-gray-200 rounded-lg">
+                                    <img src="/placeholder.png" alt="img" className="w-1/2" />
                                 </div>
                             )}
+                            <div className="mt-4 flex items-center">
+                                <FaCar size={20} className="text-blue-500" />
+                                <p className="ml-2 text-xl text-blue-700 font-bold">{brand}</p>
+                            </div>
+                            <div className="flex flex-col mb-4">
+                                <p className="ml-2 text-sm">{model}</p>
+                            </div>
                         </div>
-                        <div className="mt-8 mb-8">
-                            <label className="mb-4 flex items-center text-sm font-medium text-gray-700">
-                                Availability:
-                                <div className="flex flex-row space-x-2 ml-2">
-                                    <div className="w-4 h-4 bg-green-500 rounded-full"></div>
-                                    <p className="text-sm font-medium">Open</p>
-                                    <div className="w-4 h-4 bg-red-500 rounded-full ml-2"></div>
-                                    <p className="text-sm font-medium">Close</p>
-                                </div>
-                            </label>
+                    </div>
+                    <div className="mt-16 mb-16">
+                        <label className="mt-4 mb-4 flex items-center text-sm font-medium text-gray-700">
+                            Availability:
+                            <div className="flex flex-row space-x-2 ml-2">
+                                <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                                <p className="text-sm font-medium">Open</p>
+                                <div className="w-4 h-4 bg-red-500 rounded-full ml-2"></div>
+                                <p className="text-sm font-medium">Close</p>
+                                <div className="w-4 h-4 bg-yellow-500 rounded-full ml-2"></div>
+                                <p className="text-sm font-medium">Maintenance</p>
+                            </div>
+                        </label>
+                        <div className="flex flex-row justify-center items-center mt-8 mb-8 rounded-lg">
                             <DatePicker
+                                selected={null}
                                 inline
+                                minDate={new Date()}
                                 highlightDates={[
-                                    { "reserved-day": reservedDates },
-                                    { "maintenance-day": maintenanceDates },
-                                    { "available-day": availabilityDates },
+                                    {
+                                        selectable: false,
+                                        startDate,
+                                        endDate,
+                                        dates: availabilityDates.filter((date) =>
+                                            isSameDay(date, startDate) || isSameDay(date, endDate)
+                                        ),
+                                    },
+                                    {
+                                        selectable: true,
+                                        dates: availabilityDates,
+                                    },
                                 ]}
                                 dayClassName={(date) => {
-                                    const currentDate = new Date();
-                                    currentDate.setHours(0, 0, 0, 0); // Réinitialise les heures, minutes, secondes et millisecondes à 0 pour la comparaison
-
-                                    if (isSameDay(date, currentDate)) {
-                                        return "current-day";
-                                    }
-                                    if (date < currentDate) {
-                                        return "past-day";
-                                    }
                                     if (reservedDates.some((reservedDate) => isSameDay(date, reservedDate))) {
                                         return "reserved-day";
-                                    }
-                                    if (availabilityDates.some((availableDate) => isSameDay(date, availableDate))) {
-                                        return "available-day";
-                                    }
-                                    if (maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))) {
+                                    } else if (
+                                        maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
+                                    ) {
                                         return "maintenance-day";
+                                    } else if (
+                                        availabilityDates.some((availableDate) => isSameDay(date, availableDate))
+                                    ) {
+                                        return "available-day";
+                                    } else {
+                                        return "unavailable-day"; // Ajout d'une classe pour les jours non disponibles
                                     }
-                                    return "";
                                 }}
+                                onChange={handleDateChange}
+                                excludeDates={[...reservedDates, ...maintenanceDates]}
                             />
                         </div>
                     </div>
-                    <form onSubmit={saveCar} className="flex-1">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <input
-                                    id="brand"
-                                    name="brand"
-                                    type="text"
-                                    value={brand}
-                                    disabled={true}
-                                    onChange={(ev) => setBrand(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Brand"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="model"
-                                    name="model"
-                                    type="text"
-                                    value={model}
-                                    disabled={true}
-                                    onChange={(ev) => setModel(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Model"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="mileage"
-                                    name="mileage"
-                                    type="text"
-                                    value={mileage}
-                                    disabled={true}
-                                    onChange={(ev) => setMileage(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Mileage"
-                                />
-                            </div>
-                            <div>
-                                <input
-                                    id="registration"
-                                    name="registration"
-                                    type="text"
-                                    value={registration}
-                                    disabled={true}
-                                    onChange={(ev) => setRegistration(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Registration"
-                                />
-                            </div>
-                            { id && (
-                                <>
-                                    <DatePicker
-                                        selected={startDate ? new Date(startDate) : null}
-                                        onChange={(date) => setStartDate(date)}
-                                        placeholderText="Start Date"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                        highlightDates={[
-                                            { "reserved-day": reservedDates },
-                                            { "maintenance-day": maintenanceDates },
-                                            { "available-day": availabilityDates }
-                                        ]}
-                                        dayClassName={(date) =>
-                                            reservedDates.some((reservedDate) => isSameDay(date, reservedDate))
-                                                ? "reserved-day"
-                                                : maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
-                                                    ? "maintenance-day"
-                                                    : availabilityDates.some((availabilityDate) => isSameDay(date, availabilityDate))
-                                                        ? "available-day"
-                                                        : ""
-                                        }
-                                        filterDate={(date) =>
-                                            !reservedDates.some((reservedDate) => isSameDay(date, reservedDate)) &&
-                                            !maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
-                                        }
-                                    />
-                                    <DatePicker
-                                        selected={endDate ? new Date(endDate) : null}
-                                        onChange={(date) => setEndDate(date)}
-                                        placeholderText="End Date"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                        highlightDates={[
-                                            { "reserved-day": reservedDates },
-                                            { "maintenance-day": maintenanceDates },
-                                            { "available-day": availabilityDates }
-                                        ]}
-                                        dayClassName={(date) =>
-                                            reservedDates.some((reservedDate) => isSameDay(date, reservedDate))
-                                                ? "reserved-day"
-                                                : maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
-                                                    ? "maintenance-day"
-                                                    : availabilityDates.some((availabilityDate) => isSameDay(date, availabilityDate))
-                                                        ? "available-day"
-                                                        : ""
-                                        }
-                                        filterDate={(date) =>
-                                            !reservedDates.some((reservedDate) => isSameDay(date, reservedDate)) &&
-                                            !maintenanceDates.some((maintenanceDate) => isSameDay(date, maintenanceDate))
-                                        }
-                                    />
-                                </>
-                            )}
-                            <div>
-                                <input
-                                    id="price"
-                                    name="price"
-                                    type="text"
-                                    value={price}
-                                    onChange={(ev) => setPrice(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    placeholder="Maintenance Price"
-                                />
-                            </div>
-                            <div className="col-span-2">
-                                <textarea
-                                    id="description"
-                                    name="description"
-                                    value={description}
-                                    onChange={(ev) => setDescription(ev.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                    rows={4}
-                                    placeholder="Enter a description..."
-                                />
-                            </div>
-                        </div>
-                        <div className="mt-8 flex justify-end">
-                            <button
-                                type="submit"
-                                className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                            >
-                                Add to Maintenance List
-                            </button>
-                            <button
-                                type="button"
-                                className="ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                                onClick={goBack}
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
-
     );
 }

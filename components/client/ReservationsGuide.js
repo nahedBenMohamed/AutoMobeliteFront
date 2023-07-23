@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { FiMapPin ,FiUser, FiCheckCircle } from 'react-icons/fi';
 import Image from 'next/image';
-import {MdDirectionsCar} from "react-icons/md";
+import { MdDirectionsCar } from "react-icons/md";
 
 function ReservationsGuide() {
     return (
@@ -30,7 +30,7 @@ function ReservationsGuide() {
                             <div className="step">
                                 <div className="step-icon">
                                     <motion.div whileHover={{ scale: 1.5 }} whileTap={{ scale: 0.9 }}>
-                                    <MdDirectionsCar size={50} color="#0077b6" />
+                                        <MdDirectionsCar size={50} color="#0077b6" />
                                     </motion.div>
                                 </div>
                                 <div className="step-description">
@@ -46,8 +46,7 @@ function ReservationsGuide() {
                                     </motion.div>
                                 </div>
                                 <div className="step-description">
-                                    <h3 className="step-title">Fill in your personal information or do not if it is already
-                                    automatically filled</h3>
+                                    <h3 className="step-title">Fill in your personal information or do not if it is already automatically filled</h3>
                                     <p>and proceed to confirm your booking.</p>
                                 </div>
                             </div>
@@ -61,7 +60,7 @@ function ReservationsGuide() {
                                 <div className="step-description">
                                     <h3 className="step-title">Receive confirmation of your booking</h3>
                                     <p>by e-mail.
-                                    Thanks for your trust</p>
+                                        Thanks for your trust</p>
                                 </div>
                             </div>
                         </div>
@@ -127,6 +126,12 @@ function ReservationsGuide() {
                 display: flex;
                 align-items: center;
                 justify-content: center;
+              }
+
+              @media (max-width: 767px) {
+                .illustration {
+                  display: none;
+                }
               }
             `}</style>
         </section>

@@ -1,7 +1,19 @@
 import prisma from "@/lib/prisma";
 import * as cookie from "cookie";
 import jwt from "jsonwebtoken";
-import { parseISO, setHours, setMinutes } from "date-fns";
+import {addDays, parseISO, startOfDay} from "date-fns";
+
+function getDatesBetweenDates(startDate, endDate) {
+    let dates = [];
+    let currentDate = new Date(startDate);
+    const adjustedEndDate = addDays(new Date(endDate), 1); // on ajoute un jour à la date de fin
+
+    while (currentDate < adjustedEndDate) { // on utilise maintenant "<" au lieu de "<="
+        dates.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return dates;
+}
 
 const getAgencyNameFromToken = (req) => {
     // Extract the JWT token from the request's cookie
@@ -36,29 +48,23 @@ export default async function handler(req, res) {
 
     if (req.method === "PUT") {
         // Extract variables from the request body
-        const { id, carId, email, rentalStatus, carStatus } = req.body;
+        const {
+            id,
+            carId,
+            description,
+            price,
+            startDate,
+            endDate,
+            oldStartDate,
+            oldEndDate,
+        } = req.body;
 
-        // Recherche du client à partir de l'email
-        const client = await prisma.client.findFirst({
+        const maintenanceId = parseInt(id);
+        const maintenance = await prisma.maintenance.findUnique({
             where: {
-                email: email,
-            },
-        });
-
-        if (!client) {
-            return res.status(404).json({ error: "Client non trouvé." });
-        }
-
-
-        const rentalId = parseInt(id);
-
-        // Get rental data for the specified ID
-        const rental = await prisma.rental.findUnique({
-            where: {
-                id: Number(rentalId),
+                id: Number(maintenanceId),
             },
             include: {
-                client: true,
                 car: {
                     include: {
                         Agency: true,
@@ -68,25 +74,65 @@ export default async function handler(req, res) {
         });
 
         // Vérifier si la réservation existe et si l'agence est autorisée à y accéder
-        if (!rental || rental.car.Agency.name !== agency) {
+        if (!maintenance || maintenance.car.Agency.name !== agency) {
             return res
                 .status(403)
-                .json({ message: "You are not authorized to view this rental." });
+                .json({ message: "You are not authorized to view this maintenance." });
         }
 
+        // Définir les nouvelles valeurs des dates
+        const parsedStartDate = startDate ? parseISO(startDate) : maintenance.startDate;
+        const parsedEndDate = endDate ? parseISO(endDate) : maintenance.endDate;
+        const parsedOldStartDate = parseISO(oldStartDate);
+        const parsedOldEndDate = parseISO(oldEndDate);
+
         // Update the rental data
-        const updatedRental = await prisma.rental.update({
-            where: { id: Number(rentalId) },
+        const updatedMaintenance = await prisma.maintenance.update({
+            where: { id: Number(maintenanceId) },
             data: {
-                client: { update: { id: client.id } },
-                car: { update: { status: carStatus } },
-                status: rentalStatus,
+                carId,
+                description,
+                startDate: parsedStartDate,
+                endDate: parsedEndDate,
+                cost: parseFloat(price),
             },
-            include: { car: true, client: true },
+            include: { car: true },
         });
 
+        // Supprimer toutes les disponibilités pour la voiture pendant la période de maintenance
+        const newAvailabilities = await prisma.availability.findMany({
+            where: {
+                carId: carId,
+                date: {
+                    gte: startOfDay(parsedStartDate),
+                    lt: startOfDay(addDays(parsedEndDate, 1)),
+                },
+            },
+        });
+
+        await prisma.availability.deleteMany({
+            where: {
+                id: {
+                    in: newAvailabilities.map((a) => a.id),
+                },
+            },
+        });
+
+        const oldDates = getDatesBetweenDates(parsedOldStartDate, parsedOldEndDate);
+
+
+        for (const date of oldDates) {
+            const newAvailability = await prisma.availability.create({
+                data: {
+                    carId: carId,
+                    date: startOfDay(date),
+                },
+            });
+            console.log(newAvailability);
+        }
+
         // Send the updated rental and car data as a response
-        res.json({ rental: updatedRental });
+        res.status(201).json({ maintenance: updatedMaintenance });
     }
 
     else if (req.method === "GET") {

@@ -1,25 +1,24 @@
 import React, { useState } from "react";
 import { useRouter } from 'next/router';
 import {HiEye, HiEyeOff, HiLockClosed, HiMail} from "react-icons/hi";
+import {BeatLoader} from "react-spinners";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const SuperAdminLogin = () => {
 
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
     const [passwordVisible, setPasswordVisible]= useState();
-    const [errorMessageVisible, setErrorMessageVisible] = useState(true);
-
+    const [isLoading, setIsLoading] = useState(false);
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setIsLoading(true);
 
         if (!email || !password) {
-            setMessage('Please fill in all fields');
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.error('Please fill in all fields');
+            setIsLoading(false);
             return;
         }
 
@@ -29,31 +28,43 @@ const SuperAdminLogin = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({email, password}),
+                body: JSON.stringify({ email, password }),
             });
 
-            if (response.ok) {
-                await router.push('/super-admin/dashboard/home');
-            } else {
-                const errorData = await response.json();
-                setMessage(errorData.error);
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
+            const data = await response.json();
+
+            if (!response.ok) {
+                // Si la réponse n'est pas "ok" (code d'état 200), une erreur s'est produite
+                throw new Error(data.error);
             }
+
+            toast.success('login successful');
+            setIsLoading(false);
+            setTimeout(() => {
+                router.push('/super-admin/dashboard/home');
+            }, 2000);
+        } catch (error) {
+            console.log(error);
+            toast.error(error.message);
+            setIsLoading(false);
         }
-        catch (error) {
-                setMessage('An error occurred while logging in.');
-                setErrorMessageVisible(true);
-                setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
-            }
     };
+
 
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen overflow-hidden rounded-lg shadow-lg ">
+            <ToastContainer
+                position="top-center"
+                autoClose={2000}
+                hideProgressBar={true}
+                newestOnTop
+                closeOnClick={true}
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable={true}
+                pauseOnHover={false}
+                theme="colored"
+            />
             <div className="w-full p-4 bg-white rounded-lg shadow-lg lg:max-w-xl">
                 <h1 className="mt-2 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                     Welcome Back
@@ -101,28 +112,13 @@ const SuperAdminLogin = () => {
                                 </div>
                             </div>
                             <div>
-                                <div className="flex items-center justify-end mt-4 mb-2">
-                                    <a href="/super-admin/auth/forget" className="font-semibold text-blue-600 hover:text-indigo-500">
-                                        Forgot password?
-                                    </a>
-                                </div>
-                                <div className="flex items-end">
-                                    {errorMessageVisible && message && <p style={{ color: 'red' }}>{message}</p>}
-                                </div>
-                            </div>
-                            <div>
-                                <button type="submit" className="mt-4 w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-bold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                                    Login
+                                <button type="submit" className="uppercase mt-4 mb-4 w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-bold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                                    {isLoading ? "Wait..." : "login"}
+                                    {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
                                 </button>
                             </div>
                         </div>
                     </form>
-                    <p className="mt-10 text-center text-sm text-gray-500">
-                        Don't have an account?{' '}
-                        <a href="/super-admin/auth/register" className="font-bold leading-6 text-blue-600 hover:text-gray-500">
-                            Register
-                        </a>
-                    </p>
                 </div>
             </div>
         </div>

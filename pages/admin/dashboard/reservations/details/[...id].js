@@ -5,6 +5,7 @@ import Sidebar from "@/components/admin/Sidebar";
 import Navbar from "@/components/admin/Navbar";
 import {protectRoute} from "@/utils/auth";
 import ReservationDetails from "@/components/admin/DetailsReservation";
+import Footer from "@/components/admin/Footer";
 
 
 
@@ -26,7 +27,7 @@ export default function DetailsRental({session}){
     return(
 
         <main>
-            <Sidebar />
+            <Sidebar session={session} />
             <section id="content">
                 <Navbar session={session} />
                 <div style={{ margin: '100px 20px' }}>
@@ -34,7 +35,6 @@ export default function DetailsRental({session}){
                         <ReservationDetails {...rentalInfo}/>
                     )}
                 </div>
-
             </section>
         </main>
 

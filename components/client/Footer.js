@@ -41,7 +41,6 @@ function Footer () {
                     <p className="text-base text-gray-700">
                         Automobelite <br/>
                         All rights reserved & copy
-
                     </p>
                 </div>
                 <div className="footer__links">

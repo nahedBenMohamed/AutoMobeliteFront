@@ -30,17 +30,7 @@ function Profile() {
                 setEmail(email);
             } catch (error) {
                 if (error.response) {
-                    toast.warning('An error occurred while loading data',
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    toast.warning('An error occurred while loading data');
                 }
             }
         };
@@ -63,48 +53,18 @@ function Profile() {
         }
 
         if (isModified && newPassword !== confirmPassword && newPassword !== '') {
-            toast.warning('Different password',
-                {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+            toast.warning('Different password');
             return;
         }
 
         if (isModified && newPassword.length < 8 && newPassword !== '') {
-            toast.error('The password must have at least 8 characters.',
-                {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+            toast.error('The password must have at least 8 characters.');
             return;
         }
 
         const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*]).{8,}$/;
         if (isModified && !passwordRegex.test(newPassword) && newPassword !== '') {
-            toast.info('The password must contain at least Aa1@',
-                {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+            toast.info('The password must contain at least Aa1@');
             return;
         }
 
@@ -126,82 +86,30 @@ function Profile() {
             setNewPassword('');
             setConfirmPassword('');
             setIsEditingPassword(false);
-            toast.success('Successfully updated', {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.success('Successfully updated');
         } catch (error) {
             if (error.response) {
-                toast.error(error.response.data.error, {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+                toast.error(error.response.data.error);
             }
         }
     }
-
-
-
-
     async function uploadImage(ev) {
         const files = ev.target?.files;
         if (files?.length > 0) {
             const data = new FormData();
             data.append("file", files[0]);
             try {
-                const res = await axios.post("/api/client/upload", data, {withCredentials: true});
+                const res = await axios.post("/api/manage-profile/upload", data, {withCredentials: true});
                 const {message, imagePath} = res.data;
                 if (message === "Image uploaded successfully") {
                     setImages([imagePath]);
-                    toast.info("Image uploaded successfully",
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    toast.info("Image uploaded successfully");
                 } else {
-                    toast.warning("Upload failed",
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    toast.warning("Upload failed");
                 }
             } catch (error) {
                 if (error.response) {
-                    toast.warning('An error occurred while downloading the image',
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    toast.warning('An error occurred while downloading the image');
                 }
             }
         }
@@ -210,44 +118,17 @@ function Profile() {
 
     async function deleteImage() {
         if (images.length === 0) {
-            toast.error("No image to delete", {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.error("No image to delete");
             return;
         }
         setImages([]);
         try {
             await axios.delete("/api/manage-profile/delete", {withCredentials: true});
-            toast.success("Image deleted successfully!", {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.success("Image deleted successfully!");
             setImages([]);
 
         } catch (error) {
-            toast.error("An error occurred while deleting the image.", {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.error("An error occurred while deleting the image.");
         }
     }
 
@@ -282,8 +163,8 @@ function Profile() {
         <div className="flex flex-col items-center justify-center max-w-6xl">
             <ToastContainer
                 position="top-center"
-                autoClose={3000}
-                hideProgressBar={false}
+                autoClose={2000}
+                hideProgressBar={true}
                 newestOnTop
                 closeOnClick={true}
                 rtl={false}
@@ -304,25 +185,14 @@ function Profile() {
                                 </div>
                             )}
                         </div>
-                        <div className=" mt-8 flex flex-row space-x-2">
-                            <input
-                                type="file"
-                                id="image"
-                                name="image"
-                                onChange={uploadImage}
-                                hidden
-                            />
-                            <label
-                                htmlFor="image"
-                                className="text-blue-500 hover:text-blue-700 mx-1 cursor-pointer"
-                            >
-                                <FiPlus size={18} />
-                            </label>
-                            <button
-                                type="button"
-                                className="text-red-500 hover:text-red-700"
-                                onClick={deleteImage}
-                            >
+                        <div className=" mt-4 flex flex-row space-x-2">
+                            <div className="mt-1">
+                                <input type="file" id="image" name="image" onChange={uploadImage} hidden/>
+                                <label htmlFor="image" className="text-blue-500 hover:text-blue-700 cursor-pointer">
+                                    <FiPlus size={18} />
+                                </label>
+                            </div>
+                            <button type="button" className="mr-2 text-red-500 hover:text-red-700" onClick={deleteImage}>
                                 <FiTrash2 size={18} />
                             </button>
                         </div>

@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { parseISO, startOfDay, endOfDay } from 'date-fns';
+import {addDays, endOfDay, parseISO, startOfDay} from "date-fns";
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
@@ -13,9 +13,23 @@ export default async function handler(req, res) {
             } = req.body;
 
             const carId = parseInt(id);
-            const parsedStartDate = startOfDay(parseISO(startDate));
-            const parsedEndDate = endOfDay(parseISO(endDate));
+            const parsedStartDate = parseISO(startDate);
+            const parsedEndDate = parseISO(endDate);
             const priceFloat = parseFloat(price);
+
+            /*// Vérifier si une maintenance existe déjà pour la voiture spécifiée
+            const existingMaintenance = await prisma.maintenance.findFirst({
+                where: {
+                    carId: carId,
+                },
+            });
+
+            if (existingMaintenance) {
+                // Si une maintenance existe déjà, retourner une erreur
+                return res.status(400).json({ error: 'La voiture est déjà en maintenance.' });
+            }
+            A demander avant d'implementer la solution pour la voiture spécifiée
+            */
 
             // Créer une nouvelle maintenance dans la base de données
             const maintenance = await prisma.maintenance.create({
@@ -33,8 +47,8 @@ export default async function handler(req, res) {
                 where: {
                     carId: carId,
                     date: {
-                        gte: parsedStartDate,
-                        lte: parsedEndDate,
+                        gte: startOfDay(parsedStartDate),
+                        lt: startOfDay(addDays(parsedEndDate, 1)), // End date now includes the day of end date
                     },
                 },
             });

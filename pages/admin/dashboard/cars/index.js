@@ -3,11 +3,12 @@ import Sidebar from "@/components/admin/Sidebar";
 import { protectRoute } from "@/utils/auth";
 import React from "react";
 import Navbar from "@/components/admin/Navbar";
+import Footer from "@/components/admin/Footer";
 
 export default function Car({ session }) {
     return (
         <main>
-            <Sidebar />
+            <Sidebar session={session} />
             <section id="content">
                 <Navbar session={session} />
                 <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", alignItems: "center", margin: "40px 30px" }}>

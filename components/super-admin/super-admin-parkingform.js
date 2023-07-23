@@ -5,6 +5,7 @@ import axios from "axios";
 import {FiPlus, FiTrash2} from "react-icons/fi";
 import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import {BeatLoader} from "react-spinners";
 
 const SuperAdminParkingForm = ({ id }) => {
 
@@ -15,6 +16,7 @@ const SuperAdminParkingForm = ({ id }) => {
     const [agencyName, setAgencyName] = useState("");
     const [images, setImages] = useState([]);
     const [goToParking, setGoToParking] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
 
     useEffect(() => {
@@ -31,17 +33,7 @@ const SuperAdminParkingForm = ({ id }) => {
                 })
                 .catch((error) => {
                     if (error.response) {
-                        toast.warning('An error occurred while loading data',
-                            {
-                                position: "top-center",
-                                autoClose: 3000,
-                                hideProgressBar: false,
-                                closeOnClick: true,
-                                pauseOnHover: false,
-                                draggable: false,
-                                progress: undefined,
-                                theme: "colored",
-                            });
+                        toast.warning('An error occurred while loading data');
                     }
                 });
         }
@@ -49,19 +41,12 @@ const SuperAdminParkingForm = ({ id }) => {
 
     async function saveParking(ev) {
         ev.preventDefault();
+        setIsLoading(true);
 
         // Vérification des données côté client (facultatif)
         if (!name || !city || !address) {
-            toast.error('Please complete all fields.', {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.error('Please complete all fields.');
+            setIsLoading(false);
             return;
         }
 
@@ -80,44 +65,19 @@ const SuperAdminParkingForm = ({ id }) => {
                 // Create
                 await axios.post("/api/super-admin/parking-agence/parking/", data);
             }
-            toast.success('The parking has been successfully registered!', {
-                position: "top-center",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
-
+            toast.success('The parking has been successfully registered!');
+            setIsLoading(false);
             setTimeout(() => {
                 setGoToParking(true);
             }, 2000);
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
                 const errorMessage = error.response.data.message;
-                toast.warning(errorMessage, {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+                toast.warning(errorMessage);
+                setIsLoading(false);
             } else {
-                toast.error('An error occurred. Please try again later.', {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+                toast.error('An error occurred. Please try again later.');
+                setIsLoading(false);
             }
         }
     }
@@ -134,43 +94,13 @@ const SuperAdminParkingForm = ({ id }) => {
                 const {message, imagePath} = res.data;
                 if (message === "Image uploaded successfully") {
                     setImages([imagePath]);
-                    toast.info(res.data.message,
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    toast.info(res.data.message);
                 } else {
-                    toast.warning("Upload failed",
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    toast.warning("Upload failed");
                 }
             } catch (error) {
                 if (error.response) {
-                    toast.warning(error.response.data.error,
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    toast.warning(error.response.data.error);
                 }
             }
         }
@@ -178,43 +108,16 @@ const SuperAdminParkingForm = ({ id }) => {
 
     async function deleteImage() {
         if (images.length === 0) {
-            toast.error("No image to delete", {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.error("No image to delete");
             return;
         }
         try {
             await axios.delete(`/api/super-admin/parking-agence/delete?id=${id}`, {withCredentials: true});
-            toast.success("Image deleted successfully!", {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.success("Image deleted successfully!");
             setImages([]);
         } catch (error) {
             if (error.response) {
-                toast.error("An error occurred while deleting the image.", {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+                toast.error("An error occurred while deleting the image.");
             }
         }
     }
@@ -232,7 +135,7 @@ const SuperAdminParkingForm = ({ id }) => {
             <ToastContainer
                 position="top-center"
                 autoClose={3000}
-                hideProgressBar={false}
+                hideProgressBar={true}
                 newestOnTop
                 closeOnClick={true}
                 rtl={false}
@@ -256,23 +159,25 @@ const SuperAdminParkingForm = ({ id }) => {
                                 </div>
                             )}
                         </div>
-                        <div className="flex flex-row space-x-2">
-                            <input
-                                type="file"
-                                id="image"
-                                name="image"
-                                onChange={uploadImage}
-                                hidden
-                            />
-                            <label htmlFor="image"
-                                   className=" text-blue-500 hover:text-blue-700 mx-1 cursor-pointer">
-                                <FiPlus size={18}/>
-                            </label>
-                            <button type="button" className="text-red-500 hover:text-red-700"
-                                    onClick={deleteImage}>
-                                <FiTrash2 size={18}/>
-                            </button>
-                        </div>
+                        {id ? (
+                            <div className="flex flex-row space-x-2">
+                                <input
+                                    type="file"
+                                    id="image"
+                                    name="image"
+                                    onChange={uploadImage}
+                                    hidden
+                                />
+                                <label htmlFor="image"
+                                       className=" text-blue-500 hover:text-blue-700 mx-1 cursor-pointer">
+                                    <FiPlus size={18}/>
+                                </label>
+                                <button type="button" className="-mt-1.5 text-red-500 hover:text-red-700"
+                                        onClick={deleteImage}>
+                                    <FiTrash2 size={18}/>
+                                </button>
+                            </div>
+                        ) : null}
                     </div>
                     <form onSubmit={saveParking} className="flex-1 ml-16 mt-4">
                         <div className="grid grid-cols-2 gap-4">
@@ -332,13 +237,14 @@ const SuperAdminParkingForm = ({ id }) => {
                         <div className="mt-8 flex justify-end">
                             <button
                                 type="submit"
-                                className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                className="uppercase ml-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
                             >
-                                {id ? "Update" : "Save"}
+                                {isLoading ? "Wait" : id ? "Update" : "Save"}
+                                {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
                             </button>
                             <button
                                 type="button"
-                                className="ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                className="uppercase ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
                                 onClick={goBack}
                             >
                                 Cancel

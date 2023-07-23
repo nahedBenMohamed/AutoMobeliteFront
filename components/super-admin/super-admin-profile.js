@@ -34,7 +34,7 @@ function Profile() {
                         {
                             position: "top-center",
                             autoClose: 3000,
-                            hideProgressBar: false,
+                            hideProgressBar: true,
                             closeOnClick: true,
                             pauseOnHover: false,
                             draggable: false,
@@ -67,7 +67,7 @@ function Profile() {
                 {
                     position: "top-center",
                     autoClose: 3000,
-                    hideProgressBar: false,
+                    hideProgressBar: true,
                     closeOnClick: false,
                     pauseOnHover: true,
                     draggable: false,
@@ -82,7 +82,7 @@ function Profile() {
                 {
                     position: "top-center",
                     autoClose: 3000,
-                    hideProgressBar: false,
+                    hideProgressBar: true,
                     closeOnClick: false,
                     pauseOnHover: true,
                     draggable: false,
@@ -98,7 +98,7 @@ function Profile() {
                 {
                     position: "top-center",
                     autoClose: 3000,
-                    hideProgressBar: false,
+                    hideProgressBar: true,
                     closeOnClick: false,
                     pauseOnHover: true,
                     draggable: false,
@@ -129,7 +129,7 @@ function Profile() {
             toast.success('Successfully updated', {
                 position: "top-center",
                 autoClose: 3000,
-                hideProgressBar: false,
+                hideProgressBar: true,
                 closeOnClick: false,
                 pauseOnHover: true,
                 draggable: false,
@@ -141,7 +141,7 @@ function Profile() {
                 toast.error(error.response.data.error, {
                     position: "top-center",
                     autoClose: 3000,
-                    hideProgressBar: false,
+                    hideProgressBar: true,
                     closeOnClick: true,
                     pauseOnHover: false,
                     draggable: false,
@@ -151,9 +151,6 @@ function Profile() {
             }
         }
     }
-
-
-
 
     async function uploadImage(ev) {
         const files = ev.target?.files;
@@ -169,7 +166,7 @@ function Profile() {
                         {
                             position: "top-center",
                             autoClose: 3000,
-                            hideProgressBar: false,
+                            hideProgressBar: true,
                             closeOnClick: true,
                             pauseOnHover: false,
                             draggable: false,
@@ -181,7 +178,7 @@ function Profile() {
                         {
                             position: "top-center",
                             autoClose: 3000,
-                            hideProgressBar: false,
+                            hideProgressBar: true,
                             closeOnClick: true,
                             pauseOnHover: false,
                             draggable: false,
@@ -195,7 +192,7 @@ function Profile() {
                         {
                             position: "top-center",
                             autoClose: 3000,
-                            hideProgressBar: false,
+                            hideProgressBar: true,
                             closeOnClick: true,
                             pauseOnHover: false,
                             draggable: false,
@@ -213,7 +210,7 @@ function Profile() {
             toast.error("No image to delete", {
                 position: "top-center",
                 autoClose: 3000,
-                hideProgressBar: false,
+                hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: false,
                 draggable: false,
@@ -228,7 +225,7 @@ function Profile() {
             toast.success("Image deleted successfully!", {
                 position: "top-center",
                 autoClose: 3000,
-                hideProgressBar: false,
+                hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: false,
                 draggable: false,
@@ -241,7 +238,7 @@ function Profile() {
             toast.error("An error occurred while deleting the image.", {
                 position: "top-center",
                 autoClose: 3000,
-                hideProgressBar: false,
+                hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: false,
                 draggable: false,
@@ -283,7 +280,7 @@ function Profile() {
             <ToastContainer
                 position="top-center"
                 autoClose={3000}
-                hideProgressBar={false}
+                hideProgressBar={true}
                 newestOnTop
                 closeOnClick={true}
                 rtl={false}

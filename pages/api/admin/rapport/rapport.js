@@ -12,10 +12,10 @@ export default async function handler(req, res) {
     const carId = req.query.carId;
 
     const rentalsWhere = carId ?
-        { startDate: { gte: yearStart }, carId: parseInt(carId) } :
-        { startDate: { gte: yearStart } };
+        { startDate: { gte: yearStart }, carId: parseInt(carId), status: 'completed' } :
+        { startDate: { gte: yearStart }, status: 'completed' };
 
-    // calculate revenues for each month
+// calculate revenues for each month
     const rentals = await prisma.rental.findMany({
         select: {
             total: true,
@@ -26,6 +26,7 @@ export default async function handler(req, res) {
             startDate: 'asc'
         }
     });
+
 
     const monthlyRevenues = Array(12).fill(0)
     rentals.forEach(rental => {

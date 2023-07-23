@@ -9,6 +9,12 @@ export default async function handle(req, res) {
             // Handle POST method
             const {name, address, email, telephone,responsibleEmail} = req.body;
 
+            // Check if the responsible email is the superAdmin's email
+            const superAdminEmail = 'mobelite@gmail.com'; // Replace with the superAdmin's email
+
+            if (responsibleEmail === superAdminEmail) {
+                return res.status(400).json({ message: 'Cannot assign superAdmin as responsible for an agency' });
+            }
 
             // Vérifier si l'agence existe déjà
             const existingAgence = await prisma.agency.findUnique({

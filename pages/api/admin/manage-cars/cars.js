@@ -48,7 +48,6 @@ export default async function handle(req, res) {
                 mileage,
                 price,
                 registration,
-                status,
                 image,
                 description,
                 door,
@@ -86,7 +85,6 @@ export default async function handle(req, res) {
                     brand,
                     model,
                     registration,
-                    status,
                     image,
                     description,
                     fuel,
@@ -217,7 +215,6 @@ export default async function handle(req, res) {
                 gearBox,
                 door,
                 registration,
-                status,
                 image,
                 description,
                 startDate,
@@ -272,7 +269,6 @@ export default async function handle(req, res) {
                     registration,
                     fuel,
                     gearBox,
-                    status,
                     image,
                     description,
                     parking: parking
@@ -345,7 +341,9 @@ export default async function handle(req, res) {
 
                 // Check if the car is reserved
                 const isCarReserved = await prisma.rental.findFirst({
-                    where: { carId: Number(carId) },
+                    where: {
+                        carId: Number(carId),
+                    },
                 });
 
                 // If the car is reserved, send an error response

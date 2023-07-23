@@ -5,6 +5,7 @@ import axios from "axios";
 import {FiPlus, FiTrash2} from "react-icons/fi";
 import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import {BeatLoader} from "react-spinners";
 
 const EditAdmin = ({id}) => {
 
@@ -16,6 +17,7 @@ const EditAdmin = ({id}) => {
     const [images, setImages] = useState([]);
     const [goToAdmin, setGoToAdmin] = useState(false);
     const [isActive, setIsActive] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (id) {
@@ -33,17 +35,7 @@ const EditAdmin = ({id}) => {
                 .catch((error) => {
                     console.log(error);
                     if (error.response) {
-                        toast.warning('An error occurred while loading data',
-                            {
-                                position: "top-center",
-                                autoClose: 3000,
-                                hideProgressBar: false,
-                                closeOnClick: true,
-                                pauseOnHover: false,
-                                draggable: false,
-                                progress: undefined,
-                                theme: "colored",
-                            });
+                        toast.warning('An error occurred while loading data');
                     }
                 });
         }
@@ -51,19 +43,12 @@ const EditAdmin = ({id}) => {
 
     async function saveAdmin(ev) {
         ev.preventDefault();
+        setIsLoading(true);
 
         // Vérification des données côté client (facultatif)
         if (!name || !firstname || !email) {
-            toast.error('Please complete all fields.', {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.error('Please complete all fields.');
+            setIsLoading(false);
             return;
         }
 
@@ -76,7 +61,6 @@ const EditAdmin = ({id}) => {
             isActive
         };
         try {
-            console.log(data)
             if (id) {
                 // Update
                 if (agencyName) {
@@ -87,103 +71,38 @@ const EditAdmin = ({id}) => {
                 }
             }
 
-            toast.success('The Agency has been successfully registered!', {
-                position: "top-center",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.success('The Agency has been successfully registered!');
+            setIsLoading(false);
             setTimeout(() => {
                 setGoToAdmin(true);
-            }, 2000);
+            }, 1000);
 
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
                 const errorMessage = error.response.data.message;
                 if (errorMessage === 'Admin ID is required.') {
-                    toast.warning('Please provide an admin ID.', {
-                        position: "top-center",
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: false,
-                        draggable: false,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                    toast.warning('Please provide an admin ID.');
+                    setIsLoading(false);
                 } else if (errorMessage === 'Admin not found.') {
-                    toast.warning('Admin not found.', {
-                        position: "top-center",
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: false,
-                        draggable: false,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                    toast.warning('Admin not found.');
+                    setIsLoading(false);
                 } else if (errorMessage === 'Invalid agency name.') {
-                    toast.warning('Invalid agency name.', {
-                        position: "top-center",
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: false,
-                        draggable: false,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                    toast.warning('Invalid agency name.');
+                    setIsLoading(false);
                 } else if (errorMessage === 'The specified agency already has a responsible.') {
-                    toast.warning('The specified agency already has a responsible.', {
-                        position: "top-center",
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: false,
-                        draggable: false,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                    toast.warning('The specified agency already has a responsible.');
+                    setIsLoading(false);
                 } else if (errorMessage === 'An agency name is required when the admin is responsible for an agency.') {
-                    toast.warning('An agency name is required when the admin is responsible for an agency.', {
-                        position: "top-center",
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: false,
-                        draggable: false,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                    toast.warning('An agency name is required when the admin is responsible for an agency.');
+                    setIsLoading(false);
                 }
                 else {
-                    // Si le message d'erreur ne correspond à aucune erreur spécifique, affichez un message générique
-                    toast.warning(errorMessage, {
-                        position: "top-center",
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: false,
-                        draggable: false,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                    toast.warning(errorMessage);
+                    setIsLoading(false);
                 }
             } else {
-                toast.error('An error occurred. Please try again later', {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+                toast.error('An error occurred. Please try again later');
+                setIsLoading(false);
             }
         }
     }
@@ -200,43 +119,13 @@ const EditAdmin = ({id}) => {
                 const {message, imagePath} = res.data;
                 if (message === "Image uploaded successfully") {
                     setImages([imagePath]);
-                    toast.info(res.data.message,
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    toast.info(res.data.message);
                 } else {
-                    toast.warning("Upload failed",
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    toast.warning("Upload failed");
                 }
             } catch (error) {
                 if (error.response) {
-                    toast.warning(error.response.data.error,
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    toast.warning(error.response.data.error);
                 }
             }
         }
@@ -244,50 +133,23 @@ const EditAdmin = ({id}) => {
 
     async function deleteImage() {
         if (images.length === 0) {
-            toast.error("No image to delete", {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.error("No image to delete");
             return;
         }
         try {
             await axios.delete(`/api/super-admin/manage-admin/delete?id=${id}`, {withCredentials: true});
-            toast.success("Image deleted successfully!", {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.success("Image deleted successfully!");
             setImages([]);
         } catch (error) {
-            toast.error(`An error occurred while deleting the image`, {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.error(`An error occurred while deleting the image`);
         }
     }
 
     if (goToAdmin) {
-        router.push("/super-admin/dashboard/manage-admin");
+        router.push("/super-admin/dashboard/manage");
     }
     function goBack (){
-        router.push('/super-admin/dashboard/manage-admin')
+        router.push('/super-admin/dashboard/manage')
         return null
     }
 
@@ -296,7 +158,7 @@ const EditAdmin = ({id}) => {
             <ToastContainer
                 position="top-center"
                 autoClose={3000}
-                hideProgressBar={false}
+                hideProgressBar={true}
                 newestOnTop
                 closeOnClick={true}
                 rtl={false}
@@ -332,10 +194,10 @@ const EditAdmin = ({id}) => {
                                 hidden
                             />
                             <label htmlFor="image"
-                                   className=" text-blue-500 hover:text-blue-700 mx-1 cursor-pointer">
+                                   className="-mt-3 text-blue-500 hover:text-blue-700 mx-1 cursor-pointer">
                                 <FiPlus size={18}/>
                             </label>
-                            <button type="button" className="text-red-500 hover:text-red-700"
+                            <button type="button" className="-mt-4 text-red-500 hover:text-red-700"
                                     onClick={deleteImage}>
                                 <FiTrash2 size={18}/>
                             </button>
@@ -409,9 +271,10 @@ const EditAdmin = ({id}) => {
                         <div className="mt-4 flex justify-end">
                             <button
                                 type="submit"
-                                className="ml-4 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                                className="uppercase ml-4 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
                             >
-                                {id ? "Update" : "Save"}
+                                {isLoading ? "Wait" : id ? "Update" : "Save"}
+                                {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
                             </button>
                             <button
                                 type="button"

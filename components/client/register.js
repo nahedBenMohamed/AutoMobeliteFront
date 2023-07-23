@@ -4,11 +4,13 @@ import {HiEye, HiEyeOff, HiHome, HiLocationMarker, HiLockClosed, HiMail, HiPhone
 import { parsePhoneNumberFromString, getCountryCallingCode } from 'libphonenumber-js';
 import {BiIdCard} from "react-icons/bi";
 import {FaHandPeace} from "react-icons/fa";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import {BeatLoader} from "react-spinners";
 
 const RegisterClient = () => {
-    const router = useRouter();
 
-    const [errorMessage, setErrorMessage] = useState('');
+    const router = useRouter();
     const [name, setName] = useState('');
     const [image, setImage] = useState('');
     const [firstname, setFirstName] = useState('');
@@ -20,7 +22,7 @@ const RegisterClient = () => {
     const [city, setCity] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const [errorMessageVisible, setErrorMessageVisible] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
 
     // Function to set the default telephone value with country code
@@ -35,14 +37,12 @@ const RegisterClient = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setIsLoading(true);
 
         // Vérification des données côté client (facultatif)
         if (!name || !firstname || !email || !telephone || !numPermis || !password || !confirmPassword || !address || !city || !image) {
-            setErrorMessage('Please fill in all fields and upload the license image');
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.error('Please fill in all fields and upload the license image')
+            setIsLoading(false);
             return;
         }
 
@@ -57,41 +57,27 @@ const RegisterClient = () => {
         const isPhoneNumberValid = phoneNumber && phoneNumber.isValid() && phoneNumberRegex.test(telephoneString);
 
         if (!isPhoneNumberValid) {
-            setErrorMessage('Please enter a valid Tunisian phone number.');
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.error('Please enter a valid Tunisian phone number')
+            setIsLoading(false);
             return;
         }
 
         if (password !== confirmPassword) {
-            setErrorMessage('Passwords do not match.');
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.error('Passwords do not match')
+            setIsLoading(false);
             return;
         }
 
         if (password.length < 8) {
-            setErrorMessage('Password must be at least 8 characters');
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.error('Password must be at least 8 characters')
+            setIsLoading(false);
             return;
         }
 
         const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*]).{8,}$/;
         if (!passwordRegex.test(password)) {
-            setErrorMessage(
-                'The password must contain at least one uppercase letter, one lowercase letter, one number and one special character'
-            );
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.error('The password must contain at least one uppercase letter, one lowercase letter, one number and one special character')
+            setIsLoading(false);
             return;
         }
 
@@ -113,28 +99,36 @@ const RegisterClient = () => {
                 method: 'POST',
                 body: formData,
             });
-
+            const data = await response.json();
             if (response.ok) {
-                await router.push('/redirect');
-            } else {
-                const errorData = await response.json();
-                setErrorMessage(errorData.message);
-                setErrorMessageVisible(true);
+                toast.success(data.message);
+                setIsLoading(false);
                 setTimeout(() => {
-                    setErrorMessageVisible(false);
-                }, 5000);
+                    router.push('/redirect');
+                }, 2000);
+            } else {
+                toast.error(data.message);
+                setIsLoading(false);
             }
         } catch (error) {
-            setErrorMessage(error.message);
-            setErrorMessageVisible(true);
-            setTimeout(() => {
-                setErrorMessageVisible(false);
-            }, 5000);
+            toast.error('An error has occurred.');
         }
-    };
+    }
 
     return (
         <div className="flex flex-col  items-center justify-center min-h-screen">
+            <ToastContainer
+                position="top-center"
+                autoClose={2000}
+                hideProgressBar={true}
+                newestOnTop
+                closeOnClick={true}
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable={true}
+                pauseOnHover={false}
+                theme="colored"
+            />
             <div className="w-full mt-16 max-w-xl px-6 py-4 bg-white rounded-md shadow-md">
                 <h2 className="mb-8 text-2xl font-bold text-center text-gray-900">
                       <span className="inline-flex items-center">
@@ -197,7 +191,7 @@ const RegisterClient = () => {
                                 id="permis"
                                 name="permis"
                                 type="text"
-                                autoComplete="email"
+                                autoComplete="text"
                                 placeholder="Enter your Tunisia permis drive"
                                 value={numPermis}
                                 onChange={(e) => setNumPermis(e.target.value)}
@@ -213,7 +207,7 @@ const RegisterClient = () => {
                                     id="phone"
                                     name="phone"
                                     type="phone"
-                                    autoComplete="email"
+                                    autoComplete="phone"
                                     placeholder="Enter your Tunisia phone number"
                                     value={telephone || getDefaultTelephone()} // Set default value with country code
                                     onChange={(e) => setTelephone(e.target.value)}
@@ -288,6 +282,9 @@ const RegisterClient = () => {
                             />
                         </div>
                     </div>
+                    <label htmlFor="image" className="block mb-2 text-blue-600 ">
+                        Upload your driving licence image here:
+                    </label>
                     <input
                         id="image"
                         name="image"
@@ -296,15 +293,13 @@ const RegisterClient = () => {
                         onChange={handleImageChange}
                         className="block w-full"
                     />
-                    <div className="mt-2">
-                        {errorMessageVisible && errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-                    </div>
                     <div className="mt-4">
                         <button
                             type="submit"
-                            className="w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            className="uppercase w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
-                            Suivant
+                            {isLoading ? "Wait..." : "Create account"}
+                            {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
                         </button>
                     </div>
                 </form>

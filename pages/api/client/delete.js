@@ -1,33 +1,26 @@
 import prisma from "@/lib/prisma";
 import fs from "fs";
 import path from 'path';
-import { parseCookies } from "nookies";
-import jwt from "jsonwebtoken";
+import { getSession } from "next-auth/react";
 
 export default async function handle(req, res) {
-    const { method } = req;
-    // Get the token from the cookie
-    const { token } = parseCookies({ req });
-
-    let payload;
-    try {
-        // Verify the token
-        payload = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (error) {
-        return res.status(401).json({ error: 'Invalid token' });
-    }
-
+    const {method} = req;
+    const session = await getSession({ req });
     if (method === "DELETE") {
         try {
-            // If an ID query parameter exists, delete the user with that ID
+            if (!session) {
+                return res.status(401).json({error: 'Unauthorized'});
+            }
+
+            const clientId = session.user.id;
+
+            // Retrieve the client
             const client = await prisma.client.findUnique({
-                where: {
-                    id: payload.clientId,
-                },
+                where: {id: clientId},
             });
 
             if (!client) {
-                return res.status(404).json({ message: "User not found." });
+                return res.status(404).json({message: "User not found."});
             }
 
             if (client.image) {
@@ -35,18 +28,17 @@ export default async function handle(req, res) {
                 if (fs.existsSync(imagePath)) {
                     fs.unlinkSync(imagePath);
                     await prisma.client.update({
-                        where: { id:  payload.clientId },
-                        data: { image: null },
+                        where: {id: clientId},
+                        data: {image: null},
                     });
                 } else {
-                    return res.status(404).json({ message: `Image not found at path: ${imagePath}` });
+                    return res.status(404).json({message: `Image not found at path: ${imagePath}`});
                 }
             }
 
-            // Delete the user and send the deleted user data as a response
-            return res.status(200).json({ message: "Image deleted successfully." });
+            return res.status(200).json({message: "Image deleted successfully."});
         } catch (error) {
-            res.status(500).json({ message: "Error deleting image.", error: error.message });
+            return res.status(500).json({message: "Error deleting image.", error: error.message});
         }
     }
 }

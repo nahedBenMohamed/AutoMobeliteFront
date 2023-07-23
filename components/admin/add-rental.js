@@ -3,6 +3,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Modal from "react-modal";
 import Link from "next/link";
+import {useRouter} from "next/router";
+import {BeatLoader} from "react-spinners";
 
 function AddRental() {
     const [cars, setCars] = useState([]);
@@ -11,8 +13,9 @@ function AddRental() {
     const [currentPage, setCurrentPage] = useState(1);
     const [carsPerPage] = useState(6);
     const [paginationRange, setPaginationRange] = useState([]);
-
-
+    const [search, setSearch] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         axios
@@ -22,16 +25,7 @@ function AddRental() {
             })
             .catch((error) => {
                 if (error.response) {
-                    toast.warning("An error occurred while loading data", {
-                        position: "top-center",
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: false,
-                        draggable: false,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                    toast.warning("An error occurred while loading data");
                 }
             });
     }, []);
@@ -44,56 +38,44 @@ function AddRental() {
     // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    useEffect(() => {
-        const range = [];
-        const totalPages = Math.ceil(cars.length / carsPerPage);
-        const maxButtonsToShow = 5; // Adjust the number of buttons to show
-
-        let startPage, endPage;
-        if (totalPages <= maxButtonsToShow) {
-            // Show all buttons
-            startPage = 1;
-            endPage = totalPages;
-        } else {
-            // Determine the range of buttons to show
-            const middlePage = Math.floor(maxButtonsToShow / 2);
-            if (currentPage <= middlePage) {
-                // Show first n buttons
-                startPage = 1;
-                endPage = maxButtonsToShow;
-            } else if (currentPage + middlePage >= totalPages) {
-                // Show last n buttons
-                startPage = totalPages - maxButtonsToShow + 1;
-                endPage = totalPages;
-            } else {
-                // Show middle n buttons
-                startPage = currentPage - middlePage;
-                endPage = currentPage + middlePage;
-            }
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            range.push(i);
-        }
-
-        setPaginationRange(range);
-    }, [currentPage, cars, carsPerPage]);
-
     const openModal = (car) => {
         setSelectedCar(car);
         setModalIsOpen(true);
     };
-
-
     const closeModal = () => {
         setModalIsOpen(false);
     };
 
+    function goRental() {
+        router.push('/admin/dashboard/reservations/');
+    }
+
+    function goReservationsForm(id) {
+        setIsLoading(true)
+        router.push(`/admin/dashboard/reservations/form/${id}`);
+    }
 
     return (
         <div className="container mt-16">
+            <div className="mb-8 flex justify-between">
+                <button onClick={goRental} className="uppercase bg-blue-500 text-white p-2 rounded mx-1">
+                    Cancel
+                </button>
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="py-2 px-4 border border-gray-300 rounded-3xl"
+                />
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {currentCars.map((car) => (
+                {currentCars
+                    .filter(car =>
+                        car.brand.toLowerCase().includes(search.toLowerCase()) ||
+                        car.model.toLowerCase().includes(search.toLowerCase())
+                    )
+                    .map((car) => (
                     <div key={car.id} className="border border-lighter-grey bg-white rounded">
                         <div className="image-container">
                             {car.image ? (
@@ -119,17 +101,17 @@ function AddRental() {
                             </div>
                             <div className="flex space-x-4">
                                 <button
-                                    className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full"
+                                    onClick={() => goReservationsForm(car.id)}
+                                    className="uppercase block text-center bg-blue-600 p-2 font-bold text-white rounded w-full"
                                 >
-                                    <Link href={"/admin/dashboard/reservations/form/" + car.id}>
-                                    Book now
-                                    </Link>
+                                    {isLoading ? "Book now" : "Book now"}
+                                    {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
                                 </button>
                                 <button
-                                    className="block text-center bg-blue-600 p-2 font-bold text-white rounded w-full"
+                                    className=" uppercase block text-center bg-blue-600 p-2 font-bold text-white rounded w-full"
                                     onClick={() => openModal(car)}
                                 >
-                                    More details
+                                    details
                                 </button>
                             </div>
                         </div>
@@ -177,7 +159,7 @@ function AddRental() {
                                     <div className="mt-2 flex justify-between">
                                         <button
                                             onClick={closeModal}
-                                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                                            className="uppercase bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
                                         >
                                             Close
                                         </button>
@@ -192,7 +174,7 @@ function AddRental() {
                                         <p><span className="font-bold">Price:</span>&nbsp;{selectedCar.price} DT</p>
                                         <p><span className="font-bold">Registration:</span>&nbsp;{selectedCar.registration}</p>
                                         <p><span className="font-bold">Status:</span>&nbsp;{selectedCar.status}</p>
-                                        <p><span className="font-bold">Parking:</span>&nbsp;{selectedCar.parking?.name}</p>
+                                        <p><span className="font-bold">Parking:</span>&nbsp;{selectedCar.parking?.name ?? "N/A"}</p>
                                     </div>
                                 </div>
                             </div>

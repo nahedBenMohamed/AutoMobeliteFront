@@ -26,7 +26,7 @@ export default function EditCar({session}){
     return(
 
         <main>
-            <Sidebar />
+            <Sidebar session={session} />
             <section id="content">
                 <Navbar session={session} />
                 <div style={{
