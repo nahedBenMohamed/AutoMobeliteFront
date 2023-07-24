@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import 'boxicons/css/boxicons.min.css';
-import { FiEdit, FiInfo } from "react-icons/fi";
-import Link from "next/link";
+import {  FiInfo } from "react-icons/fi";
 import {useRouter} from "next/router";
 
 const AdminHome = () => {
@@ -72,45 +71,44 @@ const AdminHome = () => {
         <main>
             <ul className="box-info">
                 <li>
-                    <i className='bx bxs-car'></i>
+                    <i className='bx bxs-car bx-fade-right'></i>
                     <span className="text">
                         <h3>{statistics.totalCar}</h3>
                         <p>Total Cars</p>
                     </span>
                 </li>
                 <li>
-                    <i className='bx bxs-parking'></i>
+                    <i className='bx bxs-parking bx-fade-right' ></i>
                     <span className="text">
                         <h3>{statistics.parc}</h3>
                         <p>Total Parc</p>
                     </span>
                 </li>
                 <li>
-                    <i className="bx bxs-calendar-check"></i>
+                    <i className='bx bx-transfer bx-fade-left'></i>
                     <span className="text">
                         <h3>{statistics.totalReservations}</h3>
                         <p>Total Rentals</p>
                     </span>
                 </li>
             </ul>
-
-            <ul className="box-info">
+            <ul className="box-info2">
                 <li>
-                    <i className="bx bxs-calendar-check"></i>
+                    <i className="bx bx-x bx-tada"></i>
                     <span className="text">
                         <h3>{statistics.totalReservationsCancelled}</h3>
                         <p>Cancelled Reservations</p>
                     </span>
                 </li>
                 <li>
-                    <i className="bx bxs-calendar-check"></i>
+                    <i className='bx bx-trending-up bx-tada'></i>
                     <span className="text">
                         <h3>{statistics.totalReservationsInProgress}</h3>
                         <p>Reservations in Progress</p>
                     </span>
                 </li>
                 <li>
-                    <i className="bx bxs-calendar-check"></i>
+                    <i className="bx bx-check-double bx-tada"></i>
                     <span className="text">
                         <h3>{statistics.totalReservationsCompleted}</h3>
                         <p>Completed Reservations</p>

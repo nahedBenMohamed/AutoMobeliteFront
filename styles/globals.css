@@ -60,7 +60,9 @@ li {
     --dark: #342E37;
     --red: #DB504B;
     --yellow: #FFCE26;
+    --green: #00FF00;
     --light-yellow: #FFF2C6;
+    --light-green: #149414;
     --orange: #FD7238;
     --light-orange: #FFE0D3;
 }
@@ -356,6 +358,7 @@ input:checked ~ .toggle__line {
     justify-content: center;
     align-items: center;
 }
+
 #content main .box-info li:nth-child(1) .bx {
     background: var(--light-blue);
     color: var(--blue);
@@ -368,12 +371,58 @@ input:checked ~ .toggle__line {
     background: var(--light-orange);
     color: var(--orange);
 }
+
 #content main .box-info li .text h3 {
     font-size: 24px;
     font-weight: 600;
     color: var(--dark);
 }
 #content main .box-info li .text p {
+    color: var(--dark);
+}
+
+
+#content main .box-info2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-gap: 24px;
+    margin-top: 36px;
+}
+#content main .box-info2 li {
+    padding: 24px;
+    background: var(--light);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    grid-gap: 24px;
+}
+#content main .box-info2 li .bx {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    font-size: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#content main .box-info2 li:nth-child(1) .bx {
+    background: var(--red);
+    color: var(--light);
+}
+#content main .box-info2 li:nth-child(2) .bx {
+    background: var(--blue);
+    color: var(--light);
+}
+#content main .box-info2 li:nth-child(3) .bx {
+    background: var(--light-green);
+    color: var(--light);
+}
+#content main .box-info2 li .text h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--dark);
+}
+#content main .box-info2 li .text p {
     color: var(--dark);
 }
 

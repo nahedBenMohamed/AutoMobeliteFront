@@ -9,8 +9,6 @@ import {BellIcon} from '@heroicons/react/20/solid'
 import { io } from "socket.io-client";
 import {useRouter} from "next/router";
 import moment from "moment";
-import {MdAccountCircle} from "react-icons/md";
-import Link from "next/link";
 
 let socket;
 
@@ -227,7 +225,7 @@ function Profile(){
                         <img src={image} alt="Profile Picture" className="ml-4 rounded-full h-12 w-12"/>
                     ) : (
                         <div className="ml-4 w-10 h-10 object-cover rounded-full flex items-center justify-center bg-gray-200">
-                            <span className="text-gray-500 text-lg"><img src="/avatar.jpg" alt="img"/></span>
+                            <i className='bx bx-user'></i>
                         </div>
                     )}
                 </button>
