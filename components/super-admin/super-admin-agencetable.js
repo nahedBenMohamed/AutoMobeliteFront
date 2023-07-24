@@ -201,6 +201,58 @@ const SuperAdminAgencetable = () => {
                             </ul>
                         )}
                     </div>
+                    <Modal
+                        isOpen={modalIsOpen}
+                        onRequestClose={() => setModalIsOpen(false)}
+                        contentLabel="Confirmation Modal"
+                        style={{
+                            overlay: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            },
+                            content: {
+                                maxWidth: '400px',
+                                width: '90%',
+                                height: '35%',
+                                margin: 'auto',
+                                borderRadius: '8px',
+                                padding: '20px',
+                                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                                top: '50%',
+                                left: '55%',
+                                transform: 'translate(-50%, -55%)',
+                            },
+                        }}
+                        contentClassName="custom-modal-content"
+                    >
+                        <h2 className="text-2xl font-bold text-center mb-4">Confirmation</h2>
+                        {agencyToDelete && (
+                            <div>
+                                <p className="text-center mt-4 mb-4">
+                                    Êtes-vous sûr de vouloir supprimer l'agence
+                                    &nbsp;
+                                    <span className="text-blue-500">
+                                        {agencyToDelete.name}</span>
+                                </p>
+                                <div className="flex justify-center space-x-4">
+                                    <button
+                                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                        onClick={handleDeleteCar}
+                                    >
+                                        OUI
+                                    </button>
+                                    <button
+                                        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                                        onClick={() => setModalIsOpen(false)}
+                                    >
+                                        NON
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </Modal>
                 </>
             )}
         </div>

@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         agency = getAgencyNameFromToken(req);
     } catch (error) {
         // Handle error if unable to extract agency name from token
-        return res.status(401).json({ message: error.message });
+        res.status(401).json({ message: error.message });
     }
     try {
         if (req.method === 'GET') {
@@ -57,7 +57,6 @@ export default async function handler(req, res) {
                     if (!rental || rental.car.Agency.name !== agency) {
                         return res.status(403).json({ message: "You are not authorized to view this car." });
                     }
-
                     res.json(rental);
                 } else {
                     const rentals = await prisma.rental.findMany({
@@ -73,7 +72,6 @@ export default async function handler(req, res) {
                     });
                     res.status(200).json(rentals);
                 }
-                return res.status(200).json(rentals);
             } catch (error) {
                 res.status(500).json({ error: 'Error retrieving rental data' });
             }

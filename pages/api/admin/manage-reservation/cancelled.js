@@ -48,7 +48,6 @@ export default async function handler(req, res) {
                         include: { car: true, client: true, },
                     });
                     res.status(200).json(rentals);
-                return res.status(200).json(rentals);
             } catch (error) {
                 res.status(500).json({ error: 'Error retrieving rental data' });
             }
@@ -62,7 +61,7 @@ export default async function handler(req, res) {
                         id: parseInt(id)
                     },
                 });
-                return res.json(deletedRental);
+                res.json(deletedRental);
             } catch (error) {
                 return res.status(500).json({ message: "An error occurred while deleting the rental.", error: error.message });
             }

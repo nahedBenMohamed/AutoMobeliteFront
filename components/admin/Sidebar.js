@@ -11,23 +11,14 @@ export default function Sidebar({ session }) {
     const { pathname } = router;
     const [isHovered, setIsHovered] = useState(false);
     const [isLinkClicked, setIsLinkClicked] = useState(false);
+    const [isHovered2, setIsHovered2] = useState(false);
+    const [isLinkClicked2, setIsLinkClicked2] = useState(false);
     const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
     const [agencyData, setAgencyData] = useState(null);
 
     const agencyId = session.agencyId
 
 
-    const handleLogout = async () => {
-        const res = await fetch('/api/admin/logout', {
-            method: 'POST',
-        });
-
-        if (res.ok) {
-            await router.push('/admin/auth/login');
-        } else {
-            // handle error
-        }
-    };
 
     useEffect(() => {
         const fetchUnreadNotificationsCount = async () => {
@@ -64,7 +55,7 @@ export default function Sidebar({ session }) {
                 {agencyData?.image ? (
                     <img src={agencyData.image} alt="" className=" ml-4 w-10 h-10 object-cover rounded-full"/>
                 ) : (
-                    <div className="w-10 h-10 object-cover rounded-full flex items-center justify-center bg-gray-200">
+                    <div className="ml-4 w-10 h-10 object-cover rounded-full flex items-center justify-center bg-gray-200">
                         <span className="text-gray-500 text-lg"><img src="/placeholder.png" alt="img"/></span>
                     </div>
                 )}
@@ -75,8 +66,31 @@ export default function Sidebar({ session }) {
                 <li className={pathname === '/admin/dashboard/home' ? 'active' : ''}>
                     <Link href="/admin/dashboard/home">
                         <i className="bx bxs-home-smile"></i>
-                        <span className="text">Dashboard</span>
+                        <span className="text">Home</span>
                     </Link>
+                </li>
+                <li
+                    className="relative"
+                    onMouseEnter={() => setIsHovered2(true)}
+                    onMouseLeave={() => setIsHovered2(false)}
+                    onClick={() => setIsLinkClicked2(true)}
+                >
+                    <Link href="/admin/dashboard/agence">
+                        <i className="bx bxs-building-house"></i>
+                        <span className="text">My Agency</span>
+                    </Link>
+                    {(isHovered2 || isLinkClicked2) && (
+                        <ul className="absolute top-8 left-0 w-48 rounded-md py-2">
+                            <li>
+                                <Link href="/admin/dashboard/agence/details/" className="px-4 py-2 text-gray-800">
+                                    <div className="flex items-center space-x-2">
+                                        <i className="bx bxs-building-house"></i>
+                                        <span className="text">Agency Details</span>
+                                    </div>
+                                </Link>
+                            </li>
+                        </ul>
+                    )}
                 </li>
                 <li className={pathname === '/admin/dashboard/cars' ? 'active' : ''}>
                     <Link href="/admin/dashboard/cars">
@@ -139,33 +153,6 @@ export default function Sidebar({ session }) {
                         <i className="bx bxs-book"></i>
                         <span className="text">Rapport</span>
                     </Link>
-                </li>
-
-            </ul>
-            <ul className="side-menu">
-                <li className={pathname === '/admin/dashboard/profile' ? 'active' : ''}>
-                    <Link href="/admin/dashboard/profile">
-                        <i className="bx bxs-user-pin"></i>
-                        <span className="text">Profile</span>
-                    </Link>
-                </li>
-                <li>
-                    <button
-                        onClick={handleLogout}
-                        className="bg-none color-white flex items-center px-4 py-2 text-sm text-gray-700"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            id="Outline"
-                            viewBox="0 0 24 24"
-                            width="20"
-                            height="20"
-                        >
-                            <path d="M22.829,9.172,18.95,5.293a1,1,0,0,0-1.414,1.414l3.879,3.879a2.057,2.057,0,0,1,.3.39c-.015,0-.027-.008-.042-.008h0L5.989,11a1,1,0,0,0,0,2h0l15.678-.032c.028,0,.051-.014.078-.016a2,2,0,0,1-.334.462l-3.879,3.879a1,1,0,1,0,1.414,1.414l3.879-3.879a4,4,0,0,0,0-5.656Z" />
-                            <path d="M7,22H5a3,3,0,0,1-3-3V5A3,3,0,0,1,5,2H7A1,1,0,0,0,7,0H5A5.006,5.006,0,0,0,0,5V19a5.006,5.006,0,0,0,5,5H7a1,1,0,0,0,0-2Z" />
-                        </svg>
-                        <span className="ml-2">Logout</span>
-                    </button>
                 </li>
             </ul>
         </section>

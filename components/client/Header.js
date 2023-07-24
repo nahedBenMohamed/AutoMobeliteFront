@@ -105,44 +105,44 @@ function Header() {
                 )}
                 {!isReservationPage() && !isEditReservationPage() && (
                     <>
-                        {data?.user ? (
-                            <div className="relative flex">
-                                {isManageReservationsPage && (
-                                    <Link href={"/models/"} className="mr-6 ">
-                                        Book
-                                    </Link>
-                                )}
-                                <span className="flex items-center ">Hi,{data?.user?.name}</span>
-                                <button
-                                    className="flex items-center text-black gap-2 hover:text-blue-600 transition-all duration-600 ease-linear -mr-6"
-                                    onClick={toggleDropdown}
+                    {data?.user ? (
+                        <div className="relative flex items-center">
+                            {isManageReservationsPage && (
+                                <Link href={"/models/"} className="mr-6 ">
+                                    Book
+                                </Link>
+                            )}
+                            <span className="flex items-center">Hi, {data?.user?.name} </span>
+                            <button
+                                className="flex items-center text-black gap-2 hover:text-blue-600 transition-all duration-600 ease-linear -mr-6"
+                                onClick={toggleDropdown}
+                            >
+                                <MdAccountCircle size={24} />
+                            </button>
+                            {isDropdownOpen && (
+                                <div
+                                    ref={dropdownRef}
+                                    className="absolute top-full right-0 mt-2 w-72 bg-white rounded-md shadow-md overflow-hidden"
                                 >
-                                    <MdAccountCircle size={24} />
-                                </button>
-                                {isDropdownOpen && (
-                                    <div
-                                        ref={dropdownRef}
-                                        className="absolute top-full right-0 mt-2 w-72 bg-white rounded-md shadow-md overflow-hidden"
-                                    >
-                                        <Link href="/edit-profile">
-                                            <button className="text-left block px-4 py-2 cursor-pointer hover:bg-blue-600 w-full">
-                                                My Account
-                                            </button>
-                                        </Link>
-                                        <Link href="/manage-reservations">
-                                            <button className="text-left block px-4 py-2 cursor-pointer hover:bg-blue-600 w-full">
-                                                Manage Reservations
-                                            </button>
-                                        </Link>
-                                        <button
-                                            onClick={handleLogout}
-                                            className="text-left block px-4 py-2 w-full hover:bg-blue-600"
-                                        >
-                                            Logout
+                                    <Link href="/edit-profile">
+                                        <button className="text-left block px-4 py-2 cursor-pointer hover:bg-blue-600 w-full">
+                                            My Account
                                         </button>
-                                    </div>
-                                )}
-                            </div>
+                                    </Link>
+                                    <Link href="/manage-reservations">
+                                        <button className="text-left block px-4 py-2 cursor-pointer hover:bg-blue-600 w-full">
+                                            Manage Reservations
+                                        </button>
+                                    </Link>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="text-left block px-4 py-2 w-full hover:bg-blue-600"
+                                    >
+                                        Logout
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                         ) : (
                             <>
                                 <div className="hidden lg:flex">

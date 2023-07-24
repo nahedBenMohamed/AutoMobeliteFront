@@ -4,6 +4,7 @@ import {HiEye, HiEyeOff,  HiLockClosed, HiMail, HiUser} from 'react-icons/hi';
 import {FiPlus, FiTrash2} from "react-icons/fi";
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {useRouter} from "next/router";
 
 function Profile() {
 
@@ -17,6 +18,7 @@ function Profile() {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isModified, setIsModified] = useState(false);
+    const router = useRouter()
 
 
     useEffect(() => {
@@ -87,6 +89,9 @@ function Profile() {
             setConfirmPassword('');
             setIsEditingPassword(false);
             toast.success('Successfully updated');
+            setTimeout(() => {
+                router.push('/admin/dashboard/home')
+            }, 1000);
         } catch (error) {
             if (error.response) {
                 toast.error(error.response.data.error);

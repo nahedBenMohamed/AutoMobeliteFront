@@ -4,6 +4,7 @@ import {HiEye, HiEyeOff,  HiLockClosed, HiMail, HiUser} from 'react-icons/hi';
 import {FiPlus, FiTrash2} from "react-icons/fi";
 import {toast, ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {useRouter} from "next/router";
 
 function Profile() {
 
@@ -17,6 +18,7 @@ function Profile() {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isModified, setIsModified] = useState(false);
+    const router = useRouter()
 
 
     useEffect(() => {
@@ -30,17 +32,7 @@ function Profile() {
                 setEmail(email);
             } catch (error) {
                 if (error.response) {
-                    toast.warning('An error occurred while loading data',
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: true,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    toast.warning('An error occurred while loading data');
                 }
             }
         };
@@ -63,48 +55,18 @@ function Profile() {
         }
 
         if (isModified && newPassword !== confirmPassword && newPassword !== '') {
-            toast.warning('Different password',
-                {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: true,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+            toast.warning('Different password');
             return;
         }
 
         if (isModified && newPassword.length < 8 && newPassword !== '') {
-            toast.error('The password must have at least 8 characters.',
-                {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: true,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+            toast.error('The password must have at least 8 characters.');
             return;
         }
 
         const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*]).{8,}$/;
         if (isModified && !passwordRegex.test(newPassword) && newPassword !== '') {
-            toast.info('The password must contain at least Aa1@',
-                {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: true,
-                    closeOnClick: false,
-                    pauseOnHover: true,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+            toast.info('The password must contain at least Aa1@');
             return;
         }
 
@@ -126,28 +88,13 @@ function Profile() {
             setNewPassword('');
             setConfirmPassword('');
             setIsEditingPassword(false);
-            toast.success('Successfully updated', {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: true,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.success('Successfully updated');
+            setTimeout(() => {
+                router.push('/super-admin/dashboard/home')
+            }, 1000);
         } catch (error) {
             if (error.response) {
-                toast.error(error.response.data.error, {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "colored",
-                });
+                toast.error(error.response.data.error);
             }
         }
     }
@@ -162,43 +109,13 @@ function Profile() {
                 const {message, imagePath} = res.data;
                 if (message === "Image uploaded successfully") {
                     setImages([imagePath]);
-                    toast.info("Image uploaded successfully",
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: true,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    toast.info("Image uploaded successfully");
                 } else {
-                    toast.warning("Upload failed",
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: true,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    toast.warning("Upload failed");
                 }
             } catch (error) {
                 if (error.response) {
-                    toast.warning('An error occurred while downloading the image',
-                        {
-                            position: "top-center",
-                            autoClose: 3000,
-                            hideProgressBar: true,
-                            closeOnClick: true,
-                            pauseOnHover: false,
-                            draggable: false,
-                            progress: undefined,
-                            theme: "colored",
-                        });
+                    toast.warning('An error occurred while downloading the image');
                 }
             }
         }
@@ -207,31 +124,13 @@ function Profile() {
 
     async function deleteImage() {
         if (images.length === 0) {
-            toast.error("No image to delete", {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.error("No image to delete");
             return;
         }
         setImages([]);
         try {
             await axios.delete("/api/manage-profile/delete", {withCredentials: true});
-            toast.success("Image deleted successfully!", {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: false,
-                draggable: false,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.success("Image deleted successfully!");
             setImages([]);
 
         } catch (error) {

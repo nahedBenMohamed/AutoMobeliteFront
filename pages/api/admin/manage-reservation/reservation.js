@@ -44,12 +44,12 @@ export default async function handler(req, res) {
         agency = getAgencyNameFromToken(req);
     } catch (error) {
         // Handle error if unable to extract agency name from token
-        return res.status(401).json({ message: error.message });
+        return res.status(401).json({message: error.message});
     }
 
     if (req.method === "PUT") {
         // Extract variables from the request body
-        const { id, email, rentalStatus } = req.body;
+        const {id, email, rentalStatus} = req.body;
 
         // Recherche du client à partir de l'email
         const client = await prisma.client.findFirst({
@@ -59,7 +59,7 @@ export default async function handler(req, res) {
         });
 
         if (!client) {
-            return res.status(404).json({ error: "Client non trouvé." });
+            return res.status(404).json({error: "Client non trouvé."});
         }
 
         const rentalId = parseInt(id);
@@ -83,14 +83,14 @@ export default async function handler(req, res) {
         if (!rental || rental.car.Agency.name !== agency) {
             return res
                 .status(403)
-                .json({ message: "You are not authorized to view this rental." });
+                .json({message: "You are not authorized to view this rental."});
         }
 
         // Update the rental data
         const updatedRental = await prisma.rental.update({
-            where: { id: Number(rentalId) },
+            where: {id: Number(rentalId)},
             data: {
-                client: { update: { id: client.id } },
+                client: {update: {id: client.id}},
                 status: rentalStatus,
             },
             include: {
@@ -102,7 +102,6 @@ export default async function handler(req, res) {
                 client: true
             },
         });
-
 
 
         if (updatedRental.status === "completed") {
@@ -157,10 +156,10 @@ donné l'occasion de vous servir. Nous sommes impatients de vous accueillir à n
         }
 
         // Send the updated rental and car data as a response
-        res.json({ rental: updatedRental });
+        res.json({rental: updatedRental});
     }
 
-    else if (req.method === "GET") {
+    if (req.method === "GET") {
         // If an ID query parameter exists, get rental data for that ID
         if (req.query?.id) {
             const rentalId = req.query.id;
@@ -172,7 +171,7 @@ donné l'occasion de vous servir. Nous sommes impatients de vous accueillir à n
                     client: true,
                     car: {
                         include: {
-                            Agency:true,
+                            Agency: true,
                             availability: true,
                             maintenances: true
                         },
@@ -184,7 +183,7 @@ donné l'occasion de vous servir. Nous sommes impatients de vous accueillir à n
             if (!rental || rental.car.Agency.name !== agency) {
                 return res
                     .status(403)
-                    .json({ message: "You are not authorized to view this rental." });
+                    .json({message: "You are not authorized to view this rental."});
             }
 
             res.json(rental);
@@ -251,17 +250,10 @@ donné l'occasion de vous servir. Nous sommes impatients de vous accueillir à n
                 });
 
 
-                res.status(200).json({ message: 'Rental successfully deleted' });
+                res.status(200).json({message: 'Rental successfully deleted'});
             }
         } catch (error) {
-            res.status(500).json({ error: 'Error retrieving rental data' });
+            res.status(500).json({error: 'Error retrieving rental data'});
         }
-    }
-
-
-    else {
-        res
-            .status(405)
-            .json({ error: "Méthode non autorisée. Utilisez la méthode GET." });
     }
 }
