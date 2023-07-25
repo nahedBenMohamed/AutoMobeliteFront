@@ -59,7 +59,7 @@ export default async function handler(req, res) {
         });
 
         if (!client) {
-            return res.status(404).json({error: "Client non trouvé."});
+            return res.status(404).json({error: "Client not found."});
         }
 
         const rentalId = parseInt(id);
@@ -125,24 +125,24 @@ export default async function handler(req, res) {
                 subject: 'Your reservation is completed',
                 html: `
 <div style="width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 15px; font-family: Roboto, serif;">
-<header style="text-align: center; margin-bottom: 30px;">
-    <h1 style="color: #444;">Confirmation de réservation</h1>
-</header>
-<div style="text-align: center;">
-    <img src="${imageUrl}" alt="Logo de l'agence" style="width: 150px; height: auto; margin-bottom: 30px;">
-</div>
-<p>Bonjour <span style="font-weight:bold;text-transform:uppercase;">${client.name} ${client.firstname}</span>,</p>
-<p>Nous tenons à vous remercier sincèrement d'avoir choisi notre agence pour vos besoins de location de voiture. Votre confiance et votre soutien sont très appréciés. Merci de nous avoir 
-donné l'occasion de vous servir. Nous sommes impatients de vous accueillir à nouveau dans notre agence.</p>
-<p>Merci pour votre réservation!</p>
-<p>Cordialement,</p>
-<p>L'équipe <span style="font-weight:bold;text-transform:uppercase;">${updatedRental.car.Agency.name}</span></p>
-<footer style="text-align: center; margin-top: 50px;">
+  <header style="text-align: center; margin-bottom: 30px;">
+    <h1 style="color: #444;">Reservation Completed</h1>
+  </header>
+  <div style="text-align: center;">
+    <img src="${imageUrl}" alt="Agency Logo" style="width: 150px; height: auto; margin-bottom: 30px;">
+  </div>
+  <p>Hello <span style="font-weight:bold;text-transform:uppercase;">${client.name} ${client.firstname}</span>,</p>
+  <p>We sincerely thank you for choosing our agency for your car rental needs. Your trust and support are highly appreciated. Thank you for giving us the opportunity to serve you. We look forward to welcoming you again at our agency.</p>
+  <p>Thank you for your reservation!</p>
+  <p>Best regards,</p>
+  <p>The <span style="font-weight:bold;text-transform:uppercase;">${updatedRental.car.Agency.name}</span> Team</p>
+  <footer style="text-align: center; margin-top: 50px;">
     <p style="color: #777;">&copy; ${new Date().getFullYear()} - Automobelite</p>
-</footer>
+  </footer>
 </div>
-` // Corps de l'e-mail
+` // Email body
             };
+
 
 // Send the email
             transporter.sendMail(mailOptions, (error, info) => {

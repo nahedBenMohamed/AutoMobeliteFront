@@ -121,20 +121,12 @@ const LoginPage = () => {
                                     {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
                                 </button>
                             </div>
-                            <div className="mt-8 flex flex-col items-center">
-                                <span className="text-gray-500 text-sm">OR</span>
-                            </div>
-                            <div>
-                                <button className="mt-4 w-full justify-center rounded-md text-black px-3 py-1.5 text-sm font-bold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                                    <Link href="/authentification/activate">Activate Account</Link>
-                                </button>
-                            </div>
                         </div>
                     </form>
                     <p className="mt-10 text-center text-sm text-gray-500">
-                        Don't have an account?{' '}
-                        <a href="/authentification/register" className="font-bold leading-6 text-blue-600 hover:text-gray-500">
-                            Register
+                        your account is deactivated?{' '}
+                        <a href="/authentification/activate" className="font-bold leading-6 text-blue-600 hover:text-gray-500">
+                            Activate
                         </a>
                     </p>
                 </div>

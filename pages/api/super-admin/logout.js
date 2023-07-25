@@ -8,5 +8,5 @@ export default function handle(req, res) {
     });
 
     // Send a successful response indicating successful logout
-    res.status(200).json({ message: 'Déconnexion réussie.' });
+    res.status(200).json({ message: 'Logout successful.' });
 }

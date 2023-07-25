@@ -19,9 +19,6 @@ export default function Home() {
             <main className='overflow-hidden'>
                 <Header/>
                 <Hero />
-                <div className="-mt-20 flex justify-center ">
-                    <VehicleSearchForm />
-                </div>
                 <QuickEasy />
                 <div className="mt-8 flex justify-center ">
                     <ModelFront />

@@ -17,20 +17,6 @@ export default async function handler(req, res) {
             const parsedEndDate = endOfDay(parseISO(endDate));
             const priceFloat = parseFloat(price);
 
-            /*// Vérifier si une maintenance existe déjà pour la voiture spécifiée
-            const existingMaintenance = await prisma.maintenance.findFirst({
-                where: {
-                    carId: carId,
-                },
-            });
-
-            if (existingMaintenance) {
-                // Si une maintenance existe déjà, retourner une erreur
-                return res.status(400).json({ error: 'La voiture est déjà en maintenance.' });
-            }
-            A demander avant d'implementer la solution pour la voiture spécifiée
-            */
-
             // Créer une nouvelle maintenance dans la base de données
             const maintenance = await prisma.maintenance.create({
                 data: {
@@ -56,9 +42,9 @@ export default async function handler(req, res) {
             res.status(201).json(maintenance);
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la maintenance pour la voiture.' });
+            res.status(500).json({ error: 'An error occurred while adding maintenance for the car.' });
         }
     } else {
-        res.status(405).json({ error: 'Méthode non autorisée. Utilisez la méthode POST.' });
+        res.status(405).json({ error: 'Method not allowed. Use POST method.' });
     }
 }

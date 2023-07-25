@@ -97,7 +97,7 @@ function ReservationEdit({ id }) {
                 </h3>
                 <div className="grid grid-cols-3 gap-3">
                     <div className="mb-4">
-                        <label htmlFor="telephone" className="block text-xs mb-1">Téléphone:</label>
+                        <label htmlFor="telephone" className="block text-xs mb-1">Phone:</label>
                         <div className="relative">
                             <HiPhone className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                             <input
@@ -109,7 +109,7 @@ function ReservationEdit({ id }) {
                         </div>
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="city" className="block text-xs mb-1">Ville:</label>
+                        <label htmlFor="city" className="block text-xs mb-1">City:</label>
                         <div className="relative">
                             <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                             <input
@@ -121,7 +121,7 @@ function ReservationEdit({ id }) {
                         </div>
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="address" className="block text-xs mb-1">Adresse:</label>
+                        <label htmlFor="address" className="block text-xs mb-1">Address:</label>
                         <div className="relative">
                             <HiMapPin className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                             <input
@@ -135,9 +135,9 @@ function ReservationEdit({ id }) {
                 </div>
                 <div className="flex text-justify text-xs">
                     <p>
-                        En modifiant votre reservation, vous acceptez les
-                        <a href="/your-url" target="_blank" rel="noopener noreferrer" className="underline text-blue-600"> Conditions les Conditions Générales de Location et la Politique de confidentialite </a>
-                        de Automobelite
+                        By modifying your reservation, you accept the
+                        <a href="/your-url" target="_blank" rel="noopener noreferrer" className="underline text-blue-600"> Conditions the General Rental Conditions and the Privacy Policy </a>
+                        by Automobelite
                     </p>
                 </div>
             </div>
@@ -158,36 +158,36 @@ function ReservationEdit({ id }) {
                     )}
                 </div>
                 <div className="uppercase mt-4 mb-4 text-black text-xl font-extrabold">
-                    <h1>Politique de modification d'une réservation</h1>
+                    <h1>Reservation Modification Policy</h1>
                 </div>
                 <div className="bg-white p-5 rounded-lg shadow-lg">
                     <div className="flex flex-col h-full">
                         <div className="overflow-auto">
                             <p className="mb-4">
-                                Sur notre plateforme, nous comprenons que vos plans peuvent changer et que vous pourriez avoir besoin de modifier votre réservation de voiture. Voici notre politique de modification des réservations :
+                                On our platform, we understand that your plans may change, and you might need to modify your car reservation. Here's our reservation modification policy:
                             </p>
-                            <h2 className="text-lg font-semibold mb-2">Comment modifier votre réservation :</h2>
+                            <h2 className="text-lg font-semibold mb-2">How to Modify Your Reservation:</h2>
                             <p className="mb-4">
-                                Pour modifier votre réservation, veuillez suivre les étapes suivantes :
+                                To modify your reservation, please follow the steps below:
                                 <br />
-                                1. Connectez-vous à votre compte sur notre plateforme.
+                                1. Log in to your account on our platform.
                                 <br />
-                                2. Accédez à la section "Mes réservations".
+                                2. Go to the "My Reservations" section.
                                 <br />
-                                3. Sélectionnez la réservation que vous souhaitez modifier.
+                                3. Select the reservation you wish to modify.
                                 <br />
-                                4. Cliquez sur le bouton "Modifier la réservation".
+                                4. Click on the "Modify Reservation" button.
                                 <br />
-                                5. Suivez les instructions pour effectuer les modifications souhaitées.
+                                5. Follow the instructions to make the desired changes.
                                 <br />
-                                6. Cliquez sur le bouton "EDIT RENTAL" sur votre droite pour commencer le processus.
+                                6. Click on the "EDIT RENTAL" button on your right to begin the process.
                             </p>
                             <p className="mb-4">
-                                Veuillez noter que les modifications de réservation ne sont autorisées que jusqu'à 24 heures avant le début de la location. Passé ce délai, aucune modification ne pourra être effectuée.
+                                Please note that reservation modifications are allowed up to 24 hours before the start of the rental. After this time, no modifications can be made.
                             </p>
                             <p>
-                                Pour toute question ou assistance supplémentaire concernant la modification de votre réservation, n'hésitez à contacter l'agence via leur mobile <a href={`tel:${agencePhone}`} className="font-semibold text-blue-500 hover:text-blue-600">{agencePhone} </a>
-                                ou leur email <a href={`mailto:${agenceEmail}`} className="font-semibold text-blue-500 hover:text-blue-600">{agenceEmail}</a>.
+                                For any questions or additional assistance regarding the modification of your reservation, feel free to contact the agency via their mobile at <a href={`tel:${agencePhone}`} className="font-semibold text-blue-500 hover:text-blue-600">{agencePhone} </a>
+                                or their email at <a href={`mailto:${agenceEmail}`} className="font-semibold text-blue-500 hover:text-blue-600">{agenceEmail}</a>.
                             </p>
                         </div>
                     </div>
@@ -247,17 +247,6 @@ function ReservationEdit({ id }) {
                         </p>
                     </div>
                     <hr className="my-4" />
-                    <h3 className="text-lg text-black font-extrabold  mb-2">Trajets :</h3>
-                    <div className="flex flex-col">
-                        <p className="mt-2 text-gray-600 flex items-center">
-                            Delivery and collection : {livraison} <FaMoneyBillWave size={20} className="ml-4 text-blue-500" />
-                        </p>
-                        <p className="mt-2 text-gray-600 flex items-center">
-                            Vehicle location : {carPrice}  <FaMoneyBillWave size={20} className="ml-4 text-blue-500" />
-                        </p>
-                    </div>
-
-                    <hr className="my-4" />
                     <div className="flex flex-col">
                         <motion.div
                             className="flex items-center p-2 rounded-lg w-full"
@@ -285,12 +274,12 @@ function ReservationEdit({ id }) {
                                 {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
                             </button>
                         </motion.div>
-                        <div className="flex text-justify text-sm">
-                            <p>Une caution de 300€ sera demandée automatiquement le jour de votre location</p>
+                        <div className="flex text-sm">
+                            <p>A deposit of 300DT will be requested automatically on the day of your rental</p>
                         </div>
-                        <div className="flex text-justify text-sm">
-                            <p>Cette somme sera libérée 7 jours après le retour du véhicule sous réserve
-                                que les conditions générales de location aient été respectées</p>
+                        <div className="flex text-sm">
+                            <p>This sum will be released 7 days after the return of the vehicle provided that
+                                the general rental conditions have been respected.</p>
                         </div>
                     </div>
                 </div>

@@ -48,7 +48,7 @@ export default async function handler(req, res) {
             });
 
             if (!client) {
-                return res.status(404).json({ error: 'Client non trouvé.' });
+                return res.status(404).json({error: "Client not found."});
             }
             const clientId = client.id;
 
@@ -95,7 +95,7 @@ export default async function handler(req, res) {
 
             // Valider l'ID
             if (!clientId) {
-                return res.status(400).json({ error: 'L\'ID du client est requis' });
+                return res.status(400).json({ error: 'Client ID is required' });
             }
 
             // Récupérer les réservations pour le client spécifié
@@ -108,7 +108,7 @@ export default async function handler(req, res) {
 
             // Si aucune réservation n'a été trouvée, retourner une erreur
             if (!rentals.length) {
-                return res.status(404).json({ error: 'Aucune réservation trouvée pour ce client' });
+                return res.status(404).json({ error: 'No reservations found for this client' });
             }
 
             // Sinon, retourner les réservations

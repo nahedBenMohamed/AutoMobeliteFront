@@ -119,6 +119,12 @@ const SuperAdminLogin = () => {
                             </div>
                         </div>
                     </form>
+                    <p className="mt-4 text-sm text-center text-gray-500">
+                        Don't have an account?{' '}
+                        <a href="/super-admin/auth/register-super-admin" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                            Sign up
+                        </a>
+                    </p>
                 </div>
             </div>
         </div>

@@ -157,138 +157,59 @@ export default function EditRental({ id }) {
                 <div className="bg-white p-5 rounded-lg shadow-lg">
                     <div className="flex flex-row justify-center items-center mt-4 mb-4 rounded-lg">
                         <form onSubmit={rental} className="flex-1">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-4">
+                                <div className="flex">
+                                    <p className="w-1/3 text-sm font-bold">Client Name:</p>
+                                    <p className="w-2/3 text-sm">{name}</p>
+                                </div>
+
+                                <div className="flex">
+                                    <p className="w-1/3 text-sm font-bold">FirstName Client::</p>
+                                    <p className="w-2/3 text-sm">{firstname}</p>
+                                </div>
+                                <div className="flex">
+                                    <p className="w-1/3 text-sm font-bold">Email Client::</p>
+                                    <p className="w-2/3 text-sm">{email}</p>
+                                </div>
+                                <div className="flex">
+                                    <p className="w-1/3 text-sm font-bold">Phone:</p>
+                                    <p className="w-2/3 text-sm">{telephone}</p>
+                                </div>
+                                <div className="flex">
+                                    <p className="w-1/3 text-sm font-bold">Licence Number:</p>
+                                    <p className="w-2/3 text-sm">{numPermis}</p>
+                                </div>
+                                <div className="flex">
+                                    <p className="w-1/3 text-sm font-bold">Address:</p>
+                                    <p className="w-2/3 text-sm">{address}</p>
+                                </div>
+                                <div className="flex">
+                                    <p className="w-1/3 text-sm font-bold">City:</p>
+                                    <p className="w-2/3 text-sm">{city}</p>
+                                </div>
+                                <div className="flex">
+                                    <p className="w-1/3 text-sm font-bold">Start Date:</p>
+                                    <p className="w-2/3 text-sm">
+                                        {startDate ? startDate.toLocaleDateString("fr-FR") : ""}
+                                    </p>
+                                </div>
+                                <div className="flex">
+                                    <p className="w-1/3 text-sm font-bold">End Date:</p>
+                                    <p className="w-2/3 text-sm">
+                                        {endDate ? endDate.toLocaleDateString("fr-FR") : ""}
+                                    </p>
+                                </div>
                                 <div className="mb-4">
-                                    <label htmlFor="year" className="block text-xs mb-1">Name Client:</label>
+                                    <label htmlFor="door" className="block text-xs mb-1">
+                                        Rental Status:
+                                    </label>
                                     <div className="relative">
-                                        <input
-                                            id="name"
-                                            name="name"
-                                            type="text"
-                                            disabled={true}
-                                            value={name}
-                                            onChange={(ev) => setName(ev.target.value)}
+                                        <select
+                                            id="rentalStatus"
+                                            value={selectedStatus}
+                                            onChange={handleStatusChange}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="Name"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="mb-4">
-                                    <label htmlFor="year" className="block text-xs mb-1">FirstName Client:</label>
-                                    <div className="relative">
-                                        <input
-                                            id="firstname"
-                                            name="firstname"
-                                            type="text"
-                                            disabled={true}
-                                            value={firstname}
-                                            onChange={(ev) => setFirstName(ev.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="First Name"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="mb-4">
-                                    <label htmlFor="kilometer" className="block text-xs mb-1">Email Client:</label>
-                                    <div className="relative">
-                                        <input
-                                            id="email"
-                                            name="email"
-                                            type="text"
-                                            disabled={true}
-                                            value={email}
-                                            onChange={(ev) => setEmail(ev.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="Email"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="mb-4">
-                                    <label htmlFor="price" className="block text-xs mb-1">Address:</label>
-                                    <div className="relative">
-                                        <input
-                                            id="address"
-                                            name="address"
-                                            type="text"
-                                            disabled={true}
-                                            value={address}
-                                            onChange={(ev) => setAddress(ev.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="Address"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="mb-4">
-                                    <label htmlFor="carStatus" className="block text-xs mb-1">Phone Client:</label>
-                                    <div className="relative">
-                                        <input
-                                            id="phone"
-                                            name="phone"
-                                            type="phone"
-                                            disabled={true}
-                                            value={telephone}
-                                            onChange={(ev) => setTelephone(ev.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="Telephone"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="mb-4">
-                                    <label htmlFor="gearBox" className="block text-xs mb-1">City Client:</label>
-                                    <div className="relative">
-                                        <input
-                                            id="city"
-                                            name="city"
-                                            type="text"
-                                            disabled={true}
-                                            value={city}
-                                            onChange={(ev) => setCity(ev.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="City"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="mb-4">
-                                    <label htmlFor="gearBox" className="block text-xs mb-1">Driver's Licence Client:</label>
-                                    <div className="relative">
-                                        <input
-                                            id="numPermis"
-                                            name="numPermis"
-                                            type="text"
-                                            disabled={true}
-                                            value={numPermis}
-                                            onChange={(ev) => setNumPermis(ev.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                            placeholder="Num Permis"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="mb-4">
-                                    <label htmlFor="startDate" className="block text-xs mb-1">Start Date</label>
-                                    <input
-                                        type="text"
-                                        value={startDate ? startDate.toLocaleDateString('fr-FR') : ''}
-                                        onChange={(event) => setStartDate(new Date(event.target.value))}
-                                        disabled={true}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                        placeholder="Start Date"
-                                    />
-                                </div>
-                                <div className="mb-4">
-                                    <label htmlFor="endDate" className="block text-xs mb-1">End Date</label>
-                                    <input
-                                        type="text"
-                                        value={endDate ? endDate.toLocaleDateString('fr-FR') : ''}
-                                        onChange={(event) => setEndDate(new Date(event.target.value))}
-                                        disabled={true}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                        placeholder="End Date"
-                                    />
-                                </div>
-                                <div className="mb-4">
-                                    <label htmlFor="door" className="block text-xs mb-1">Rental Status:</label>
-                                    <div className="relative">
-                                        <select id="rentalStatus" value={selectedStatus} onChange={handleStatusChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                        >
                                             <option value="reserved">Reserved</option>
                                             <option value="ongoing">On going</option>
                                             <option value="completed">Completed</option>

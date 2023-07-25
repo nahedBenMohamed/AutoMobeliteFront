@@ -93,13 +93,13 @@ const Models = () => {
             {selectedCar && (
                 <Modal onClose={closeModal} car={selectedCar}>
                     <h1 className="font-bold text-xl mb-4">{selectedCar.brand}</h1>
-                    <p>Modèle: {selectedCar.model}</p>
-                    <p>Année: {selectedCar.year}</p>
-                    <p>Kilométrage: {selectedCar.mileage}</p>
-                    <p>Prix: {selectedCar.price} DT</p>
-                    <p>Enregistrement: {selectedCar.registration}</p>
-                    <p>Nom du parking: {selectedCar.parkingName}</p>
-                    <p>Agence: {selectedCar.Agency}</p>
+                    <p>Model: {selectedCar.model}</p>
+                    <p>Year: {selectedCar.year}</p>
+                    <p>Mileage: {selectedCar.mileage}</p>
+                    <p>Price: {selectedCar.price} DT</p>
+                    <p>Registration: {selectedCar.registration}</p>
+                    <p>Parking name: {selectedCar.parkingName}</p>
+                    <p>Agency: {selectedCar.Agency}</p>
                     <p>Locations: {selectedCar.rentals}</p>
                 </Modal>
             )}

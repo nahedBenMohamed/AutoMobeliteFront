@@ -14,6 +14,7 @@ import {HiMapPin} from "react-icons/hi2";
 import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {BeatLoader} from "react-spinners";
+import {FiPlus} from "react-icons/fi";
 
 
 function Step2 () {
@@ -22,14 +23,11 @@ function Step2 () {
     const { id, pickupDate, returnDate, pickupTime, returnTime, totalPrice } = router.query;
     const { data} = useSession();
     const [model, setModel] = useState("")
-    const [livraison, setLivraison] = useState(20)
     const [images, setImages] = useState([]);
-    const [price, setPrice] = useState("");
     const [brand, setBrand] = useState("");
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
     const [name, setName] = useState('');
     const [image, setImage] = useState('');
     const [firstname, setFirstName] = useState('');
@@ -38,7 +36,6 @@ function Step2 () {
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [errorMessageVisible, setErrorMessageVisible] = useState(true);
     const [telephoneConnected, setTelephoneConnected] = useState('')
     const [cityConnected, setCityConnected] = useState('')
     const [addressConnected,setAddressConnected] = useState('')
@@ -48,8 +45,8 @@ function Step2 () {
     const [isLoadingNew, setIsLoadingNew] = useState(false);
     const formattedPickupDate = moment(pickupDate).format('DD MMMM');
     const formattedReturnDate = moment(returnDate).format('DD MMMM');
+    const [selectedFileName, setSelectedFileName] = useState('');
 
-    const validateInput = (input) => input.trim() !== '';
     const getDefaultTelephone = () => {
         const defaultCountryCode = getCountryCallingCode('TN');
         return `+${defaultCountryCode}`;
@@ -57,8 +54,13 @@ function Step2 () {
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         setImage(file);
+        // Obtenez le nom du fichier à partir du champ d'entrée
+        if (file) {
+            setSelectedFileName(file.name);
+        } else {
+            setSelectedFileName(''); // Réinitialisez le nom du fichier s'il n'y a pas de fichier sélectionné
+        }
     };
-
     const handleSubmitRegister = async (event) => {
         event.preventDefault();
         setIsLoadingNew(true);
@@ -177,7 +179,6 @@ function Step2 () {
                     const carData = response.data;
                     setBrand(carData.brand);
                     setModel(carData.model);
-                    setPrice(carData.price.toString());
                     setImages(carData.image ? [carData.image] : []);
                 })
                 .catch((error) => {
@@ -214,11 +215,11 @@ function Step2 () {
             <div className="bg-white p-5 rounded-lg shadow-lg">
                 <div className="flex-grow flex flex-col space-y-5 mt-4 ml-16 mr-8">
                     <h3 className="uppercase mt-4 mb-4 text-black text-xs font-extrabold">
-                        Je vérifie que mon numéro de téléphone mobile est à jour.
+                        I check that my mobile phone number is up to date.
                     </h3>
                     <div className="grid grid-cols-3 gap-3">
                         <div className="mb-4">
-                            <label htmlFor="telephone" className="block text-xs mb-1">Téléphone:</label>
+                            <label htmlFor="telephone" className="block text-xs mb-1">Phone:</label>
                             <div className="relative">
                                 <HiPhone className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                                 <input
@@ -230,7 +231,7 @@ function Step2 () {
                             </div>
                         </div>
                         <div className="mb-4">
-                            <label htmlFor="city" className="block text-xs mb-1">Ville:</label>
+                            <label htmlFor="city" className="block text-xs mb-1">City:</label>
                             <div className="relative">
                                 <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                                 <input
@@ -242,7 +243,7 @@ function Step2 () {
                             </div>
                         </div>
                         <div className="mb-4">
-                            <label htmlFor="address" className="block text-xs mb-1">Adresse:</label>
+                            <label htmlFor="address" className="block text-xs mb-1">Address:</label>
                             <div className="relative">
                                 <HiMapPin className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                                 <input
@@ -263,10 +264,10 @@ function Step2 () {
                             onChange={() => setIsChecked(!isChecked)}
                         />
                         <label htmlFor="ageConfirmation" className="text-sm">
-                            Je reconnais avoir 21 ans, et 2ans de permis de minimum
-                            et accepte les
-                            <a href="/your-url" target="_blank" rel="noopener noreferrer" className="underline text-blue-600"> Conditions les Conditions Générales de Location et la Politique de confidentialite </a>
-                            de Automobelite
+                            I acknowledge that I am 21 years old, and have a minimum license of 2 years
+                            and accept the
+                            <a href="/your-url" target="_blank" rel="noopener noreferrer" className="underline text-blue-600"> Conditions the General Rental Conditions and the Privacy Policy </a>
+                            by Automobelite
                         </label>
                     </div>
                     <button
@@ -520,13 +521,24 @@ function Step2 () {
                                                         />
                                                     </div>
                                                 </div>
+                                                <div className="flex flex-row">
+                                                    <label htmlFor="image" className="block mb-2 text-blue-600">
+                                                        Upload your driving licence image here: {" "}
+                                                    </label>
+                                                    <label htmlFor="image" className="mt-1 ml-4 text-red-500 hover:text-red-700 cursor-pointer rounded-full" title="Select an image">
+                                                        <FiPlus size={18} />
+                                                    </label>
+                                                </div>
+                                                <span id="file-name-display" className="ml-2">
+                                                    {selectedFileName ? `Selected file: ${selectedFileName}` : 'No file chosen'}
+                                                </span>
                                                 <input
                                                     id="image"
                                                     name="image"
                                                     type="file"
                                                     accept="image/*"
                                                     onChange={handleImageChange}
-                                                    className="block w-full"
+                                                    hidden
                                                 />
                                                 <div className="mt-4">
                                                     <button
@@ -587,17 +599,6 @@ function Step2 () {
                         </p>
                     </div>
                     <hr className="my-4" />
-                    <h3 className="text-lg text-black font-extrabold  mb-2">Trajets :</h3>
-                    <div className="flex flex-col">
-                        <p className="mt-2 text-gray-600 flex items-center">
-                            Delivery and collection : {livraison} <FaMoneyBillWave size={20} className="ml-4 text-blue-500" />
-                        </p>
-                        <p className="mt-2 text-gray-600 flex items-center">
-                            Vehicle location : {price}  <FaMoneyBillWave size={20} className="ml-4 text-blue-500" />
-                        </p>
-                    </div>
-
-                    <hr className="my-4" />
                     <div className="flex flex-col">
                         <motion.div
                             className="flex items-center p-2 rounded-lg w-full"
@@ -612,11 +613,11 @@ function Step2 () {
                             </div>
                         </motion.div>
                         <div className="flex text-justify text-sm">
-                            <p>Une caution de 300€ sera demandée automatiquement le jour de votre location</p>
+                            <p>A deposit of 300€ will be requested automatically on the day of your rental</p>
                         </div>
                         <div className="flex text-justify text-sm">
-                            <p>Cette somme sera libérée 7 jours après le retour du véhicule sous réserve
-                                que les conditions générales de location aient été respectées</p>
+                            <p> This sum will be released 7 days after the return of the vehicle subject to
+                                that the general rental conditions have been respected</p>
                         </div>
                     </div>
                 </div>

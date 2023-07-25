@@ -53,9 +53,8 @@ const Modal = ({ onClose, car }) => {
                             <p><span className="font-bold">Mileage:</span>&nbsp;{car.mileage} km</p>
                             <p><span className="font-bold">Price:</span>&nbsp;{car.price} DT</p>
                             <p><span className="font-bold">Registration:</span>&nbsp;{car.registration}</p>
-                            <p><span className="font-bold">Status:</span>&nbsp;{car.status}</p>
-                            <p><span className="font-bold">Parking:</span>&nbsp;{car.parkingName}</p>
-                            <p><span className="font-bold">Agency:</span>&nbsp;{car.Agency?.name}</p>
+                            <p><span className="font-bold">Parking:</span>&nbsp;{car.parking?.name ? car.parking?.name : "N/A"}</p>
+                            <p><span className="font-bold">Agency:</span>&nbsp;{car.Agency.name}</p>
                             <button onClick={() => goReservations(car.id)} className="block text-center bg-blue-600 p-2 hover:bg-green-500 font-bold text-white rounded w-full">
                                 {isLoading ? "Book now..." : "Book now"}
                                 {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}

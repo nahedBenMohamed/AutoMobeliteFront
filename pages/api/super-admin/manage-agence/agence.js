@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-
+import nodemailer from "nodemailer";
 
 export default async function handle(req, res) {
     const { method } = req;
@@ -71,9 +71,61 @@ export default async function handle(req, res) {
                 },
             });
 
+            let transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL,
+                    pass: process.env.PASSWORD,
+                },
+            });
+
+            let imageUrl;
+            if (process.env.NODE_ENV === 'development') {
+                imageUrl = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNMUztOoMBnPAYvVulW_GF0189vAJRr3AQEngvD0lpkg&s`;
+            }
+            // Définir les options pour l'email
+            let mailOptions = {
+                from: process.env.EMAIL, // Expéditeur
+                to: email, // Destinataire
+                subject: 'Successful Registration on Automobelite',
+                html: `
+<div style="width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 15px; font-family: Roboto, serif;">
+<header style="text-align: center; margin-bottom: 30px;">
+    <h1 style="color: #444;">Successful Registration on Automobelite</h1>
+</header>
+<div style="text-align: center;">
+    <img src="${imageUrl}" alt="Logo of the agency" style="width: 150px; height: auto; margin-bottom: 30px;">
+</div>
+<p>Dear <span style="font-weight:bold;text-transform:uppercase;">${newAgence.name}</span>,</p>
+<p>We are pleased to inform you that your agency has been successfully registered on Automobelite. The responsible person for your agency is ${responsible.name.toUpperCase()} with the email address ${responsibleEmail}.</p>
+<p>Your responsible can now use their email ${responsibleEmail} to log in and start managing your agency. Enjoy!</p>
+<div style="text-align:center;margin:20px;">
+    <a href="http://localhost:3000/admin/auth/login" style="background-color: #008CBA; border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;margin: 4px 2px;cursor: pointer;">Login</a>
+</div>
+<p>If you have any questions or need assistance with your new account, do not hesitate to contact us at ${process.env.EMAIL}.</p>
+<p>Best regards,</p>
+<p>The Automobelite Team</p>
+<footer style="text-align: center; margin-top: 50px;">
+    <p style="color: #777;">&copy; ${new Date().getFullYear()} - Automobelite</p>
+</footer>
+</div>
+    `
+            };
+
+
+            transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email envoyé: ' + info.response);
+                }
+            });
             // Envoyer une réponse de succès
             return res.status(200).json({message: 'Agency added successfully', newAgence});
-        } else if (method === 'GET') {
+
+        }
+
+        else if (method === 'GET') {
             // Handle GET method
             const {id} = req.query;
 
@@ -123,7 +175,9 @@ export default async function handle(req, res) {
 
             }
 
-        }  else if (method === 'PUT') {
+        }
+
+        else if (method === 'PUT') {
             // Handle PUT method
             const {id, name, address, email, telephone, image,responsibleEmail,isActive} = req.body;
 
@@ -181,7 +235,9 @@ export default async function handle(req, res) {
 
             return res.json(updatedAgency);
 
-        }else if (method === 'DELETE') {
+        }
+
+        else if (method === 'DELETE') {
             // Handle DELETE method
             if (req.query?.id) {
                 const agencyId = req.query.id;

@@ -1,5 +1,5 @@
 import { HiPhone, HiUser} from "react-icons/hi";
-import {FaCalendar, FaCar, FaEquals, FaHandPeace, FaMoneyBillWave} from "react-icons/fa";
+import {FaCalendar, FaCar, FaEquals} from "react-icons/fa";
 import {motion} from "framer-motion";
 import React, {useEffect, useState} from "react";
 import { useSession} from "next-auth/react";
@@ -18,9 +18,7 @@ function ReservationEditStep3 () {
     const { id, pickupDate, returnDate, pickupTime, returnTime, totalPrice } = router.query;
     const { data} = useSession();
     const [model, setModel] = useState("")
-    const [livraison, setLivraison] = useState(20)
     const [images, setImages] = useState([]);
-    const [price, setPrice] = useState("");
     const [brand, setBrand] = useState("");
     const [email, setEmail] = useState('');
     const [telephone, setTelephone] = useState('');
@@ -123,7 +121,7 @@ function ReservationEditStep3 () {
                 </h3>
                 <div className="grid grid-cols-3 gap-3">
                     <div className="mb-4">
-                        <label htmlFor="telephone" className="block text-xs mb-1">Téléphone:</label>
+                        <label htmlFor="telephone" className="block text-xs mb-1">Phone:</label>
                         <div className="relative">
                             <HiPhone className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                             <input
@@ -135,7 +133,7 @@ function ReservationEditStep3 () {
                         </div>
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="city" className="block text-xs mb-1">Ville:</label>
+                        <label htmlFor="city" className="block text-xs mb-1">City:</label>
                         <div className="relative">
                             <HiUser className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                             <input
@@ -147,7 +145,7 @@ function ReservationEditStep3 () {
                         </div>
                     </div>
                     <div className="mb-4">
-                        <label htmlFor="address" className="block text-xs mb-1">Adresse:</label>
+                        <label htmlFor="address" className="block text-xs mb-1">Address:</label>
                         <div className="relative">
                             <HiMapPin className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                             <input
@@ -161,10 +159,10 @@ function ReservationEditStep3 () {
                 </div>
                 <div className="flex text-justify text-xs">
                     <p>
-                        En validant votre reservation, vous reconnaissez avoir 21 ans, 2 ans de permis minimum et acceptez
-                        et accepte les
-                        <a href="/your-url" target="_blank" rel="noopener noreferrer" className="underline text-blue-600"> Conditions les Conditions Générales de Location et la Politique de confidentialite </a>
-                        de Automobelite
+                        By validating your reservation, you acknowledge that you are 21 years old, have a minimum license of 2 years and accept
+                        and accept the
+                        <a href="/your-url" target="_blank" rel="noopener noreferrer" className="underline text-blue-600"> Conditions the General Rental Conditions and the Privacy Policy </a>
+                        by Automobelite
                     </p>
                 </div>
             </div>
@@ -185,24 +183,24 @@ function ReservationEditStep3 () {
                     )}
                 </div>
                 <div className="uppercase mt-4 mb-4 text-black text-xl font-extrabold">
-                    <h1>Politique de paiement et d'annulation</h1>
+                    <h1>Payment and Cancellation Policy</h1>
                 </div>
                 <div className="bg-white p-5 rounded-lg shadow-lg">
                     <div className="flex flex-col h-full">
                         <div className="overflow-auto">
-                            <p className="text-justify mt-4">Les annulations faites jusqu'à 24 heures avant la date de début de la location sont gratuites. Si vous annulez moins de 24 heures avant, des frais d'annulation de 50% s'appliquent. Si la location est annulée après le début de la période de location, aucun remboursement n'est possible.</p>
-                            <p className="text-justify mt-4">Le paiement se fait sur place le jour de la location. Si le client ne se présente pas dans l'heure suivant l'heure prévue de la location, la réservation sera annulée et des frais d'annulation pourront s'appliquer.</p>
+                            <p className="text-justify mt-4">Cancellations made up to 24 hours before the rental start date are free. If you cancel less than 24 hours before, a 50% cancellation fee applies. If the rental is canceled after the start of the rental period, no refund is possible.</p>
+                            <p className="text-justify mt-4">Payment is made on site on the day of rental. If the customer does not show up within one hour of the scheduled rental time, the reservation will be canceled and cancellation fees may apply.</p>
                         </div>
                     </div>
                 </div>
 
                 <div className="uppercase mt-2 mb-2 text-black text-xl font-extrabold">
-                    <h1>Le jour de la location</h1>
+                    <h1>The day of the rental</h1>
                 </div>
                 <div className="bg-white h-48 p-5 rounded-lg shadow-lg">
                     <div className="flex flex-col h-full">
                         <div className="overflow-auto">
-                            <p className="text-justify mt-4">Veuillez vous assurer d'arriver à l'heure pour récupérer votre véhicule. Apportez votre permis de conduire valide, ainsi qu'une carte de crédit pour le dépôt de garantie. Assurez-vous également d'inspecter le véhicule et de signaler tout dommage avant de partir.</p>
+                            <p className="text-justify mt-4">Please ensure you arrive on time to collect your vehicle. Bring your valid driver's license, as well as a credit card for the security deposit. Also, be sure to inspect the vehicle and report any damage before setting off.</p>
                         </div>
                     </div>
                 </div>
@@ -248,17 +246,6 @@ function ReservationEditStep3 () {
                         </p>
                     </div>
                     <hr className="my-4" />
-                    <h3 className="text-lg text-black font-extrabold  mb-2">Trajets :</h3>
-                    <div className="flex flex-col">
-                        <p className="mt-2 text-gray-600 flex items-center">
-                            Delivery and collection : {livraison} <FaMoneyBillWave size={20} className="ml-4 text-blue-500" />
-                        </p>
-                        <p className="mt-2 text-gray-600 flex items-center">
-                            Vehicle location : {carPrice}  <FaMoneyBillWave size={20} className="ml-4 text-blue-500" />
-                        </p>
-                    </div>
-
-                    <hr className="my-4" />
                     <div className="flex flex-col">
                         <motion.div
                             className="flex items-center p-2 rounded-lg w-full"
@@ -286,12 +273,12 @@ function ReservationEditStep3 () {
                                 {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
                             </button>
                         </motion.div>
-                        <div className="flex text-justify text-sm">
-                            <p>Une caution de 300€ sera demandée automatiquement le jour de votre location</p>
+                        <div className="flex text-sm">
+                            <p>A deposit of 300DT will be requested automatically on the day of your rental</p>
                         </div>
-                        <div className="flex text-justify text-sm">
-                            <p>Cette somme sera libérée 7 jours après le retour du véhicule sous réserve
-                                que les conditions générales de location aient été respectées</p>
+                        <div className="flex text-sm">
+                            <p>This sum will be released 7 days after the return of the vehicle provided that
+                                the general rental conditions have been respected.</p>
                         </div>
                     </div>
                 </div>

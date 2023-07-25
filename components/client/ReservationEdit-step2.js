@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useRouter } from 'next/router';
 import {AiOutlineClockCircle} from "react-icons/ai";
 import {FaCalendar, FaCar, FaEquals, FaMoneyBillWave} from "react-icons/fa";
@@ -18,7 +18,6 @@ function ReservationEditStep2() {
     const [brand, setBrand] = useState("");
     const [model, setModel] = useState("")
     const [carPrice, setCarPrice] = useState(0);
-    const [livraison, setLivraison] = useState(20)
     const [images, setImages] = useState([]);
     const [description, setDescription] = useState('')
     const [availabilityDates, setAvailabilityDates] = useState([]);
@@ -29,8 +28,8 @@ function ReservationEditStep2() {
     const [focusedInput, setFocusedInput] = useState(null);
     const { id } = router.query;
     const [isLoading, setIsLoading] = useState(false);
-
-
+    const [isDelivery, setIsDelivery] = useState(true);
+    const delivery = isDelivery ? 20 : 0;
 
     useEffect(() => {
         if (id) {
@@ -123,7 +122,7 @@ function ReservationEditStep2() {
         const differenceInDays = selectedDates.endDate
             ? (selectedDates.endDate.diff(selectedDates.startDate, 'days') )
             : 0;
-        const totalPrice = pricePerDay * differenceInDays + livraison; // Ajout du coût de la livraison
+        const totalPrice = pricePerDay * differenceInDays + delivery;
         return totalPrice.toFixed(1);
     };
 
@@ -310,9 +309,26 @@ function ReservationEditStep2() {
                     <hr className="my-4" />
                     <h3 className="text-lg text-black font-extrabold  mb-2">Trajets :</h3>
                     <div className="flex flex-col">
-                        <p className="mt-2 text-gray-600 flex items-center">
-                            Delivery and collection : {livraison} <FaMoneyBillWave size={20} className="ml-4 text-blue-500" />
-                        </p>
+                        <div className="mt-2 text-gray-600 flex items-center">
+                            Delivery and collection : {delivery}
+                            <FaMoneyBillWave size={20} className="ml-4 text-blue-500" />
+                            <label
+                                htmlFor="toggleB"
+                                className="flex items-center ml-4 cursor-pointer"
+                            >
+                                <div className="relative">
+                                    <input
+                                        id="toggleB"
+                                        type="checkbox"
+                                        className="hidden"
+                                        checked={isDelivery}
+                                        onChange={(e) => setIsDelivery(e.target.checked)}
+                                    />
+                                    <div className="toggle__line w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
+                                    <div className="toggle__dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 top-0 transition"></div>
+                                </div>
+                            </label>
+                        </div>
                         <p className="mt-2 text-gray-600 flex items-center">
                             Vehicle location : {carPrice}  <FaMoneyBillWave size={20} className="ml-4 text-blue-500" />
                         </p>
@@ -347,12 +363,12 @@ function ReservationEditStep2() {
                                 {isLoading && <BeatLoader color={"#ffffff"} size={10} css={`margin-left: 10px;`} />}
                             </button>
                         </motion.div>
-                        <div className="flex text-justify text-sm">
-                            <p>Une caution de 300€ sera demandée automatiquement le jour de votre location</p>
+                        <div className="flex text-sm">
+                            <p>A deposit of 300DT will be requested automatically on the day of your rental</p>
                         </div>
-                        <div className="flex text-justify text-sm">
-                            <p>Cette somme sera libérée 7 jours après le retour du véhicule sous réserve
-                                que les conditions générales de location aient été respectées</p>
+                        <div className="flex text-sm">
+                            <p>This sum will be released 7 days after the return of the vehicle provided that
+                                the general rental conditions have been respected.</p>
                         </div>
                     </div>
                 </div>

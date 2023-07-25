@@ -5,15 +5,15 @@ export default async function handler(req, res) {
 
     try {
         // Vérifier les dates de début et de fin
-        if (!departDate || !returnDate) {
-            return res.status(400).json({ error: 'Les dates de début et de fin sont requises.' });
+        if (!startDate || !returnDate) {
+            return res.status(400).json({ error: 'Start and end dates are required.' });
         }
 
-        const start = new Date(departDate);
-        const end = new Date(returnDate);
+        const start = new Date(startDate);
+        const end = newDate(returnDate);
 
         if (start >= end) {
-            return res.status(400).json({ error: 'La date de début doit être antérieure à la date de fin.' });
+            return res.status(400).json({ error: 'Start date must be before end date.' });
         }
 
         // Générer toutes les dates dans la plage
@@ -45,6 +45,6 @@ export default async function handler(req, res) {
         res.status(200).json({ cars });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ error: 'Une erreur est survenue lors de la recherche des voitures.' });
+        res.status(500).json({ error: 'An error occurred while searching for cars.' });
     }
 }

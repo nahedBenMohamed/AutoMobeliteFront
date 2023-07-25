@@ -185,6 +185,6 @@ export default async function handler(req, res) {
     } else {
         res
             .status(405)
-            .json({ error: "Méthode non autorisée. Utilisez la méthode GET." });
+            .json({ error: "Method not allowed. Use GET method." });
     }
 }

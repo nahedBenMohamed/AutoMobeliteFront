@@ -17,7 +17,7 @@ export default async function handle(req, res) {
             return res.status(200).json({ user });
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ error: 'Une erreur est survenue lors de la récupération des données de l\'utilisateur' });
+            return res.status(500).json({ error: 'An error occurred while retrieving user data' });
         }
     }
     else if (req.method === 'PUT') {

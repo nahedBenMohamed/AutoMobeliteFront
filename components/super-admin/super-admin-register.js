@@ -1,76 +1,32 @@
 import React, { useState } from "react";
 import { useRouter } from 'next/router';
-import {HiEye, HiEyeOff, HiHome, HiLocationMarker, HiLockClosed, HiMail, HiPhone, HiUser} from "react-icons/hi";
-import { parsePhoneNumberFromString, getCountryCallingCode } from 'libphonenumber-js';
-import {BiIdCard} from "react-icons/bi";
+import {HiEye, HiEyeOff,HiLockClosed, HiMail, HiUser} from "react-icons/hi";
 import {FaHandPeace} from "react-icons/fa";
 import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {BeatLoader} from "react-spinners";
-import {FiPlus} from "react-icons/fi";
 
-const RegisterClient = () => {
+function RegisterSuperAdmin () {
 
     const router = useRouter();
     const [name, setName] = useState('');
-    const [image, setImage] = useState('');
     const [firstname, setFirstName] = useState('');
     const [email, setEmail] = useState('');
-    const [telephone, setTelephone] = useState('');
-    const [numPermis, setNumPermis] = useState('');
     const [password, setPassword] = useState('');
-    const [address, setAddress] = useState('');
-    const [city, setCity] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [passwordVisible, setPasswordVisible]= useState();
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedFileName, setSelectedFileName] = useState('');
-
-
-    // Function to set the default telephone value with country code
-    const getDefaultTelephone = () => {
-        const defaultCountryCode = getCountryCallingCode('TN');
-        return `+${defaultCountryCode}`;
-    };
-    const handleImageChange = (event) => {
-        const file = event.target.files[0];
-        setImage(file);
-        // Obtenez le nom du fichier à partir du champ d'entrée
-        if (file) {
-            setSelectedFileName(file.name);
-        } else {
-            setSelectedFileName(''); // Réinitialisez le nom du fichier s'il n'y a pas de fichier sélectionné
-        }
-    };
-
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsLoading(true);
 
         // Vérification des données côté client (facultatif)
-        if (!name || !firstname || !email || !telephone || !numPermis || !password || !confirmPassword || !address || !city || !image) {
-            toast.error('Please fill in all fields and upload the license image')
+        if (!name || !firstname || !email || !password || !confirmPassword) {
+            toast.error('Please complete all fields.')
             setIsLoading(false);
             return;
         }
-
-        // Convert telephone to a string
-        const telephoneString = String(telephone);
-
-        // Validate the phone number using the country code for Tunisia (TN)
-        const phoneNumber = parsePhoneNumberFromString(telephoneString, 'TN');
-
-        // Additional validation for the phone number
-        const phoneNumberRegex = /^\+216\d{8}$/; // Matches "+216" followed by 8 digits
-        const isPhoneNumberValid = phoneNumber && phoneNumber.isValid() && phoneNumberRegex.test(telephoneString);
-
-        if (!isPhoneNumberValid) {
-            toast.error('Please enter a valid Tunisian phone number')
-            setIsLoading(false);
-            return;
-        }
-
         if (password !== confirmPassword) {
             toast.error('Passwords do not match')
             setIsLoading(false);
@@ -78,51 +34,44 @@ const RegisterClient = () => {
         }
 
         if (password.length < 8) {
-            toast.error('Password must be at least 8 characters')
+            toast.warning('Password must be at least 8 characters')
             setIsLoading(false);
             return;
         }
 
         const passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*]).{8,}$/;
         if (!passwordRegex.test(password)) {
-            toast.error('The password must contain at least one uppercase letter, one lowercase letter, one number and one special character')
+            toast.warning('The password must contain at least one uppercase letter, one lowercase letter, one number and one special character')
             setIsLoading(false);
             return;
         }
 
-        const formData = new FormData();
-        formData.append('name', name);
-        formData.append('firstname', firstname);
-        formData.append('email', email);
-        formData.append('telephone', telephone);
-        formData.append('numPermis', numPermis);
-        formData.append('password', password);
-        formData.append('address', address);
-        formData.append('city', city);
-        if (image instanceof File) { // Vérifiez que image est bien un objet File
-            formData.append('image', image);
-        }
-
         try {
-            const response = await fetch('/api/auth/register-client', {
+            const response = await fetch('/api/super-admin/register', {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, firstname,email, password, role: 'superAdmin' }),
             });
-            const data = await response.json();
+
             if (response.ok) {
-                toast.success(data.message);
+                toast.success('User has been registered successfully!');
                 setIsLoading(false);
                 setTimeout(() => {
-                    router.push('/redirect');
+                    router.push('/super-admin/auth/login')
                 }, 2000);
-            } else {
-                toast.error(data.message);
+
+            }  else {
+                const errorData = await response.json();
+                toast.error(errorData.message);
                 setIsLoading(false);
             }
-        } catch (error) {
-            toast.error('An error has occurred.');
+        } catch (errorData) {
+            toast.success(errorData.message);
+            setIsLoading(false);
         }
-    }
+    };
 
     return (
         <div className="flex flex-col  items-center justify-center min-h-screen">
@@ -195,68 +144,6 @@ const RegisterClient = () => {
                     </div>
                     <div className="mb-4">
                         <div className="relative">
-                            <BiIdCard className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
-                            <input
-                                id="permis"
-                                name="permis"
-                                type="text"
-                                autoComplete="text"
-                                placeholder="Enter your Tunisia permis drive"
-                                value={numPermis}
-                                onChange={(e) => setNumPermis(e.target.value)}
-                                className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            />
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                        <div className="mr-2">
-                            <div className="relative">
-                                <HiPhone className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
-                                <input
-                                    id="phone"
-                                    name="phone"
-                                    type="phone"
-                                    autoComplete="phone"
-                                    placeholder="Enter your Tunisia phone number"
-                                    value={telephone || getDefaultTelephone()} // Set default value with country code
-                                    onChange={(e) => setTelephone(e.target.value)}
-                                    className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-                        </div>
-                        <div className="ml-2">
-                            <div className="relative">
-                                <HiLocationMarker className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
-                                <input
-                                    id="city"
-                                    name="city"
-                                    type="text"
-                                    autoComplete="address-level2"
-                                    placeholder="Enter your city"
-                                    value={city}
-                                    onChange={(e) => setCity(e.target.value)}
-                                    className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="mb-4 mt-4">
-                        <div className="relative">
-                            <HiHome className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
-                            <input
-                                id="address"
-                                name="address"
-                                type="text"
-                                autoComplete="address"
-                                placeholder="Enter your address"
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                                className="pl-10 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            />
-                        </div>
-                    </div>
-                    <div className="mb-4">
-                        <div className="relative">
                             <HiLockClosed className="absolute top-1/2 left-3 transform -translate-y-1/2 text-blue-600" />
                             <input
                                 id="password"
@@ -291,25 +178,6 @@ const RegisterClient = () => {
                             />
                         </div>
                     </div>
-                    <div className="flex flex-row">
-                        <label htmlFor="image" className="block mb-2 text-blue-600">
-                            Upload your driving licence image here: {" "}
-                        </label>
-                        <label htmlFor="image" className="mt-1 ml-4 text-red-500 hover:text-red-700 cursor-pointer rounded-full" title="Select an image">
-                            <FiPlus size={18} />
-                        </label>
-                    </div>
-                    <span id="file-name-display" className="ml-2">
-                        {selectedFileName ? `Selected file: ${selectedFileName}` : 'No file chosen'}
-                    </span>
-                    <input
-                        id="image"
-                        name="image"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        hidden
-                    />
                     <div className="mt-4">
                         <button
                             type="submit"
@@ -322,7 +190,7 @@ const RegisterClient = () => {
                 </form>
                 <p className="mt-8 text-sm text-center text-gray-500">
                     Already have an account?{' '}
-                    <a href="/authentification/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                    <a href="/super-admin/auth/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
                         Login
                     </a>
                 </p>
@@ -332,4 +200,4 @@ const RegisterClient = () => {
     );
 };
 
-export default RegisterClient;
+export default RegisterSuperAdmin;

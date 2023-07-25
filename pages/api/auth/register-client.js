@@ -113,9 +113,9 @@ export default async (req, res) => {
 
                 await transporter.sendMail(mailOptions);
 
-                return res.status(200).json({ message: 'Email envoyé avec succès.' });
+                return res.status(200).json({ message: 'Email sent successfully.' });
             } else {
-                throw new Error('Toutes les informations requises ne sont pas fournies.');
+                throw new Error('Not all required information provided.');
             }
         } catch (error) {
             if (error.message === 'Email already exists.') {

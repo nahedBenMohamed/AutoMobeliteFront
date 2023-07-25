@@ -58,7 +58,7 @@ export default async function handler(req, res) {
             });
 
             if (!client) {
-                return res.status(404).json({ error: 'Client non trouvé.' });
+                return res.status(404).json({ error: 'Client not found.' });
             }
             const clientId = client.id;
 
@@ -68,7 +68,7 @@ export default async function handler(req, res) {
             });
 
             if (!car) {
-                return res.status(404).json({ error: 'Voiture non trouvée.' });
+                return res.status(404).json({ error: 'Car not found.' });
             }
 
             const agencyId = car.agencyId;
@@ -122,54 +122,54 @@ export default async function handler(req, res) {
 
             // Définir les options pour l'email
             let mailOptions = {
-                from: process.env.EMAIL, // Expéditeur
-                to: email, // Destinataire
-                subject: 'Confirmation de réservation', // Sujet
+                from: process.env.EMAIL, // Sender
+                to: email, // Recipient
+                subject: 'Reservation Confirmation', // Subject
                 html: `
-    <div style="width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 15px; font-family: Roboto, serif;">
-    <header style="text-align: center; margin-bottom: 30px;">
-        <h1 style="color: #444;">Confirmation de réservation</h1>
-    </header>
-    <div style="text-align: center;">
-        <img src="${imageUrl}" alt="Logo de l'agence" style="width: 150px; height: auto; margin-bottom: 30px;">
-    </div>
-    <p>Bonjour <span style="font-weight:bold;text-transform:uppercase;">${client.name} ${client.firstname}</span>,</p>
-    <p>Merci d'avoir réservé à notre agence <span style="font-weight:bold;text-transform:uppercase;">${car.Agency.name}</span>!</p>
-    <p>Votre réservation a été confirmée avec succès! Voici les détails de votre réservation :</p>
-    <table style="width: 100%; margin-bottom: 30px; text-align:center;">
-         <tr>
-                <th style="text-align: left;">Date de début</th>
-                <td style="text-align: left;">${formattedStartDate}</td>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Date de fin</th>
-                <td style="text-align: left;">${formattedEndDate}</td>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Heure de début</th>
-                <td style="text-align: left;">${startTime}</td>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Heure de fin</th>
-                <td style="text-align: left;">${endTime}</td>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Voiture réservée</th>
-                <td style="text-align: left;">${car.brand} ${car.model}</td>
-            </tr>
-    </table>
-    <h2 style="text-align:center;">Total de la réservation : ${total}DT</h2>
-    <p>Pour toute information supplémentaire, veuillez contacter l'agence <span style="font-weight:bold;text-transform:uppercase;">${car.Agency.name}</span> au numéro <span style="font-weight:bold;text-transform:uppercase;">${car.Agency.telephone}</span> ou à l'adresse ${car.Agency.email}.</p>
-    <p>Merci pour votre réservation!</p>
-    <p>Cordialement,</p>
-    <p>L'équipe Automobelite</p>
-    <footer style="text-align: center; margin-top: 50px;">
-        <p style="color: #777;">&copy; ${new Date().getFullYear()} - Automobelite</p>
-    </footer>
+<div style="width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 15px; font-family: Roboto, serif;">
+<header style="text-align: center; margin-bottom: 30px;">
+    <h1 style="color: #444;">Reservation Confirmation</h1>
+</header>
+<div style="text-align: center;">
+    <img src="${imageUrl}" alt="Agency Logo" style="width: 150px; height: auto; margin-bottom: 30px;">
 </div>
-
-    ` // Corps de l'e-mail
+<p>Hello <span style="font-weight:bold;text-transform:uppercase;">${client.name} ${client.firstname}</span>,</p>
+<p>Thank you for booking with our agency <span style="font-weight:bold;text-transform:uppercase;">${car.Agency.name}</span>!</p>
+<p>Your reservation has been successfully confirmed! Here are the details of your reservation:</p>
+<table style="width: 100%; margin-bottom: 30px; text-align:center;">
+    <tr>
+        <th style="text-align: left;">Start Date</th>
+        <td style="text-align: left;">${formattedStartDate}</td>
+    </tr>
+    <tr>
+        <th style="text-align: left;">End Date</th>
+        <td style="text-align: left;">${formattedEndDate}</td>
+    </tr>
+    <tr>
+        <th style="text-align: left;">Start Time</th>
+        <td style="text-align: left;">${startTime}</td>
+    </tr>
+    <tr>
+        <th style="text-align: left;">End Time</th>
+        <td style="text-align: left;">${endTime}</td>
+    </tr>
+    <tr>
+        <th style="text-align: left;">Reserved Car</th>
+        <td style="text-align: left;">${car.brand} ${car.model}</td>
+    </tr>
+</table>
+<h2 style="text-align:center;">Total Reservation Cost: ${total}DT</h2>
+<p>For any further information, please contact <span style="font-weight:bold;text-transform:uppercase;">${car.Agency.name}</span> agency at phone number <span style="font-weight:bold;text-transform:uppercase;">${car.Agency.telephone}</span> or email address ${car.Agency.email}.</p>
+<p>Thank you for your reservation!</p>
+<p>Best regards,</p>
+<p>The Automobelite Team</p>
+<footer style="text-align: center; margin-top: 50px;">
+    <p style="color: #777;">&copy; ${new Date().getFullYear()} - Automobelite</p>
+</footer>
+</div>
+    ` // Email body
             };
+
 
             // Envoyer l'email
             transporter.sendMail(mailOptions, function(error, info){
@@ -226,7 +226,7 @@ export default async function handler(req, res) {
             });
 
             if (!client) {
-                return res.status(404).json({ error: 'Client non trouvé.' });
+                return res.status(404).json({ error: 'Client not found.' });
             }
             const clientId = client.id;
 
@@ -296,53 +296,53 @@ export default async function handler(req, res) {
 
             // Définir les options pour l'email
             let mailOptions = {
-                from: process.env.EMAIL, // Expéditeur
-                to: email, // Destinataire
-                subject: 'Modification de votre réservation',
+                from: process.env.EMAIL, // Sender
+                to: email, // Recipient
+                subject: 'Modification of your reservation',
                 html: `
 <div style="width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 15px; font-family: Roboto, serif;">
     <header style="text-align: center; margin-bottom: 30px;">
-        <h1 style="color: #444;">Modification de votre réservation</h1>
+        <h1 style="color: #444;">Modification of your reservation</h1>
     </header>
     <div style="text-align: center;">
-        <img src="${imageUrl}" alt="Logo de l'agence" style="width: 150px; height: auto; margin-bottom: 30px;">
+        <img src="${imageUrl}" alt="Agency Logo" style="width: 150px; height: auto; margin-bottom: 30px;">
     </div>
-    <p>Bonjour <span style="font-weight:bold;text-transform:uppercase;">${client.name} ${client.firstname}</span>,</p>
-    <p>Votre réservation à notre agence <span style="font-weight:bold;text-transform:uppercase;">${car.Agency.name}</span> a été modifiée avec succès! Voici les détails de votre nouvelle réservation :</p>
+    <p>Hello <span style="font-weight:bold;text-transform:uppercase;">${client.name} ${client.firstname}</span>,</p>
+    <p>Your reservation at our agency <span style="font-weight:bold;text-transform:uppercase;">${car.Agency.name}</span> has been successfully modified! Here are the details of your new reservation:</p>
     <table style="width: 100%; margin-bottom: 30px; text-align:center;">
-         <tr>
-                <th style="text-align: left;">Date de début</th>
-                <td style="text-align: left;">${formattedStartDate}</td>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Date de fin</th>
-                <td style="text-align: left;">${formattedEndDate}</td>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Heure de début</th>
-                <td style="text-align: left;">${startTime}</td>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Heure de fin</th>
-                <td style="text-align: left;">${endTime}</td>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Voiture réservée</th>
-                <td style="text-align: left;">${car.brand} ${car.model}</td>
-            </tr>
+        <tr>
+            <th style="text-align: left;">Start Date</th>
+            <td style="text-align: left;">${formattedStartDate}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left;">End Date</th>
+            <td style="text-align: left;">${formattedEndDate}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left;">Start Time</th>
+            <td style="text-align: left;">${startTime}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left;">End Time</th>
+            <td style="text-align: left;">${endTime}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left;">Reserved Car</th>
+            <td style="text-align: left;">${car.brand} ${car.model}</td>
+        </tr>
     </table>
-   <h2 style="text-align:center;">Total de la réservation : ${total}DT</h2>
-    <p>Pour toute information supplémentaire, veuillez contacter l'agence <span style="font-weight:bold;text-transform:uppercase;">${car.Agency.name}</span> au numéro <span style="font-weight:bold;text-transform:uppercase;">${car.Agency.telephone}</span> ou à l'adresse ${car.Agency.email}.</p>
-    <p>Merci pour votre confiance!</p>
-    <p>Cordialement,</p>
-    <p>L'équipe Automobelite</p>
-        <footer style="text-align: center; margin-top: 50px;">
-            <p style="color: #777;">&copy; ${new Date().getFullYear()} - Automobelite</p>
-        </footer>
+    <h2 style="text-align:center;">Total Reservation Cost: ${total}DT</h2>
+    <p>For any further information, please contact <span style="font-weight:bold;text-transform:uppercase;">${car.Agency.name}</span> agency at phone number <span style="font-weight:bold;text-transform:uppercase;">${car.Agency.telephone}</span> or email address ${car.Agency.email}.</p>
+    <p>Thank you for your trust!</p>
+    <p>Best regards,</p>
+    <p>The Automobelite Team</p>
+    <footer style="text-align: center; margin-top: 50px;">
+        <p style="color: #777;">&copy; ${new Date().getFullYear()} - Automobelite</p>
+    </footer>
 </div>
-
-    ` // Corps de l'e-mail
+    ` // Email body
             };
+
 
             // Envoyer l'email
             transporter.sendMail(mailOptions, function(error, info){
@@ -463,28 +463,28 @@ export default async function handler(req, res) {
 
                     // Définir les options pour l'email
                     let mailOptions = {
-                        from: process.env.EMAIL, // Expéditeur
-                        to: clientEmail, // Destinataire
-                        subject: 'Annulation de votre réservation',
-                        html: `
+                        from: process.env.EMAIL, // Sender
+                        to: clientEmail, // Recipient
+                        subject: 'Cancellation of your booking',
+                        html:`
                 <div style="width: 600px; margin: 0 auto; border: 1px solid #ddd; padding: 15px; font-family: Roboto, serif;">
 <header style="text-align: center; margin-bottom: 30px;">
-    <h1 style="color: #444;">Annulation de votre réservation</h1>
+    <h1 style="color: #444;">Cancellation of your reservation</h1>
 </header>
 <div style="text-align: center;">
-    <img src="${imageUrl}" alt="Logo de l'agence" style="width: 150px; height: auto; margin-bottom: 30px;">
+    <img src="${imageUrl}" alt="Agency logo" style="width: 150px; height: auto; margin-bottom: 30px;">
 </div>
-<p>Bonjour <span style="font-weight:bold;text-transform:uppercase;">${rental.client.name} ${rental.client.firstname}</span>,</p>
-<p>Nous sommes désolés d'apprendre que vous avez dû annuler votre réservation à notre agence <span style="font-weight:bold;text-transform:uppercase;">${rental.car.Agency.name}</span>. Nous espérons que vous choisirez à nouveau notre agence pour vos futures réservations.</p>
-<p>Si vous avez des questions ou si vous avez besoin d'aide pour une future réservation, n'hésitez pas à contacter l'agence <span style="font-weight:bold;text-transform:uppercase;">${rental.car.Agency.name}</span> au numéro <span style="font-weight:bold;text-transform:uppercase;">${rental.car.Agency.telephone}</span> ou à l'adresse ${rental.car.Agency.email}.</p>
-<p>Merci pour votre compréhension,</p>
-<p>Cordialement,</p>
-<p>L'équipe Automobelite</p>
+<p>Hello <span style="font-weight:bold;text-transform:uppercase;">${rental.client.name} ${rental.client.firstname}</span>,</p>
+<p>We are sorry to hear that you had to cancel your reservation at our <span style="font-weight:bold;text-transform:uppercase;">${rental.car.Agency.name}</span> agency. We hope you will choose our agency again for your future reservations.</p>
+<p>If you have any questions or need assistance with a future booking, please do not hesitate to contact <span style="font-weight:bold;text-transform:uppercase;">${rental.car.Agency.name}</span> at <span style="font-weight:bold;text-transform:uppercase;">${rental.car.Agency.telephone}</span> or at ${rental.car. Agency.email}.</p>
+<p>Thank you for your understanding,</p>
+<p>Regards,</p>
+<p>The Automobelite team</p>
 <footer style="text-align: center; margin-top: 50px;">
     <p style="color: #777;">&copy; ${new Date().getFullYear()} - Automobelite</p>
 </footer>
 </div>
-                ` // Corps de l'e-mail
+                ` // Email body
                     };
 
                     // Envoyer l'email
