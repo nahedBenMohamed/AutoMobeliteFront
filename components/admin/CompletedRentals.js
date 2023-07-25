@@ -1,7 +1,5 @@
-import { MdEdit, MdDelete, MdDetails } from "react-icons/md";
 import React, {Fragment, useEffect, useRef, useState} from "react";
 import axios from "axios";
-import {toast, ToastContainer} from "react-toastify";
 import {FiInfo} from "react-icons/fi";
 import Modal from "react-modal";
 import {useRouter} from "next/router";
@@ -60,18 +58,6 @@ function CompletedRental() {
 
     return (
         <div>
-            <ToastContainer
-                position="top-center"
-                autoClose={2000}
-                hideProgressBar={true}
-                newestOnTop
-                closeOnClick={true}
-                rtl={false}
-                pauseOnFocusLoss={false}
-                draggable={true}
-                pauseOnHover={false}
-                theme="colored"
-            />
             <div className="mb-4 flex justify-end">
                 <input
                     type="text"

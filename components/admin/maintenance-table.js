@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FiInfo } from 'react-icons/fi';
 import axios from 'axios';
 import Modal from "react-modal";
-import {toast, ToastContainer} from "react-toastify";
+import {toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {MdEdit} from "react-icons/md";
 import {useRouter} from "next/router";

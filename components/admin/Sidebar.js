@@ -102,7 +102,7 @@ export default function Sidebar({ session }) {
                     <Link href="/admin/dashboard/messages">
                         <i className="bx bxs-message"></i>
                         <div className="flex items-center">
-                            <span className="text">Messages</span>
+                            <span className="text">Notifications</span>
                             {unreadMessagesCount > 0 &&
                                 <span className="w-5 h-5 text-xs rounded-full bg-red-500 text-white flex items-center justify-center ml-1">
                                     {unreadMessagesCount}

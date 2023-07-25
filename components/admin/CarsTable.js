@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import Link from 'next/link';
 import axios from 'axios';
 import { FiEdit, FiInfo, FiTrash2} from 'react-icons/fi';
 import {toast, ToastContainer} from "react-toastify";

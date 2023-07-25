@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Modal from "react-modal";
-import Link from "next/link";
 import {useRouter} from "next/router";
 import {BeatLoader} from "react-spinners";
 

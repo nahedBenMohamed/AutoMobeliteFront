@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import Spinner from "@/components/admin/Spinner";
+import {toast} from "react-toastify";
 
 function DetailsAgence  ({ session }) {
     const [agencyData, setAgencyData] = useState(null);
-    const [errorMessage, setErrorMessage] = useState("");
     const router = useRouter();
     const agencyId = session.agencyId
 
@@ -17,7 +17,7 @@ function DetailsAgence  ({ session }) {
                     setAgencyData(response.data);
                 })
                 .catch((error) => {
-                    setErrorMessage("Failed to fetch agence data");
+                    toast.error("Failed to fetch agence data");
                     console.log(error);
                 });
         }
