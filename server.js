@@ -85,7 +85,7 @@ io.on('connection', async (socket) => {
     listenForEditReservations(socket, agencyId);
 
     socket.on('disconnect', () => {
-        console.log('Client disconnected:', socket.id);
+        console.log('Agency disconnected:', socket.id);
         agencySockets[agencyId] = agencySockets[agencyId].filter(s => s !== socket);
     });
 });

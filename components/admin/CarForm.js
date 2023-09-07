@@ -235,7 +235,7 @@ export default function Carform({ id }) {
             />
             <div className="flex-grow flex flex-col space-y-5 -ml-7 mr-8">
                 <div className="uppercase ml-7 mt-4 mb-4 text-black text-xl font-extrabold">
-                    {id ? "edit your car information" : "put your car information"}
+                    {id ? "edit your car informations" : "put your car informations"}
                 </div>
                 <div className="bg-white p-5 rounded-lg shadow-lg">
                     <div className="flex flex-row justify-center items-center mt-4 mb-4 rounded-lg">
@@ -328,7 +328,7 @@ export default function Carform({ id }) {
                                 {id && (
                                     <>
                                         <div className="mb-4">
-                                            <label htmlFor="startDate" className="block text-xs mb-1">Start Date</label>
+                                            <label htmlFor="startDate" className="block text-xs mb-1">Start Availability Date</label>
                                             <input
                                                 type="text"
                                                 value={startDate ? startDate.toLocaleDateString('fr-FR') : ''}
@@ -338,7 +338,7 @@ export default function Carform({ id }) {
                                             />
                                         </div>
                                         <div className="mb-4">
-                                            <label htmlFor="endDate" className="block text-xs mb-1">End Date</label>
+                                            <label htmlFor="endDate" className="block text-xs mb-1">End Availability Date</label>
                                             <input
                                                 type="text"
                                                 value={endDate ? endDate.toLocaleDateString('fr-FR') : ''}

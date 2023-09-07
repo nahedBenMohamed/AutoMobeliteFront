@@ -23,15 +23,15 @@ function Footer2() {
                     <div>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="tel:123456789" className="flex items-center justify-center lg:justify-start gap-2 hover:text-blue-600 transition-all duration-300 ease-linear">
+                                <Link href="tel:51719140" className="flex items-center justify-center lg:justify-start gap-2 hover:text-blue-600 transition-all duration-300 ease-linear">
                                     <span><HiPhone /></span>
-                                    <span className="font-semibold">+33 1 83 81 01 20</span>
+                                    <span className="font-semibold">+216 51 719 140</span>
                                 </Link>
                             </li>
                             <li>
-                                <Link href="mailto:carrental@gmail.com" className="flex items-center justify-center lg:justify-start gap-2 hover:text-blue-600 transition-all duration-300 ease-linear">
+                                <Link href="mailto:automobelite@gmail.com" className="flex items-center justify-center lg:justify-start gap-2 hover:text-blue-600 transition-all duration-300 ease-linear">
                                     <span><HiMail /></span>
-                                    <span className="font-semibold">automobelite@gmail@.com</span>
+                                    <span className="font-semibold">automobelite@gmail.com</span>
                                 </Link>
                             </li>
                         </ul>
