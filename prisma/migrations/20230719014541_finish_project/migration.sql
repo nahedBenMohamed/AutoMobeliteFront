@@ -178,13 +178,13 @@ ALTER TABLE "Notification" ADD CONSTRAINT "Notification_reservationId_fkey" FORE
 ALTER TABLE "Agency" ADD CONSTRAINT "Agency_responsibleId_fkey" FOREIGN KEY ("responsibleId") REFERENCES "AgencyUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Parking" ADD CONSTRAINT "Parking_agencyId_fkey" FOREIGN KEY ("agencyId") REFERENCES "Agency"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE Parc ADD CONSTRAINT "Parking_agencyId_fkey" FOREIGN KEY ("agencyId") REFERENCES "Agency"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Car" ADD CONSTRAINT "Car_agencyId_fkey" FOREIGN KEY ("agencyId") REFERENCES "Agency"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Car" ADD CONSTRAINT "Car_parkingId_fkey" FOREIGN KEY ("parkingId") REFERENCES "Parking"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Car" ADD CONSTRAINT "Car_parkingId_fkey" FOREIGN KEY ("parkingId") REFERENCES Parc("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Rental" ADD CONSTRAINT "Rental_carId_fkey" FOREIGN KEY ("carId") REFERENCES "Car"("id") ON DELETE CASCADE ON UPDATE CASCADE;

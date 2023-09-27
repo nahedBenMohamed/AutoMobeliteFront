@@ -1,30 +1,42 @@
 import SuperAdminSidebar from "@/components/super-admin/SuperAdminSidebar";
 import SuperAdminNavbar from "@/components/super-admin/SuperAdminNavbar";
 import React from "react";
-import {protectRoute} from "@/utils/auth";
+import { protectRoute } from "@/utils/auth";
 import Manage from "@/components/super-admin/Manage";
 
-
-export default function ManageAdmin({session}){
-    return(
-        <main>
-            <SuperAdminSidebar />
-            <section id="content">
-                <SuperAdminNavbar session={session} />
-                <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", alignItems: "center", margin: "40px 30px" }}>
-                    <h1 style={{ marginRight: "10px", fontSize: "24px", fontWeight: "bold" }}>
-                        Manage {'\u{1F464}'}
-                    </h1>
-                    <div style={{ width: "100%" }}></div>
-                </div>
-                <div style={{ margin: '-60px 0px' }}>
-                    <Manage/>
-                </div>
-            </section>
-        </main>
-    )
+export default function ManageAdmin({ session }) {
+  return (
+    <main>
+      <SuperAdminSidebar />
+      <section id="content">
+        <SuperAdminNavbar session={session} />
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "auto 1fr",
+            alignItems: "center",
+            margin: "40px 30px",
+          }}
+        >
+          <h1
+            style={{
+              marginRight: "10px",
+              fontSize: "24px",
+              fontWeight: "bold",
+            }}
+          >
+            Manage {"\u{1F464}"}
+          </h1>
+          <div style={{ width: "100%" }}></div>
+        </div>
+        <div style={{ margin: "-60px 0px" }}>
+          <Manage />
+        </div>
+      </section>
+    </main>
+  );
 }
 
 export const getServerSideProps = (ctx) => {
-    return protectRoute(ctx, ['superAdmin']);
+  return protectRoute(ctx, ["superAdmin"]);
 };

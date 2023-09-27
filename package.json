@@ -9,15 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@emotion/styled": "^11.11.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
-    "@headlessui/react": "1.7.15",
+    "@headlessui/react": "^1.7.15",
     "@heroicons/react": "^2.0.18",
     "@material-ui/core": "^4.12.4",
     "@prisma/client": "5.0.0",
-    "@progress/kendo-react-buttons": "^5.14.1",
-    "@progress/kendo-react-form": "^5.14.1",
-    "@progress/kendo-react-layout": "^5.14.1",
     "@tailwindcss/forms": "0.5.4",
     "autoprefixer": "10.4.14",
     "axios": "^1.4.0",
@@ -70,6 +66,7 @@
     "@types/bcrypt": "^5.0.0",
     "@types/node": "20.2.5",
     "@types/react": "18.2.7",
+    "prettier": "3.0.3",
     "prisma": "^4.16.1"
   }
 }

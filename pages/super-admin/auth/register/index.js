@@ -1,6 +1,5 @@
 import RegisterAdmin from "@/components/super-admin/admin-register";
 
-
 function page() {
     return (
         <main>
