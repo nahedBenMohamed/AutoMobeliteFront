@@ -58,8 +58,21 @@ export default async function handle(req, res) {
             .status(403)
             .json({ message: "You are not authorized to delete this car." });
         }
-
         if (car.image) {
+          const imagePath = path.join(process.cwd(), "/public", car.image);
+          if (fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
+            await prisma.car.update({
+              where: { id: Number(carId) },
+              data: { image: null },
+            });
+          } else {
+            return res
+              .status(404)
+              .json({ message: `Image not found at path: ${imagePath}` });
+          }
+        }
+        /*if (car.image) {
           const imagePath = path.join(process.cwd(), "/public", car.image);
           fs.unlinkSync(imagePath);
         }
@@ -69,8 +82,9 @@ export default async function handle(req, res) {
           await prisma.car.update({
             where: { id: Number(carId) },
             data: { image: null },
-          })
-        );
+          }),
+        );*/
+        res.status(200).json({ message: "Image deleted successfully." });
       }
     } catch (error) {
       res

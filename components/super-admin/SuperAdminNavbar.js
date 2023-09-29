@@ -86,9 +86,7 @@ export default function SuperAdminNavbar({ session }) {
           />
         ) : (
           <div className="ml-4 w-10 h-10 object-cover rounded-full flex items-center justify-center bg-gray-200">
-            <span className="text-gray-500 text-lg">
-              <img src="/avatar.jpg" alt="img" />
-            </span>
+            <i className="bx bx-user"></i>
           </div>
         )}
       </button>

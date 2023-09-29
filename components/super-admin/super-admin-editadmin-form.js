@@ -109,7 +109,7 @@ const EditAdmin = ({ id }) => {
           "An agency name is required when the admin is responsible for an agency."
         ) {
           toast.warning(
-            "An agency name is required when the admin is responsible for an agency."
+            "An agency name is required when the admin is responsible for an agency.",
           );
           setIsLoading(false);
         } else {
@@ -132,7 +132,7 @@ const EditAdmin = ({ id }) => {
       try {
         const res = await axios.post(
           "/api/super-admin/manage-admin/upload",
-          data
+          data,
         );
         const { message, imagePath } = res.data;
         if (message === "Image uploaded successfully") {
@@ -326,7 +326,7 @@ const EditAdmin = ({ id }) => {
               </button>
               <button
                 type="button"
-                className="ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="uppercase ml-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
                 onClick={goBack}
               >
                 Cancel

@@ -206,7 +206,7 @@ function Models() {
               <div className="flex justify-between">
                 <h3>Gearbox</h3>
                 <small className="cursor-pointer" onClick={resetGearboxFilters}>
-                  réinitialiser
+                  reset
                 </small>
               </div>
               <div className="mt-8">
@@ -278,7 +278,7 @@ function Models() {
                     car.year.toString().includes(search) ||
                     car.mileage.toString().includes(search) ||
                     car.price.toString().includes(search) ||
-                    car.door.toString().includes(search)
+                    car.door.toString().includes(search),
                 );
 
                 if (searchFilteredCars.length > 0) {

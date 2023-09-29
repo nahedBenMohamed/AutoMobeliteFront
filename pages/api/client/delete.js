@@ -6,6 +6,7 @@ import { getSession } from "next-auth/react";
 export default async function handle(req, res) {
   const { method } = req;
   const session = await getSession({ req });
+
   if (method === "DELETE") {
     try {
       if (!session) {
@@ -24,12 +25,7 @@ export default async function handle(req, res) {
       }
 
       if (client.image) {
-        const imagePath = path.join(
-          process.cwd(),
-          "public",
-          "client",
-          client.image
-        );
+        const imagePath = path.join(process.cwd(), "/public", client.image);
         if (fs.existsSync(imagePath)) {
           fs.unlinkSync(imagePath);
           await prisma.client.update({
@@ -43,7 +39,7 @@ export default async function handle(req, res) {
         }
       }
 
-      return res.status(200).json({ message: "Image deleted successfully." });
+      res.status(200).json({ message: "Image deleted successfully." });
     } catch (error) {
       return res
         .status(500)

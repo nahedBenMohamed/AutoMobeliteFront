@@ -377,7 +377,9 @@ const VehicleTable = () => {
                         </p>
                         <p>
                           <span className="font-bold">Parking:</span>&nbsp;
-                          {selectedCar.parking?.name}
+                          {selectedCar.parking?.name
+                            ? selectedCar.parking.name
+                            : "N/A"}
                         </p>
                       </div>
                     </div>

@@ -133,7 +133,7 @@ export default async function handle(req, res) {
       // Generate availability dates for the next 365 days
       const currentDate = new Date();
       const availabilityDates = [];
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 10; i++) {
         const date = new Date();
         date.setDate(currentDate.getDate() + i);
         availabilityDates.push(date);
@@ -345,7 +345,7 @@ export default async function handle(req, res) {
           await prisma.car.delete({
             where: { id: Number(carId) },
             include: { Agency: true, parking: true }, // Include the Agency and parking details
-          })
+          }),
         );
       }
     }

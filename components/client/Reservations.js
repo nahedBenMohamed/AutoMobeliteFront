@@ -43,7 +43,7 @@ function ReservationForm() {
           setDescription(carData.description);
           setImages(carData.image ? [carData.image] : []);
           setAvailabilityDates(
-            carData.availability.map((avail) => new Date(avail.date))
+            carData.availability.map((avail) => new Date(avail.date)),
           );
           const reservedDates = [];
           for (const rental of carData.rentals) {
@@ -70,13 +70,13 @@ function ReservationForm() {
       (date) =>
         date.getFullYear() === day.year() &&
         date.getMonth() === day.month() &&
-        date.getDate() === day.date()
+        date.getDate() === day.date(),
     );
     const isAvailable = availabilityDates.some(
       (date) =>
         date.getFullYear() === day.year() &&
         date.getMonth() === day.month() &&
-        date.getDate() === day.date()
+        date.getDate() === day.date(),
     );
 
     return isBeforeToday || isReserved || !isAvailable;
@@ -88,7 +88,7 @@ function ReservationForm() {
       (date) =>
         date.getFullYear() === day.year() &&
         date.getMonth() === day.month() &&
-        date.getDate() === day.date()
+        date.getDate() === day.date(),
     );
 
     if (isReserved) {
@@ -104,7 +104,7 @@ function ReservationForm() {
         (date) =>
           date.getFullYear() === currentDay.getFullYear() &&
           date.getMonth() === currentDay.getMonth() &&
-          date.getDate() === currentDay.getDate()
+          date.getDate() === currentDay.getDate(),
       );
 
       if (!isAvailable) {
@@ -146,7 +146,7 @@ function ReservationForm() {
         options.push(
           <option key={time} value={time}>
             {time}
-          </option>
+          </option>,
         );
       }
     }
@@ -156,9 +156,9 @@ function ReservationForm() {
   const goStep2 = () => {
     setIsLoading(true);
     const query = `pickupDate=${selectedDates.startDate.format(
-      "YYYY-MM-DD"
+      "YYYY-MM-DD",
     )}&returnDate=${selectedDates.endDate.format(
-      "YYYY-MM-DD"
+      "YYYY-MM-DD",
     )}&pickupTime=${selectedStartTime}&returnTime=${selectedReturnTime}&totalPrice=${totalPrice}`;
     router.push(`/reservations/new/step2?id=${id}&${query}`);
   };
@@ -269,7 +269,9 @@ function ReservationForm() {
         <div className="bg-white h-48 p-5 rounded-lg shadow-lg">
           <div className="flex flex-col h-full">
             <div className="overflow-auto">
-              <p className="text-justify mt-4">{description}</p>
+              <p className="text-justify mt-4">
+                {description ? description : "N/A"}
+              </p>
             </div>
           </div>
         </div>

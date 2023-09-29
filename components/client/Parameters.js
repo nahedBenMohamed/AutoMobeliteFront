@@ -37,7 +37,7 @@ function ParametersForm() {
     const fetchProfile = async () => {
       try {
         const response = await axios.get(
-          "/api/client/profile?id=" + session.user.id
+          "/api/client/profile?id=" + session.user.id,
         );
         const { email } = response.data.user;
         setEmail(email);
@@ -58,16 +58,19 @@ function ParametersForm() {
 
     if (!oldPassword || !newPassword || !confirmPassword) {
       toast.error("Please complete all fields.");
+      setIsLoading(false);
       return;
     }
 
     if (newPassword !== confirmPassword) {
       toast.error("Different password");
+      setIsLoading(false);
       return;
     }
 
     if (newPassword.length < 8 && newPassword !== "") {
       toast.error("The password must have at least 8 characters.");
+      setIsLoading(false);
       return;
     }
 
@@ -75,8 +78,9 @@ function ParametersForm() {
       /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*]).{8,}$/;
     if (!passwordRegex.test(newPassword) && newPassword !== "") {
       toast.info(
-        "Your password must contain at least 8 characters, a capital letter, a number and a special character."
+        "Your password must contain at least 8 characters, a capital letter, a number and a special character.",
       );
+      setIsLoading(false);
       return;
     }
 
@@ -87,7 +91,7 @@ function ParametersForm() {
     try {
       const response = await axios.put(
         "/api/client/updatePassword?id=" + session.user.id,
-        { ...data }
+        { ...data },
       );
       toast.success("Password updated successfully ");
       setIsLoading(false);
@@ -98,6 +102,7 @@ function ParametersForm() {
       if (error.response) {
         toast.error(error.response.data.error);
       }
+      setIsLoading(false);
     }
   };
   const handleSubmitEmail = async (event) => {
@@ -106,6 +111,7 @@ function ParametersForm() {
 
     if (!newEmail) {
       toast.error("Please complete email fields.");
+      setIsLoading(false);
       return;
     }
 
@@ -116,7 +122,7 @@ function ParametersForm() {
     try {
       const response = await axios.put(
         "/api/client/updateEmail?id=" + session.user.id,
-        { ...data }
+        { ...data },
       );
       toast.success("Email updated successfully");
       setIsLoading(false);
@@ -127,6 +133,7 @@ function ParametersForm() {
       if (error.response) {
         toast.error(error.response.data.error);
       }
+      setIsLoading(false);
     }
   };
 

@@ -42,7 +42,7 @@ function ReservationEditStep2() {
           setDescription(rentalData.car.description);
           setImages(rentalData.car.image ? [rentalData.car.image] : []);
           setAvailabilityDates(
-            rentalData.car.availability.map((avail) => new Date(avail.date))
+            rentalData.car.availability.map((avail) => new Date(avail.date)),
           );
           const reservedDates = [];
           for (const rental of rentalData.rentals) {
@@ -69,13 +69,13 @@ function ReservationEditStep2() {
       (date) =>
         date.getFullYear() === day.year() &&
         date.getMonth() === day.month() &&
-        date.getDate() === day.date()
+        date.getDate() === day.date(),
     );
     const isAvailable = availabilityDates.some(
       (date) =>
         date.getFullYear() === day.year() &&
         date.getMonth() === day.month() &&
-        date.getDate() === day.date()
+        date.getDate() === day.date(),
     );
 
     return isBeforeToday || isReserved || !isAvailable;
@@ -87,7 +87,7 @@ function ReservationEditStep2() {
       (date) =>
         date.getFullYear() === day.year() &&
         date.getMonth() === day.month() &&
-        date.getDate() === day.date()
+        date.getDate() === day.date(),
     );
 
     if (isReserved) {
@@ -103,7 +103,7 @@ function ReservationEditStep2() {
         (date) =>
           date.getFullYear() === currentDay.getFullYear() &&
           date.getMonth() === currentDay.getMonth() &&
-          date.getDate() === currentDay.getDate()
+          date.getDate() === currentDay.getDate(),
       );
 
       if (!isAvailable) {
@@ -146,7 +146,7 @@ function ReservationEditStep2() {
         options.push(
           <option key={time} value={time}>
             {time}
-          </option>
+          </option>,
         );
       }
     }
@@ -160,9 +160,9 @@ function ReservationEditStep2() {
   const goStep3 = () => {
     setIsLoading(true);
     const query = `pickupDate=${selectedDates.startDate.format(
-      "YYYY-MM-DD"
+      "YYYY-MM-DD",
     )}&returnDate=${selectedDates.endDate.format(
-      "YYYY-MM-DD"
+      "YYYY-MM-DD",
     )}&pickupTime=${selectedStartTime}&returnTime=${selectedReturnTime}&totalPrice=${totalPrice}`;
     router.push(`/reservations/edit/step3?id=${id}&${query}`);
   };
@@ -273,7 +273,9 @@ function ReservationEditStep2() {
         <div className="bg-white h-48 p-5 rounded-lg shadow-lg">
           <div className="flex flex-col h-full">
             <div className="overflow-auto">
-              <p className="text-justify mt-4">{description}</p>
+              <p className="text-justify mt-4">
+                {description ? description : "N/A"}
+              </p>
             </div>
           </div>
         </div>
